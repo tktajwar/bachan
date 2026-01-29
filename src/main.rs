@@ -9,7 +9,8 @@ use pages::*;
 #[tokio::main]
 async fn main() {
     let app = Router::new()
-	.route("/", get(root_page));
+	.route("/", get(root_page))
+	.fallback(fallback);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
 
