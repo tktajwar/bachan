@@ -1,0 +1,12 @@
+body {
+    background-color: lightgreen;
+}
+
+#logo {
+    text-decoration: none; 
+    color: #4A90E2;
+    font-size: 48px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-family: 'Arial', sans-serif;
+}
