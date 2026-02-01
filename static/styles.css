@@ -1,12 +1,53 @@
 body {
-    background-color: lightgreen;
+    background-color: #FFE085;/* #A4D65E; */
 }
 
 #logo {
     text-decoration: none; 
-    color: #4A90E2;
+    color: #C0261D;
     font-size: 48px;
     font-weight: bold;
     letter-spacing: 2px;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Impact', Bold;
+}
+
+#boards, #highlights, #announcements {
+    margin: 5px auto;
+    background-color: #D0E7D4;
+    border: 1px solid black;
+    max-width: 980px;
+}
+
+#boards > h2,
+#highlights > h2,
+#announcements > h2 {
+    text-align: center;
+    background-color: #A4D65E;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+.container > .column {
+    flex: 1;
+    margin: 0 10px;
+    min-width: 250px;
+}
+
+.container > .column > ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.container > .column > ul > li {
+    padding-bottom: 10px;
+}
+
+.container > .column > h3 {
+    text-decoration: underline;
 }
