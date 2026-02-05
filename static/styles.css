@@ -12,6 +12,14 @@ body {
     font-family: 'Impact', Bold;
 }
 
+.quote {
+    color: green;
+}
+
+.thread-mention {
+    color: red;
+}
+
 #boards, #highlights, #announcements {
     margin: 5px auto;
     background-color: #D0E7D4;
@@ -31,7 +39,7 @@ body {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    margin: 0;
+    margin: auto;
 }
 
 .container > .column {
@@ -51,4 +59,42 @@ body {
 
 .container > .column > h3 {
     text-decoration: underline;
+}
+
+#new-thread-button {
+    text-decoration: none;
+}
+
+#postFormContainer {
+    display: none;
+}
+
+#postFormContainer > table {
+    flex: 1;
+    margin: 0 10px;
+    min-width: 250px;
+}
+
+#postForm {
+    margin: 10px;
+    border-spacing: 1px;
+    width: 468px;
+}
+
+#postForm > tbody > tr > td:first-child {
+    border: 1px solid black;
+    border-radius: 2px;
+    background-color: #A4D65E;
+}
+
+#style-format {
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+#style-format > tbody > tr > td {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px;
+    background: white;
 }

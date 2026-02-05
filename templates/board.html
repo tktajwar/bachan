@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{board.url}} - {{board.label}} - বাchan</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <header>
+      <h1><center>{{board.url}} - {{board.label}}</center></h1>
+      <hr />
+      <div id="newThreadButton">
+	<center>
+	  [
+	  <a href="#" id="new-thread-button" title="Start a New Thread">
+	    একটি নতুন কথোপকথন চালু করুন
+	  </a>
+	  ]
+	</center>
+      </div>
+      <div id="postFormContainer" class="container">
+	<table id="postForm"><form>
+	  <tbody>
+	    <tr>
+	      <td title="Subject">
+		বিষয়*
+	      </td>
+	      <td>
+		<input name="subject" type="text" style="width:
+		336px;" required />
+		<input name="submit" type="submit" value="জমা দিন"
+		       title="Submit"/>
+	      </td>
+	    <tr>
+	      <td title="Comment">
+		মন্তব্য
+	      </td>
+	      <td>
+		<textarea name="comment" cols="48" rows="4"
+			  style="width: 388px; height: 179px;"></textarea>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td title="Image/GIF">
+		ছবি*
+	      </td>
+	      <td>
+		<input type="file" name="myImage" required
+		       accept="image/png, image/gif, image/jpeg"
+		       id="image-upload" />
+	      </td>
+	    </tr>
+	  </tbody>
+	</form></table>
+	<table id="style-format">
+	  <caption>
+	    Text Formatting
+	  </caption>
+	  <thead>
+	  </thead>
+	  <tbody>
+	    <tr>
+	      <td>*bold*</td>
+	      <td><b>bold</b></td>
+	    </tr>
+	    <tr>
+	      <td>/italic/</td>
+	      <td><i>italic</i></td>
+	    </tr>
+	    <tr>
+	      <td>_underlined_</td>
+	      <td><u>underlined</u></td>
+	    </tr>
+	    <tr>
+	      <td>> quote</td>
+	      <td><span class="quote">> quote</span></td>
+	    </tr>
+	    <tr>
+	      <td>>>00000001</td>
+	      <td><a class="thread-mention"
+	      href="/threads/00000001">>>00000001</a></td>
+	    </tr>
+	  </tbody>
+	</table>
+      </div>
+    </header>
+    <hr />
+    <main>
+      <div id="thread-container">
+	<!-- TODO -->
+      </div>
+    </main>
+    <script src="/static/new_thread.js"></script>
+  </body>
+</html>

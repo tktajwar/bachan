@@ -1,8 +1,10 @@
-pub mod dashboard_data;
-pub use dashboard_data::*;
+pub mod template;
 
 pub mod root_handler;
 pub use root_handler::*;
+
+pub mod board_b_handler;
+pub use board_b_handler::*;
 
 pub mod fallback_handler;
 pub use fallback_handler::*;

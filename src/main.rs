@@ -1,6 +1,7 @@
 use axum::{
     routing::get,
     Router,
+    response::Redirect,
 };
 use tower_http::services::ServeDir;
 
@@ -11,6 +12,8 @@ use pages::*;
 async fn main() {
     let app = Router::new()
 	.route("/", get(root_page))
+	.route("/b/", get(board_b_page))
+	.route("/b", get(|| async {Redirect::to("/b/")}))
 	.fallback(fallback)
 	.nest_service("/static", ServeDir::new("static"));
 

@@ -1,10 +1,10 @@
-use serde::Serialize;
 use lazy_static::lazy_static;
+use serde::Serialize;
 
 #[derive(Serialize)]
-struct Board {
-    url: &'static str,
-    label: &'static str,
+pub struct Board {
+    pub url: &'static str,
+    pub label: &'static str,
 }
 
 #[derive(Serialize)]
@@ -16,8 +16,13 @@ pub struct Boards {
 }
 
 #[derive(Serialize)]
-pub struct Context {
+pub struct DashboardContext {
     pub boards: Boards,
+}
+
+#[derive(Serialize)]
+pub struct BoardContext {
+    pub board: Board,
 }
 
 lazy_static! {
@@ -25,8 +30,8 @@ lazy_static! {
 	tera::Tera::new("templates/**/*")
 	    .expect("Failed to initiate Tera")
     };
-
-    pub static ref CTX: Context = Context {
+    
+    pub static ref Dashboard_CTX: DashboardContext = DashboardContext {
 	boards: Boards {
 	    hobbies: vec![
 		Board { url: "/a", label: "আনিমে এবং মাঙ্গা (Anime & Manga)" },
@@ -53,6 +58,13 @@ lazy_static! {
 		Board { url: "/site", label: "সাইট আলোচনা (Site Talk)" },
 		Board { url: "/b", label: "বিষয়বহির্ভূত (Random)" },
 	    ],
+	}
+    };
+
+    pub static ref Board_b_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/b/",
+	    label: "বিষয়বহির্ভূত (Random)",
 	}
     };
 }
