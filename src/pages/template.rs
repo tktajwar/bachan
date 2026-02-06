@@ -9,10 +9,10 @@ pub struct Board {
 
 #[derive(Serialize)]
 pub struct Boards {
-    hobbies: Vec<Board>,
-    interests: Vec<Board>,
-    lifestyle: Vec<Board>,
-    misc: Vec<Board>,
+    hobbies: Vec<&'static Board>,
+    interests: Vec<&'static Board>,
+    lifestyle: Vec<&'static Board>,
+    misc: Vec<&'static Board>,
 }
 
 #[derive(Serialize)]
@@ -26,38 +26,163 @@ pub struct BoardContext {
 }
 
 lazy_static! {
+
+    // Tera templating engine
+
     pub static ref TERA: tera::Tera = {
 	tera::Tera::new("templates/**/*")
 	    .expect("Failed to initiate Tera")
     };
-    
+
+    // Dashboard context
+
     pub static ref Dashboard_CTX: DashboardContext = DashboardContext {
 	boards: Boards {
 	    hobbies: vec![
-		Board { url: "/a", label: "আনিমে এবং মাঙ্গা (Anime & Manga)" },
-		Board { url: "/khaddo", label: "খাদ্য ও রান্না (Food & Cooking)" },
-		Board { url: "/kheladhula", label: "খেলাধুলা (Sports)" },
-		Board { url: "/sangeet", label: "সঙ্গীত (Music)" },
-		Board { url: "/tv", label: "ফিল্ম ও টেলিভিশন (Film & Television)" },
-		Board { url: "/vg", label: "ভিডিও গেমস (Video Games)" },
+		&Board_a_CTX.board,
+		&Board_kr_CTX.board,
+		&Board_kd_CTX.board,
+		&Board_sangeet_CTX.board,
+		&Board_tv_CTX.board,
+		&Board_vg_CTX.board,
 	    ],
 	    interests: vec![
-		Board { url: "/desh", label: "বাংলাদেশ (Bangladesh)" },
-		Board { url: "/sahitto", label: "সাহিত্য (Literature)" },
-		Board { url: "/manobota", label: "মানবতা ও ইতিহাস (History & Humanity)" },
-		Board { url: "/biggan", label: "বিজ্ঞান ও গণিত (Science & Math)" },
+		&Board_desh_CTX.board,
+		&Board_sahitto_CTX.board,
+		&Board_me_CTX.board,
+		&Board_bg_CTX.board,
 	    ],
 	    lifestyle: vec![
-		Board { url: "/ghor", label: "ঘরের সাজসজ্জা (Home Décor)" },
-		Board { url: "/shajgoj", label: "সাজগোজ (Fashion)" },
-		Board { url: "/sastho", label: "স্বাস্থ্য ও শরীরচর্চা (Health & Fitness)" },
-		Board { url: "/manosik", label: "মানসিক স্বাস্থ্য (Mental Health)" },
+		&Board_ghor_CTX.board,
+		&Board_shajgoj_CTX.board,
+		&Board_sharir_CTX.board,
+		&Board_manoshik_CTX.board,
 	    ],
 	    misc: vec![
-		Board { url: "/ghoshona", label: "ঘোষণা (Announcements)" },
-		Board { url: "/site", label: "সাইট আলোচনা (Site Talk)" },
-		Board { url: "/b", label: "বিষয়বহির্ভূত (Random)" },
+		&Board_ghoshona_CTX.board,
+		&Board_site_CTX.board,
+		&Board_b_CTX.board,
 	    ],
+	}
+    };
+
+    // Hobbies boards contexts
+
+    pub static ref Board_a_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/a/",
+	    label: "আনিমে এবং মাঙ্গা (Anime & Manga)",
+	}
+    };
+
+    pub static ref Board_kr_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/kr/",
+	    label: "খাদ্য ও রান্না (Food & Cooking)",
+	}
+    };
+
+    pub static ref Board_kd_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/kd/",
+	    label: "খেলাধুলা (Sports)",
+	}
+    };
+
+    pub static ref Board_sangeet_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/sangeet/",
+	    label: "সঙ্গীত (Music)",
+	}
+    };
+
+    pub static ref Board_tv_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/tv/",
+	    label: "ফিল্ম ও টেলিভিশন (Film & Television)",
+	}
+    };
+
+    pub static ref Board_vg_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/vg/",
+	    label: "ভিডিও গেমস (Video Games)",
+	}
+    };
+
+    // Interests boards contexts
+
+    pub static ref Board_desh_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/desh/",
+	    label: "বাংলাদেশ (Bangladesh)",
+	}
+    };
+
+    pub static ref Board_sahitto_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/sahitto/",
+	    label: "সাহিত্য (Literature)",
+	}
+    };
+
+    pub static ref Board_me_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/me/",
+	    label: "মানবতা ও ইতিহাস (History & Humanity)",
+	}
+    };
+
+    pub static ref Board_bg_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/bg/",
+	    label: "বিজ্ঞান ও গণিত (Science & Math)",
+	}
+    };
+
+    // Lifestyle boards contexts
+
+    pub static ref Board_ghor_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/ghor/",
+	    label: "ঘরের সাজসজ্জা (Home Décor)",
+	}
+    };
+
+    pub static ref Board_shajgoj_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/shajgoj/",
+	    label: "সাজগোজ (Fashion)",
+	}
+    };
+
+    pub static ref Board_sharir_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/sharir/",
+	    label: "স্বাস্থ্য ও শরীরচর্চা (Health & Fitness)",
+	}
+    };
+
+    pub static ref Board_manoshik_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/manosik/",
+	    label: "মানসিক স্বাস্থ্য (Mental Health)",
+	}
+    };
+
+    // Misc boards contexts
+
+    pub static ref Board_ghoshona_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/ghoshona/",
+	    label: "ঘোষণা (Announcements)",
+	}
+    };
+
+    pub static ref Board_site_CTX: BoardContext = BoardContext {
+	board: Board {
+	    url: "/site/",
+	    label: "সাইট আলোচনা (Site Talk)",
 	}
     };
 
