@@ -20,8 +20,8 @@ pub struct Thread {
 
 #[derive(Serialize)]
 pub struct ThreadSerializable {
-    pub id: u32,
-    pub utid: u16,
+    pub id: String,
+    pub utid: String,
     pub subject: String,
     pub comment: String,
     pub board: String,
@@ -32,8 +32,8 @@ pub struct ThreadSerializable {
 impl Thread {
     pub fn into_serializable(self) -> ThreadSerializable {
 	ThreadSerializable {
-	    id: self.id as u32,
-	    utid: self.hashed_utid(),
+	    id: format!("{:08x}", self.id as u32),
+	    utid: format!("{:04x}", self.hashed_utid()),
 	    subject: self.subject,
 	    comment: self.comment,
 	    board: self.board,
