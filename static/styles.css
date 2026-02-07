@@ -20,6 +20,11 @@ body {
     color: red;
 }
 
+.img-comment {
+    max-width: 200px;
+    max-height: 400px;
+}
+
 #boards, #highlights, #announcements {
     margin: 5px auto;
     background-color: #D0E7D4;
