@@ -11,19 +11,32 @@ use crate::template::{
     Board_b_CTX as CTX,
     TERA,
 };
-use crate::helper::{hashed,create_thread};
+use crate::helper::{
+    board_threads,
+    create_thread,
+};
 use crate::forms::ThreadForm;
 
-pub async fn board_b_page() -> Result<Html<String>, axum::http::StatusCode> {
+pub async fn board_b_page(
+    State(pool): State<PgPool>,
+) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
     ctx.insert("board", &CTX.board);
+    let threads = board_threads(
+	"/b/",
+	pool,
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("threads", &threads);
+
     let rendered = TERA.render("board.html", &ctx);
     let content = match rendered {
 	Ok(s) => s,
 	Err(e) => {
 	    eprintln!("{e}");
-	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)}
-	,
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
     };
 
     Ok(Html(content))
@@ -34,10 +47,6 @@ pub async fn board_b_submission(
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Form(thread_form): Form<ThreadForm>,
 ) -> &'static str {
-    println!("{}", thread_form.subject);
-    println!("{}", thread_form.comment);
-    println!("{}", hashed(addr.ip()));
-
     match create_thread(
 	addr.ip(),
 	thread_form.subject,

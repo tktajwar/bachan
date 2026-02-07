@@ -106,3 +106,10 @@ body {
     padding: 5px;
     background: white;
 }
+
+.thread {
+    border: 1px solid black;
+    background-color: #A4D65E;
+    padding: 2px;
+    margin: 5px;
+}

@@ -102,7 +102,20 @@
     <hr />
     <main>
       <div id="thread-container">
-	<!-- TODO -->
+	{% for thread in threads %}
+	<div class="thread">
+	  <h3 class="thread-headline">{{thread.subject}}</h3>
+	  <p class="thread-tagline">
+	    {{thread.id}} submitted on {{thread.ctime}} by
+	    {{thread.utid}}
+	  </p>
+	  <p class="thread-comment">
+	    {{thread.comment}}
+	  </p>
+	</div>
+	{% else %}
+	<p> No thread posted in this board </p>
+	{% endfor %}
       </div>
     </main>
     <script src="/static/new_thread.js"></script>
