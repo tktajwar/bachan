@@ -42,7 +42,7 @@ lazy_static! {
     pub static ref SECRET_NUMBER: u32 = {
 	eprintln!("Reading secret number.");
 	std::env::var("SECRET_NUMBER")
-	    .unwrap_or(return 123)
+	    .unwrap_or("123".to_string())
 	    .parse()
 	    .unwrap_or(123)
     };
