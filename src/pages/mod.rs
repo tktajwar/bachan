@@ -1,6 +1,7 @@
 pub mod template;
 
 pub mod helper;
+pub mod forms;
 
 pub mod root_handler;
 pub use root_handler::*;

@@ -8,9 +8,7 @@ use std::net::SocketAddr;
 use tower_http::services::ServeDir;
 
 mod pages;
-mod database;
 use pages::*;
-use database::*;
 
 #[tokio::main]
 async fn main() {
