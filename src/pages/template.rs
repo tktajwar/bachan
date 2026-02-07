@@ -189,7 +189,7 @@ lazy_static! {
     pub static ref Board_b_CTX: BoardContext = BoardContext {
 	board: Board {
 	    url: "/b/",
-	    label: "বিষয়বহির্ভূত (Random)",
+	    label: "বিবিধ (Misc)",
 	}
     };
 }
