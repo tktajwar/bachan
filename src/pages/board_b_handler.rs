@@ -3,7 +3,6 @@ use axum::{
     Form,
     response::Html,
 };
-use std::error::Error;
 use std::net::SocketAddr;
 use sqlx::PgPool;
 
