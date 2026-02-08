@@ -8,7 +8,9 @@
   </head>
   <body>
     <header>
-      <h1><center>{{board.url}} - {{board.label}}</center></h1>
+      <h1 id="board-title">
+	<center>{{board.url}} - {{board.label}}</center>
+      </h1>
       <hr />
       <div id="newThreadButton">
 	<center>
@@ -104,14 +106,24 @@
       <div id="thread-container">
 	{% for thread in threads %}
 	<div class="thread">
-	  <h3 class="thread-headline">{{thread.subject}}</h3>
 	  <p class="thread-tagline">
-	    {{thread.id}} submitted on {{thread.ctime}} by
-	    {{thread.utid}}
+	    ID:
+	    <span class="thread-id">
+	      {{thread.id}}
+	    </span>
+	    submitted by
+	    <span class="thread-utid">
+	      {{thread.utid}}
+	    </span>
+	    on
+	    <span class="thread-time">
+	      {{thread.ctime}}
+	    </span>
 	  </p>
-	  <p class="thread-comment">
+	  <h3 class="thread-headline">{{thread.subject}}</h3>
+	  <div class="thread-comment">
 	    {{thread.comment}}
-	  </p>
+	  </div>
 	</div>
 	{% else %}
 	<p> No thread posted in this board </p>

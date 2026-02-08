@@ -1,7 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@100..900&family=Noto+Serif+Bengali:wght@100..900&display=swap');
 
+:root {
+    --bg:#F8F8FF;
+    --fg:black;
+    --border:black;
+    --red:#C0261D;
+    --yellow:#E6AF2E;
+    --green:#A4D65E;
+    --lgreen:#D0E7D4;
+    --wgreen:#F2F8F3;
+}
+
 body {
-    background-color: #FFE085;
+    background-color: var(--bg);
+    color: var(--fg);
     font-family: Helvetica, 'Noto Sans Bengali', Arial, sans-serif;
     font-size: 16px;
     line-height: 1.6;
@@ -9,7 +21,9 @@ body {
 
 #logo {
     text-decoration: none; 
-    color: #C0261D;
+    color: var(--red);
+    padding: 10px;
+    border-radius: 5px;
     font-weight: bold;
     letter-spacing: 2px;
     font-family: 'Impact', Bold;
@@ -30,8 +44,8 @@ body {
 
 #boards, #highlights, #announcements {
     margin: 5px auto;
-    background-color: #D0E7D4;
-    border: 1px solid black;
+    background-color: var(--lgreen);
+    border: 1px solid var(--border);
     max-width: 980px;
 }
 
@@ -39,7 +53,7 @@ body {
 #highlights > h2,
 #announcements > h2 {
     text-align: center;
-    background-color: #A4D65E;
+    background-color: var(--green);
     margin: 0;
 }
 
@@ -90,9 +104,9 @@ body {
 }
 
 #postForm > tbody > tr > td:first-child {
-    border: 1px solid black;
+    border: 1px solid var(--border);
     border-radius: 2px;
-    background-color: #A4D65E;
+    background-color: var(--green);
 }
 
 #style-format,
@@ -104,15 +118,49 @@ body {
 
 #style-format > tbody > tr > td,
 #link-format > tbody > tr > td {
-    border: 1px solid black;
+    border: 1px solid var(--border);
     border-radius: 5px;
     padding: 5px;
     background: white;
 }
 
+#style-format > tbody > tr > td:first-child,
+#link-format > tbody > tr > td:first-child {
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+
+#board-title {
+    color: var(--red);
+}
+
+#thread-container {
+    padding: 5px;
+    max-width: 700px;
+    margin: auto;
+}
+
 .thread {
-    border: 1px solid black;
-    background-color: #A4D65E;
-    padding: 2px;
-    margin: 5px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background-color: var(--lgreen);
+    padding: 5px;
+    margin: 8px 5px;
+}
+
+.thred-tagline,
+.thread-headline,
+.thread-comment {
+    margin: 3px;
+}
+
+.thread-tagline {
+    color: #0E3D55;
+    margin: 0;
+}
+
+.thread-id,
+.thread-utid,
+.thread-time {
+    color: var(--fg);
+    font-family: "Lucida Console", monospace;
 }
