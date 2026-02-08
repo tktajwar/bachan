@@ -26,6 +26,7 @@ async fn main() {
 	.route("/", get(root_page))
 	.route("/k/", get(k_page))
 	.route("/k", get(|| async {Redirect::to("/k/")}))
+	.route("/k/{tid_hex}", get(k_thread_page))
 	.route("/b/", get(board_b_page).post(board_b_submission))
 	.route("/b", get(|| async {Redirect::to("/b/")}))
 	.fallback(fallback)
