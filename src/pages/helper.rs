@@ -32,7 +32,7 @@ pub struct ThreadSerializable {
 impl Thread {
     pub fn into_serializable(self) -> ThreadSerializable {
 	ThreadSerializable {
-	    id: format!("{:06x}", self.id as u32),
+	    id: format!("{:03x}", self.id as u32),
 	    utid: format!("{:04x}", self.hashed_utid()),
 	    subject: self.subject,
 	    comment: self.comment,
