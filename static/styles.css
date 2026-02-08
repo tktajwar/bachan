@@ -160,7 +160,18 @@ body {
 
 .thread-id,
 .thread-utid,
-.thread-time {
+.thread-time,
+.thread-board {
     color: var(--fg);
     font-family: "Lucida Console", monospace;
+}
+
+#k-title {
+    color: var(--red);
+    margin: 0;
+    padding: 0;
+}
+
+.yellow {
+    color: var(--yellow);
 }
