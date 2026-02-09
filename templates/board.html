@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{board.url}} - {{board.label}} - বাchan</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://kit.fontawesome.com/9187eb4d30.js"
+    crossorigin="anonymous"></script>
   </head>
   <body>
     <header>
@@ -124,6 +126,7 @@
 	  <div class="thread-comment">
 	    {{thread.comment}}
 	  </div>
+	  {% include "thread-buttons.html" %}
 	</a></div>
 	{% else %}
 	<p> No thread posted in this board </p>

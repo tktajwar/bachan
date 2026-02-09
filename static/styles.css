@@ -4,11 +4,15 @@
     --bg:#F8F8FF;
     --fg:black;
     --border:black;
+    --gray:lightgray;
     --red:#C0261D;
     --yellow:#E6AF2E;
     --green:#A4D65E;
     --lgreen:#D0E7D4;
     --wgreen:#F2F8F3;
+    --button:lightblue;
+    --button-hover:lightblue;
+    --button-click:gray;
 }
 
 body {
@@ -176,6 +180,27 @@ body {
     color: var(--red);
     margin: 0;
     padding: 0;
+}
+
+.thread-buttons {
+    display: block;
+    margin: 15px 0 0 0;
+    padding: 0;
+}
+
+.thread-buttons > li {
+    display: inline-block;
+    padding: 0 10px 0 0;
+    font-size: 0.8rem;
+}
+
+.thread-buttons > li > a {
+    display: block;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 .yellow {
