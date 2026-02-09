@@ -16,7 +16,7 @@
     <main>
       <div id="thread-container">
 	{% for thread in threads %}
-	<div class="thread" id="{{thread.id}}">
+	<div class="thread" id="{{thread.id}}"><a href="/k/{{thread.id}}">
 	  <p class="thread-tagline">
 	    ID:
 	    <span class="thread-id">
@@ -39,7 +39,7 @@
 	  <div class="thread-comment">
 	    {{thread.comment}}
 	  </div>
-	</div>
+	</a></div>
 	{% else %}
 	<p> No thread has been posted yet. </p>
 	{% endfor %}

@@ -147,6 +147,12 @@ body {
     margin: 8px 5px;
 }
 
+.thread > a {
+    display: block;
+    text-decoration: inherit;
+    color: inherit;
+}
+
 .thred-tagline,
 .thread-headline,
 .thread-comment {
