@@ -163,6 +163,15 @@ body {
     margin: 3px;
 }
 
+.thread-headline {
+    text-align: center;
+}
+
+.thread-comment {
+    max-width: 480px;
+    margin: auto;
+}
+
 .thread-tagline {
     color: #0E3D55;
     margin: 0;
