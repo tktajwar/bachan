@@ -1,18 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@100..900&family=Noto+Serif+Bengali:wght@100..900&display=swap');
 
 :root {
-    --bg:#F8F8FF;
-    --fg:black;
-    --border:black;
+    --white:#F8F8FF;
+    --black:black;
     --gray:lightgray;
     --red:#C0261D;
     --yellow:#E6AF2E;
     --green:#A4D65E;
     --lgreen:#D0E7D4;
     --wgreen:#F2F8F3;
-    --button:lightblue;
-    --button-hover:lightblue;
-    --button-click:gray;
+
+    --fg:var(--black);
+    --bg:var(--white);
+    --border:var(--black);
+    --thread-bg:var(--lgreen);
 }
 
 body {
@@ -144,11 +145,15 @@ body {
 }
 
 .thread {
+    margin: 12px 7px;
+}
+
+.thread-body {
     border: 1px solid var(--border);
     border-radius: 5px;
-    background-color: var(--lgreen);
-    padding: 5px;
-    margin: 8px 5px;
+    background-color: var(--thread-bg);
+    padding: 20px;
+    margin: 0;
 }
 
 .thread > a {
@@ -175,6 +180,7 @@ body {
 .thread-tagline {
     color: #0E3D55;
     margin: 0;
+    font-size: 0.8rem;
 }
 
 .thread-id,
@@ -182,7 +188,7 @@ body {
 .thread-time,
 .thread-board {
     color: var(--fg);
-    font-family: "Lucida Console", monospace;
+    font-family: "Lucida Console", "Courier New", monospace;
 }
 
 #k-title {
@@ -193,14 +199,15 @@ body {
 
 .thread-buttons {
     display: block;
-    margin: 15px 0 0 0;
+    margin: 5px 0 0 0;
     padding: 0;
+    font-family: "Lucida Console", "Courier New", monospace;
+    font-size: 0.8rem;
 }
 
 .thread-buttons > li {
     display: inline-block;
     padding: 0 10px 0 0;
-    font-size: 0.8rem;
 }
 
 .thread-buttons > li > a {

@@ -19,28 +19,8 @@
       <div id="thread-container">
 	{% for thread in threads %}
 	<div class="thread" id="{{thread.id}}"><a href="/k/{{thread.id}}">
-	  <p class="thread-tagline">
-	    ID:
-	    <span class="thread-id">
-	      {{thread.id}}
-	    </span>
-	    submitted by
-	    <span class="thread-utid">
-	      {{thread.utid}}
-	    </span>
-	    on
-	    <span class="thread-time">
-	      {{thread.ctime}}
-	    </span>
-	    to
-	    <span class="thread-board">
-	      {{thread.board}}
-	    </span>
-	  </p>
-	  <h3 class="thread-headline">{{thread.subject}}</h3>
-	  <div class="thread-comment">
-	    {{thread.comment}}
-	  </div>
+	  {% include "thread-tagline-with-boardname.html" %}
+	  {% include "thread-body.html" %}
 	  {% include "thread-buttons.html" %}
 	</a></div>
 	{% else %}
