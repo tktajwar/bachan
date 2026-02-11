@@ -126,60 +126,6 @@ pub async fn create_thread(
     Ok(())
 }
 
-pub async fn create_reply(
-    ip: IpAddr,
-    tid: i32,
-    comment: String,
-    pool: PgPool,
-) -> Result<(), Box<dyn Error>> {
-    let query = "\
-    INSERT INTO reply (uid, tid, comment) \
-    VALUES ($1, $2, $3) \
-    ";
-
-    sqlx::query(query)
-	.bind(hashed(ip))
-	.bind(tid)
-	.bind(comment)
-	.execute(&pool)
-	.await?;
-
-    Ok(())
-}
-
-pub async fn board_threads(
-    board: &str,
-    pool: PgPool,
-) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
-    let q = "\
-    SELECT \
-    t.id, \
-    t.uid, \
-    t.subject, \
-    t.comment, \
-    t.board, \
-    t.ctime, \
-    t.mtime, \
-    COUNT(r.id) AS reply_count \
-    FROM thread t \
-    LEFT JOIN reply r ON r.tid = t.id \
-    WHERE t.board = $1 \
-    GROUP BY t.id \
-    ORDER BY mtime desc \
-    ";
-
-    let threads = sqlx::query_as::<_, Thread>(q)
-	.bind(board)
-	.fetch_all(&pool)
-	.await?;
-
-    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
-        .map(Thread::into_serializable)
-        .collect();
-
-    Ok(serializable_threads)
-}
-
 pub async fn thread_replies(
     tid: i32,
     pool: PgPool,
@@ -206,4 +152,25 @@ pub async fn thread_replies(
         .collect();
 
     Ok(serializable_replies)
+}
+
+pub async fn create_reply(
+    ip: IpAddr,
+    tid: i32,
+    comment: String,
+    pool: PgPool,
+) -> Result<(), Box<dyn Error>> {
+    let query = "\
+    INSERT INTO reply (uid, tid, comment) \
+    VALUES ($1, $2, $3) \
+    ";
+
+    sqlx::query(query)
+	.bind(hashed(ip))
+	.bind(tid)
+	.bind(comment)
+	.execute(&pool)
+	.await?;
+
+    Ok(())
 }
