@@ -37,7 +37,7 @@ async fn all_threads(
     FROM thread t \
     LEFT JOIN reply r ON r.tid = t.id \
     GROUP BY t.id \
-    ORDER BY mtime desc \
+    ORDER BY t.id desc \
     ";
 
     let threads = sqlx::query_as::<_, Thread>(q)
