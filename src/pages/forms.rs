@@ -5,3 +5,8 @@ pub struct ThreadForm {
     pub subject: String,
     pub comment: String,
 }
+
+#[derive(Deserialize)]
+pub struct ReplyForm {
+    pub comment: String,
+}

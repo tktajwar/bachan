@@ -126,6 +126,27 @@ pub async fn create_thread(
     Ok(())
 }
 
+pub async fn create_reply(
+    ip: IpAddr,
+    tid: i32,
+    comment: String,
+    pool: PgPool,
+) -> Result<(), Box<dyn Error>> {
+    let query = "\
+    INSERT INTO reply (uid, tid, comment) \
+    VALUES ($1, $2, $3) \
+    ";
+
+    sqlx::query(query)
+	.bind(hashed(ip))
+	.bind(tid)
+	.bind(comment)
+	.execute(&pool)
+	.await?;
+
+    Ok(())
+}
+
 pub async fn board_threads(
     board: &str,
     pool: PgPool,

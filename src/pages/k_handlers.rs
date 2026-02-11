@@ -1,19 +1,24 @@
 use axum::{
     extract::{
+	ConnectInfo,
 	Path,
 	State,
     },
+    Form,
     response::Html,
 };
 use std::error::Error;
+use std::net::SocketAddr;
 use sqlx::PgPool;
 
+use crate::forms::ReplyForm;
 use crate::template::{
     TERA,
 };
 use crate::helper::{
     Thread,
     ThreadSerializable,
+    create_reply,
 };
 
 async fn all_threads(
@@ -136,4 +141,29 @@ pub async fn k_thread_page(
     };
 
     Ok(Html(content))
+}
+
+pub async fn reply_submission(
+    State(pool): State<PgPool>,
+    Path(tid_hex): Path<String>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    Form(reply_form): Form<ReplyForm>,
+) -> Result<&'static str, axum::http::StatusCode> {
+    let Ok(tid_u32) = u32::from_str_radix(&tid_hex, 16) else {
+	return Err(axum::http::StatusCode::BAD_REQUEST)
+    };
+    let tid = tid_u32 as i32;
+
+    match create_reply(
+	addr.ip(),
+	tid,
+	reply_form.comment,
+	pool,
+    ).await {
+	Ok(()) => Ok("Hello! Your reply has been posted."),
+	Err(e) => {
+	    eprintln!("{}", e);
+	    Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	}
+    }
 }
