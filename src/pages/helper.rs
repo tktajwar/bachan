@@ -16,6 +16,16 @@ pub struct Thread {
     pub board: String,
     pub ctime: chrono::NaiveDateTime,
     pub mtime: chrono::NaiveDateTime,
+    pub reply_count: i64,
+}
+
+#[derive(sqlx::FromRow)]
+pub struct Reply {
+    pub id: i32,
+    pub uid: i32,
+    pub tid: i32,
+    pub comment: String,
+    pub ctime: chrono::NaiveDateTime,
 }
 
 #[derive(Serialize)]
@@ -27,6 +37,15 @@ pub struct ThreadSerializable {
     pub board: String,
     pub ctime: String,
     pub mtime: String,
+    pub reply_count: i64,
+}
+
+#[derive(Serialize)]
+pub struct ReplySerializable {
+    pub id: String,
+    pub utid: String,
+    pub comment: String,
+    pub ctime: String,
 }
 
 impl Thread {
@@ -39,6 +58,7 @@ impl Thread {
 	    board: self.board,
 	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
 	    mtime: self.mtime.format("%Y-%m-%d %H:%M").to_string(),
+	    reply_count: self.reply_count,
 	}
     }
 
@@ -46,6 +66,27 @@ impl Thread {
 	let mut hasher = DefaultHasher::new();
 
 	self.id.hash(&mut hasher);
+	self.uid.hash(&mut hasher);
+	crate::SECRET_NUMBER.hash(&mut hasher);
+
+	hasher.finish() as u16
+    }
+}
+
+impl Reply {
+    pub fn into_serializable(self) -> ReplySerializable {
+	ReplySerializable {
+	    id: format!("{:03x}", self.id as u32),
+	    utid: format!("{:04x}", self.hashed_utid()),
+	    comment: self.comment,
+	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
+	}
+    }
+
+    pub fn hashed_utid(&self) -> u16 {
+	let mut hasher = DefaultHasher::new();
+
+	self.tid.hash(&mut hasher);
 	self.uid.hash(&mut hasher);
 	crate::SECRET_NUMBER.hash(&mut hasher);
 
@@ -90,9 +131,20 @@ pub async fn board_threads(
     pool: PgPool,
 ) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
     let q = "\
-    SELECT id, uid, subject, comment, board, ctime, mtime FROM thread \
-    WHERE board = $1 \
-    ORDER BY id desc \
+    SELECT \
+    t.id, \
+    t.uid, \
+    t.subject, \
+    t.comment, \
+    t.board, \
+    t.ctime, \
+    t.mtime, \
+    COUNT(r.id) AS reply_count \
+    FROM thread t \
+    LEFT JOIN reply r ON r.tid = t.id \
+    WHERE t.board = $1 \
+    GROUP BY t.id \
+    ORDER BY mtime desc \
     ";
 
     let threads = sqlx::query_as::<_, Thread>(q)
@@ -105,4 +157,32 @@ pub async fn board_threads(
         .collect();
 
     Ok(serializable_threads)
+}
+
+pub async fn thread_replies(
+    tid: i32,
+    pool: PgPool,
+) -> Result<Vec<ReplySerializable>, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    id, \
+    uid, \
+    tid, \
+    comment, \
+    ctime \
+    FROM reply \
+    WHERE tid = $1 \
+    ORDER BY id ASC \
+    ";
+
+    let replies = sqlx::query_as::<_, Reply>(q)
+	.bind(tid)
+	.fetch_all(&pool)
+	.await?;
+
+    let serializable_replies: Vec<ReplySerializable> = replies.into_iter()
+        .map(Reply::into_serializable)
+        .collect();
+
+    Ok(serializable_replies)
 }

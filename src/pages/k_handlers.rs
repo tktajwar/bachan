@@ -20,7 +20,18 @@ async fn all_threads(
     pool: PgPool,
 ) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
     let q = "\
-    SELECT id, uid, subject, comment, board, ctime, mtime FROM thread \
+    SELECT \
+    t.id, \
+    t.uid, \
+    t.subject, \
+    t.comment, \
+    t.board, \
+    t.ctime, \
+    t.mtime, \
+    COUNT(r.id) AS reply_count \
+    FROM thread t \
+    LEFT JOIN reply r ON r.tid = t.id \
+    GROUP BY t.id \
     ORDER BY mtime desc \
     ";
 
@@ -40,9 +51,19 @@ async fn thread_with_id(
     pool: PgPool,
 ) -> Result<ThreadSerializable, Box<dyn Error>> {
     let q = "\
-    SELECT id, uid, subject, comment, board, ctime, mtime FROM thread \
-    WHERE id = $1 \
-    ORDER BY mtime desc \
+    SELECT \
+    t.id, \
+    t.uid, \
+    t.subject, \
+    t.comment, \
+    t.board, \
+    t.ctime, \
+    t.mtime, \
+    COUNT(r.id) AS reply_count \
+    FROM thread t \
+    LEFT JOIN reply r ON r.tid = t.id \
+    WHERE t.id = $1 \
+    GROUP BY t.id \
     ";
 
     let thread = sqlx::query_as::<_, Thread>(q)
@@ -86,15 +107,24 @@ pub async fn k_thread_page(
 	return Err(axum::http::StatusCode::BAD_REQUEST)
     };
     let tid = tid_u32 as i32;
+
     let Ok(thread) = thread_with_id(
 	tid,
-	pool,
+	pool.clone(),
     ).await else {
 	return Err(axum::http::StatusCode::NOT_FOUND)
     };
 
+    let Ok(replies) = crate::helper::thread_replies(
+	tid,
+	pool,
+    ).await else {
+	return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+    };
+
     let mut ctx = tera::Context::new();
     ctx.insert("thread", &thread);
+    ctx.insert("replies", &replies);
 
     let rendered = TERA.render("k_thread.html", &ctx);
     let content = match rendered {

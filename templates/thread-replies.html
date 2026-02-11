@@ -1,0 +1,16 @@
+<div id="thread-replies">
+  <h3 id="replies"> Replies </h3>
+  {% for reply in replies %}
+  <div class="reply" id="{{reply.id}}">
+    {% include "reply-tagline-without-boardname.html" %}
+    <div class="reply-body">
+      <div class="reply-comment">
+	{{reply.comment}}
+      </div>
+    </div>
+    {% include "reply-buttons.html" %}
+  </div>
+  {% else %}
+  <p> This thread has no reply yet.</p>
+  {% endfor %}
+</div>
