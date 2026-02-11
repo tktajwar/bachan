@@ -154,7 +154,7 @@ body {
     border: 1px solid var(--border);
     border-radius: 5px;
     background-color: var(--thread-bg);
-    padding: 20px;
+    padding: 13px 20px;
     margin: 0;
 }
 

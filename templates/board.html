@@ -6,7 +6,7 @@
     <title>{{board.url}} - {{board.label}} - বাchan</title>
     <link rel="stylesheet" href="/static/styles.css">
     <script src="https://kit.fontawesome.com/9187eb4d30.js"
-    crossorigin="anonymous"></script>
+	    crossorigin="anonymous"></script>
   </head>
   <body>
     <header>
@@ -25,28 +25,28 @@
       </div>
       <div id="postFormContainer" class="container">
 	<table id="postForm"><form method="post">
-	  <tbody>
-	    <tr>
-	      <td title="Subject">
-		বিষয়
-	      </td>
-	      <td>
-		<input name="subject" type="text" style="width:
-		336px;" required />
-		<input name="submit" type="submit" value="জমা দিন"
-		       title="Submit"/>
-	      </td>
-	    <tr>
-	      <td title="Comment">
-		মন্তব্য
-	      </td>
-	      <td>
-		<textarea name="comment" cols="48" rows="4"
-			  maxlength="4096" style="width: 388px;
-			  height: 200px;" required ></textarea>
-	      </td>
-	    </tr>
-	  </tbody>
+	    <tbody>
+	      <tr>
+		<td title="Subject">
+		  বিষয়
+		</td>
+		<td>
+		  <input name="subject" type="text" style="width:
+							   336px;" required />
+		  <input name="submit" type="submit" value="জমা দিন"
+			 title="Submit"/>
+		</td>
+	      <tr>
+		<td title="Comment">
+		  মন্তব্য
+		</td>
+		<td>
+		  <textarea name="comment" cols="48" rows="4"
+			    maxlength="4096" style="width: 388px;
+						    height: 200px;" required ></textarea>
+		</td>
+	      </tr>
+	    </tbody>
 	</form></table>
 	<table id="style-format">
 	  <caption>
@@ -74,7 +74,7 @@
 	    <tr>
 	      <td>>>001</td>
 	      <td><a class="t-comment"
-	      href="/k/001">>>001</a></td>
+		     href="/k/001">>>001</a></td>
 	    </tr>
 	  </tbody>
 	</table>
@@ -96,8 +96,8 @@
 	    <tr>
 	      <td>[[https://i.imgur.com/WoPQgJs.jpeg]]</td>
 	      <td><a href="https://i.imgur.com/WoPQgJs.jpeg"><img src="https://i.imgur.com/WoPQgJs.jpeg"
-	      alt="https://i.imgur.com/WoPQgJs.jpeg" class="img-comment"
-	      /></a></td>
+								  alt="https://i.imgur.com/WoPQgJs.jpeg" class="img-comment"
+								  /></a></td>
 	    </tr>
 	  </tbody>
 	</table>
@@ -107,11 +107,13 @@
     <main>
       <div id="thread-container">
 	{% for thread in threads %}
-	<div class="thread" id="{{thread.id}}"><a href="/k/{{thread.id}}">
+	<div class="thread" id="{{thread.id}}">
 	  {% include "thread-tagline-without-boardname.html" %}
-	  {% include "thread-body.html" %}
+	  <a href="/k/{{thread.id}}">
+	    {% include "thread-body.html" %}
+	  </a>
 	  {% include "thread-buttons.html" %}
-	</a></div>
+	</div>
 	{% else %}
 	<p> No thread posted in this board </p>
 	{% endfor %}

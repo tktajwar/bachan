@@ -18,11 +18,13 @@
     <main>
       <div id="thread-container">
 	{% for thread in threads %}
-	<div class="thread" id="{{thread.id}}"><a href="/k/{{thread.id}}">
+	<div class="thread" id="{{thread.id}}">
 	  {% include "thread-tagline-with-boardname.html" %}
-	  {% include "thread-body.html" %}
+	  <a href="/k/{{thread.id}}">
+	    {% include "thread-body.html" %}
+	  </a>
 	  {% include "thread-buttons.html" %}
-	</a></div>
+	</div>
 	{% else %}
 	<p> No thread has been posted yet. </p>
 	{% endfor %}
