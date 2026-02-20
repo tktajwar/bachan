@@ -27,8 +27,8 @@ async fn main() {
 	.route("/k/", get(k_page))
 	.route("/k", get(|| async {Redirect::to("/k/")}))
 	.route("/k/{tid_hex}", get(k_thread_page).post(reply_submission))
-	.route("/b/", get(board_b_page).post(board_b_submission))
-	.route("/b", get(|| async {Redirect::to("/b/")}))
+	.route("/{boardname}/", get(board_x_page).post(board_x_submission))
+	.route("/{boardname}", get(board_x_page).post(board_x_submission))
 	.fallback(fallback)
 	.with_state(pool)
 	.nest_service("/static", ServeDir::new("static"));

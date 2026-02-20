@@ -40,7 +40,7 @@ async fn all_threads(
     ORDER BY t.id desc \
     ";
 
-    let threads = sqlx::query_as::<_, Thread>(q)
+    let threads: Vec<Thread> = sqlx::query_as::<_, Thread>(q)
 	.fetch_all(&pool)
 	.await?;
 
@@ -71,7 +71,7 @@ async fn thread_with_id(
     GROUP BY t.id \
     ";
 
-    let thread = sqlx::query_as::<_, Thread>(q)
+    let thread: Thread = sqlx::query_as::<_, Thread>(q)
 	.bind(&id)
 	.fetch_one(&pool)
 	.await?;

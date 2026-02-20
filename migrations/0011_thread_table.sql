@@ -3,7 +3,7 @@ CREATE TABLE thread (
        uid INT NOT NULL,
        subject VARCHAR NOT NULL,
        comment TEXT NOT NULL,
-       board VARCHAR NOT NULL,
+       board VARCHAR NOT NULL REFERENCES board(url),
        ctime TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
        mtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

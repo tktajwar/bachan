@@ -1,22 +1,24 @@
 use axum::{
-    extract::{ConnectInfo,State},
     Form,
+    extract::{
+	ConnectInfo,
+	Path,
+	State,
+    },
     response::Html,
 };
 use sqlx::PgPool;
 use std::error::Error;
 use std::net::SocketAddr;
 
-use crate::template::{
-    Board_b_CTX as CTX,
-    TERA,
-};
 use crate::forms::ThreadForm;
 use crate::helper::{
     Thread,
     ThreadSerializable,
     create_thread,
+    get_board_ctx,
 };
+use crate::template::*;
 
 pub async fn board_threads(
     board: &str,
@@ -53,12 +55,19 @@ pub async fn board_threads(
 
 async fn board_page(
     pool: PgPool,
-    boardname: &str,
+    url: &str,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
-    ctx.insert("board", &CTX.board);
+    let Ok(board) = get_board_ctx(
+	url,
+	pool.clone(),
+    ).await else {
+	return Err(axum::http::StatusCode::NOT_FOUND)
+    };
+
+    ctx.insert("board", &board);
     let threads = board_threads(
-	boardname,
+	url,
 	pool,
     ).await.unwrap_or(
 	vec![]
@@ -98,17 +107,19 @@ async fn board_submission(
     }
 }
 
-pub async fn board_b_page(
+pub async fn board_x_page(
     State(pool): State<PgPool>,
+    Path(url): Path<String>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     board_page(
 	pool,
-	"/b/"
+	&url,
     ).await
 }
 
-pub async fn board_b_submission(
+pub async fn board_x_submission(
     State(pool): State<PgPool>,
+    Path(boardname): Path<String>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Form(thread_form): Form<ThreadForm>,
 ) -> &'static str {
@@ -116,6 +127,6 @@ pub async fn board_b_submission(
 	pool,
 	addr,
 	thread_form,
-	"/b/"
+	&boardname,
     ).await
 }

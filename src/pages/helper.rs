@@ -1,3 +1,4 @@
+use axum::extract::State;
 use serde::Serialize;
 use std::error::Error;
 use std::hash::{DefaultHasher, Hash, Hasher};
@@ -94,6 +95,12 @@ impl Reply {
     }
 }
 
+#[derive(sqlx::FromRow, Serialize)]
+pub struct Board {
+    pub url: String,
+    pub label: String,
+}
+
 pub fn hashed(ip: IpAddr) -> i32 {
     let mut hasher = DefaultHasher::new();
 
@@ -173,4 +180,46 @@ pub async fn create_reply(
 	.await?;
 
     Ok(())
+}
+
+pub async fn boards_in_category(
+    category: &str,
+    State(pool): State<PgPool>,
+) -> Result<Vec<Board>, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    url, \
+    label \
+    FROM board \
+    WHERE category = $1 \
+    ORDER BY url ASC \
+    ";
+
+    let boards: Vec<Board> = sqlx::query_as::<_, Board>(q)
+	.bind(category)
+	.fetch_all(&pool)
+	.await?;
+
+    Ok(boards)
+}
+
+pub async fn get_board_ctx(
+    url: &str,
+    pool: PgPool,
+) -> Result<Board, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    url, \
+    label \
+    FROM board \
+    WHERE url = $1 \
+    ORDER BY url ASC \
+    ";
+
+    let board: Board = sqlx::query_as::<_, Board>(q)
+	.bind(url)
+	.fetch_one(&pool)
+	.await?;
+
+    Ok(board)
 }
