@@ -8,6 +8,8 @@ use sqlx::{
     types::chrono,
 };
 
+use crate::formatting;
+
 #[derive(sqlx::FromRow)]
 pub struct Thread {
     pub id: i32,
@@ -112,11 +114,13 @@ pub fn hashed(ip: IpAddr) -> i32 {
 
 pub async fn create_thread(
     ip: IpAddr,
-    subject: String,
-    comment: String,
+    subject: &str,
+    comment: &str,
     board: String,
     pool: PgPool,
 ) -> Result<(), Box<dyn Error>> {
+    let comment_formatted = formatting::format(comment);
+
     let query = "\
     INSERT INTO thread (uid, subject, comment, board) \
     VALUES ($1, $2, $3, $4) \
@@ -125,7 +129,7 @@ pub async fn create_thread(
     sqlx::query(query)
 	.bind(hashed(ip))
 	.bind(subject)
-	.bind(comment)
+	.bind(comment_formatted)
 	.bind(board)
 	.execute(&pool)
 	.await?;

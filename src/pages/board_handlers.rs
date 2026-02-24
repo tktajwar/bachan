@@ -94,8 +94,8 @@ async fn board_submission(
 ) -> &'static str {
     match create_thread(
 	addr.ip(),
-	thread_form.subject,
-	thread_form.comment,
+	&thread_form.subject,
+	&thread_form.comment,
 	boardname.to_string(),
 	pool,
     ).await {

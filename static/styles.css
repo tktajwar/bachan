@@ -183,6 +183,7 @@ body {
 .thread-comment {
     max-width: 480px;
     margin: auto;
+    white-space: pre-wrap;
 }
 
 .thread-tagline,

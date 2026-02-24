@@ -9,6 +9,7 @@ use tower_http::services::ServeDir;
 
 mod pages;
 use pages::*;
+mod formatting;
 
 #[tokio::main]
 async fn main() {
