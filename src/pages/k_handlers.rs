@@ -157,7 +157,7 @@ pub async fn reply_submission(
     match create_reply(
 	addr.ip(),
 	tid,
-	reply_form.comment,
+	&reply_form.comment,
 	pool,
     ).await {
 	Ok(()) => Ok("Hello! Your reply has been posted."),

@@ -193,6 +193,10 @@ body {
     font-size: 0.8rem;
 }
 
+.reply-comment {
+    white-space: pre-wrap;
+}
+
 .thread-id,
 .thread-utid,
 .thread-time,

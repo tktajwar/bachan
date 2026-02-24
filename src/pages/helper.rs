@@ -168,9 +168,11 @@ pub async fn thread_replies(
 pub async fn create_reply(
     ip: IpAddr,
     tid: i32,
-    comment: String,
+    comment: &str,
     pool: PgPool,
 ) -> Result<(), Box<dyn Error>> {
+    let comment_formatted = formatting::format(comment);
+
     let query = "\
     INSERT INTO reply (uid, tid, comment) \
     VALUES ($1, $2, $3) \
@@ -179,7 +181,7 @@ pub async fn create_reply(
     sqlx::query(query)
 	.bind(hashed(ip))
 	.bind(tid)
-	.bind(comment)
+	.bind(comment_formatted)
 	.execute(&pool)
 	.await?;
 
