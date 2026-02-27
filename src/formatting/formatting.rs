@@ -58,10 +58,42 @@ fn enref(input: &str) -> String {
     ).to_string()
 }
 
+fn embed(input: &str) -> String {
+    let re = Regex::new(
+	r"\[\[((?:http|https|ftp)://.+?(?:jpeg|jpg|png|webp))\]\]"
+    ).unwrap();
+    re.replace_all(
+	input,
+	r#"<img class="img-comment" src="$1" alt="$1" />"#
+    ).to_string()
+}
+
+fn enlink(input: &str) -> String {
+    let re = Regex::new(
+	r"\[\[((?:http|https|ftp)://.+?)\](?:\[(.+?)?\])?\]"
+    ).unwrap();
+    re.replace_all(input, |caps: &regex::Captures| {
+	let href = caps[1].to_string();
+	let text = caps.get(2).map_or(href.clone(),
+				       |m| m.as_str().to_string()
+	);
+
+	format!(
+	    r#"<a href="{}">{}</a>"#,
+	    href,
+	    text,
+	)
+    }).to_string()
+}
+
 pub fn format(input: &str) -> String {
     let formatted_input = enref(&enquote(&underline(&italicize(&embold(
 	input
     )))));
+
+    let formatted_input = enlink(&embed(
+	&formatted_input
+    ));
 
     formatted_input
 }
