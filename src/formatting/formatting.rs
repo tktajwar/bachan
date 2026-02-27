@@ -37,21 +37,25 @@ fn underline(input: &str) -> String {
 }
 
 fn enquote(input: &str) -> String {
-    let re = Regex::new(r"^> +\S+ *$").unwrap();
+    let re = Regex::new(r"(?m)^>[ a-zA-Z0-9].*$").unwrap();
     re.replace_all(
 	input,
-	"<span class=\"q-comment\">$0</span>"
+	r#"<span class="quote">$0</span>"#
     ).to_string()
 }
 
 fn enref(input: &str) -> String {
-    let re = Regex::new(r"^>>\([0-9a-f]{3,8}\)$").unwrap();
+    let re = Regex::new(r"(?m)^>> *([0-9a-fA-F]{3,8})(\r)*$").unwrap();
     re.replace_all(
 	input,
-	"<span class=\"t-comment\" href=\"/k/$1\">$0</span>"
+	r#"<a class="ref" href="/k/$1">$0</a>"#
     ).to_string()
 }
 
 pub fn format(input: &str) -> String {
-    enref(&enquote(&underline(&italicize(&embold(input)))))
+    let formatted_input = enref(&enquote(&underline(&italicize(&embold(
+	input
+    )))));
+
+    formatted_input
 }

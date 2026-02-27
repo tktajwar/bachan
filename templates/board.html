@@ -109,9 +109,7 @@
 	{% for thread in threads %}
 	<div class="thread" id="{{thread.id}}">
 	  {% include "thread-tagline-without-boardname.html" %}
-	  <a href="/k/{{thread.id}}">
-	    {% include "thread-body.html" %}
-	  </a>
+	  {% include "thread-body.html" %}
 	  {% include "thread-buttons.html" %}
 	</div>
 	{% else %}
