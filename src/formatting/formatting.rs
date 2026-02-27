@@ -22,17 +22,23 @@ use regex::Regex;
 //     ).unwrap());
 
 fn embold(input: &str) -> String {
-    let re = Regex::new(r"\*(\S+?)\*").unwrap();
+    let re = Regex::new(
+	r"(?:\s|^)\*(\S+?)\*(?:\s|$)"
+    ).unwrap();
     re.replace_all(input, "<b>$1</b>").to_string()
 }
 
 fn italicize(input: &str) -> String {
-    let re = Regex::new(r"/(\S+?)/").unwrap();
+    let re = Regex::new(
+	r"(?:\s|^)/(\S+?)/(?:\s|$)"
+    ).unwrap();
     re.replace_all(input, "<i>$1</i>").to_string()
 }
 
 fn underline(input: &str) -> String {
-    let re = Regex::new(r"_(\S+?)_").unwrap();
+    let re = Regex::new(
+	r"(?:\s|^)_(\S+?)_(?:\s|$)"
+    ).unwrap();
     re.replace_all(input, "<u>$1</u>").to_string()
 }
 
