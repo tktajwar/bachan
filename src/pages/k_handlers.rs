@@ -5,7 +5,10 @@ use axum::{
 	State,
     },
     Form,
-    response::Html,
+    response::{
+	Html,
+	Redirect,
+    },
 };
 use std::error::Error;
 use std::net::SocketAddr;
@@ -81,6 +84,25 @@ async fn thread_with_id(
     Ok(serializable_thread)
 }
 
+async fn thread_with_reply_id(
+    reply_id: i32,
+    pool: PgPool,
+) -> Result<i32, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    tid \
+    FROM reply \
+    WHERE id = $1
+    ";
+
+    let thread_id: (i32,) = sqlx::query_as::<_, (i32,)>(q)
+	.bind(&reply_id)
+	.fetch_one(&pool)
+	.await?;
+
+    Ok(thread_id.0)
+}
+
 pub async fn k_page(
     State(pool): State<PgPool>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
@@ -106,22 +128,29 @@ pub async fn k_page(
 
 pub async fn k_thread_page(
     State(pool): State<PgPool>,
-    Path(tid_hex): Path<String>,
-) -> Result<Html<String>, axum::http::StatusCode> {
-    let Ok(tid_u32) = u32::from_str_radix(&tid_hex, 16) else {
+    Path(id_hex): Path<String>,
+) -> Result<Result<Html<String>, Redirect>, axum::http::StatusCode> {
+    let Ok(id_u32) = u32::from_str_radix(&id_hex, 16) else {
 	return Err(axum::http::StatusCode::BAD_REQUEST)
     };
-    let tid = tid_u32 as i32;
+    let id = id_u32 as i32;
 
     let Ok(thread) = thread_with_id(
-	tid,
+	id,
 	pool.clone(),
     ).await else {
-	return Err(axum::http::StatusCode::NOT_FOUND)
+	return if let Ok(tid) = thread_with_reply_id(id, pool).await {
+	    let tid_hex = format!("{:03x}", tid);
+	    Ok(Err(Redirect::permanent(
+		&format!("/k/{}#{}", tid_hex, id_hex
+		))))
+	} else {
+	    Err(axum::http::StatusCode::NOT_FOUND)
+	}
     };
 
     let Ok(replies) = crate::helper::thread_replies(
-	tid,
+	id,
 	pool,
     ).await else {
 	return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
@@ -140,7 +169,7 @@ pub async fn k_thread_page(
 	},
     };
 
-    Ok(Html(content))
+    Ok(Ok(Html(content)))
 }
 
 pub async fn reply_submission(
