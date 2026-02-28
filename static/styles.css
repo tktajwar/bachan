@@ -11,12 +11,12 @@
     --wgreen:#F2F8F3;
 
     --fg:var(--black);
-    --bg:var(--white);
+    --bg:var(--lgreen);
     --border:var(--black);
-    --thread-bg:var(--lgreen);
-    --reply-bg:var(--lgreen);
-    --quote:green;
-    --ref:red;
+    --thread-bg:white;
+    --reply-bg:white;
+    --quote:var(--green);
+    --ref:var(--red);
 }
 
 body {
@@ -25,6 +25,14 @@ body {
     font-family: Helvetica, 'Noto Sans Bengali', Arial, sans-serif;
     font-size: 16px;
     line-height: 1.6;
+}
+
+h1 {
+    background-color: var(--wgreen);
+    box-shadow: inset 0 0 20px var(--green);
+    max-width: 700px;
+    margin: auto;
+    border-radius: 5px;
 }
 
 #logo {
@@ -52,7 +60,7 @@ body {
 
 #boards, #highlights, #announcements {
     margin: 5px auto;
-    background-color: var(--lgreen);
+    background-color: var(--wgreen);
     border: 1px solid var(--border);
     max-width: 980px;
 }
@@ -211,7 +219,6 @@ body {
 
 #k-title {
     color: var(--red);
-    margin: 0;
     padding: 0;
 }
 
