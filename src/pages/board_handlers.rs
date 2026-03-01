@@ -33,6 +33,7 @@ pub async fn board_threads(
     t.board, \
     t.ctime, \
     t.mtime, \
+    t.redacted, \
     COUNT(r.id) AS reply_count \
     FROM thread t \
     LEFT JOIN reply r ON r.tid = t.id \

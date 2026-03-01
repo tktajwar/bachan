@@ -19,6 +19,7 @@ pub struct Thread {
     pub board: String,
     pub ctime: chrono::NaiveDateTime,
     pub mtime: chrono::NaiveDateTime,
+    pub redacted: bool,
     pub reply_count: i64,
 }
 
@@ -29,6 +30,7 @@ pub struct Reply {
     pub tid: i32,
     pub comment: String,
     pub ctime: chrono::NaiveDateTime,
+    pub redacted: bool,
 }
 
 #[derive(Serialize)]
@@ -41,6 +43,7 @@ pub struct ThreadSerializable {
     pub ctime: String,
     pub mtime: String,
     pub reply_count: i64,
+    pub redacted: bool,
 }
 
 #[derive(Serialize)]
@@ -56,12 +59,21 @@ impl Thread {
 	ThreadSerializable {
 	    id: format!("{:03x}", self.id as u32),
 	    utid: format!("{:04x}", self.hashed_utid()),
-	    subject: self.subject,
-	    comment: self.comment,
+	    subject: if self.redacted {
+		"স#ম্পা#দি#ত".to_string()
+	    } else {
+		self.subject
+	    },
+	    comment: if self.redacted {
+		"<del>###সম্পাদিত###</del>".to_string()
+	    } else {
+		self.comment
+	    },
 	    board: self.board,
 	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
 	    mtime: self.mtime.format("%Y-%m-%d %H:%M").to_string(),
 	    reply_count: self.reply_count,
+	    redacted: self.redacted,
 	}
     }
 
@@ -81,7 +93,11 @@ impl Reply {
 	ReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
 	    utid: format!("{:04x}", self.hashed_utid()),
-	    comment: self.comment,
+	    comment: if self.redacted {
+		"<del>###সম্পাদিত###</del>".to_string()
+	    } else {
+		self.comment
+	    },
 	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
 	}
     }
@@ -147,7 +163,8 @@ pub async fn thread_replies(
     uid, \
     tid, \
     comment, \
-    ctime \
+    ctime, \
+    redacted
     FROM reply \
     WHERE tid = $1 \
     ORDER BY id ASC \

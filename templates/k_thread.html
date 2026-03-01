@@ -15,8 +15,10 @@
 	  {% include "thread-tagline-with-boardname.html" %}
 	  {% include "thread-body.html" %}
 	  {% include "thread-buttons.html" %}
+	  {% if not thread.redacted %}
 	  {% include "thread-replies.html" %}
 	  {% include "thread-reply-form.html" %}
+	  {% endif %}
 	</div>
       </div>
     </main>

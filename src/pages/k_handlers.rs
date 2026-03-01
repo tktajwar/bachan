@@ -36,6 +36,7 @@ async fn all_threads(
     t.board, \
     t.ctime, \
     t.mtime, \
+    t.redacted, \
     COUNT(r.id) AS reply_count \
     FROM thread t \
     LEFT JOIN reply r ON r.tid = t.id \
@@ -67,6 +68,7 @@ async fn thread_with_id(
     t.board, \
     t.ctime, \
     t.mtime, \
+    t.redacted, \
     COUNT(r.id) AS reply_count \
     FROM thread t \
     LEFT JOIN reply r ON r.tid = t.id \
