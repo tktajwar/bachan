@@ -1,0 +1,7 @@
+CREATE TABLE mod (
+       id SERIAL PRIMARY KEY,
+       username VARCHAR(16) UNIQUE NOT NULL,
+       hash VARCHAR NOT NULL,
+       can_perma_ban BOOLEAN NOT NULL DEFAULT FALSE,
+       can_delete BOOLEAN NOT NULL DEFAULT FALSE
+);
