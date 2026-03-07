@@ -79,7 +79,8 @@ fn enlink(input: &str) -> String {
 	);
 
 	format!(
-	    r#"<a href="{}">{}</a>"#,
+	    r#"<a href="{}" onClick="return confirm('Enter {}?')">{}</a>"#,
+	    href,
 	    href,
 	    text,
 	)
