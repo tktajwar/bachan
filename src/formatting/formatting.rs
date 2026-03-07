@@ -1,5 +1,9 @@
 // use std::sync::LazyLock;
 use regex::Regex;
+use sanitize_html::{
+    rules::predefined::DEFAULT,
+    sanitize_str,
+};
 
 // static RE_TAG_NUMBER: LazyLock<Regex> =
 //     LazyLock::new(|| Regex::new(
@@ -87,9 +91,21 @@ fn enlink(input: &str) -> String {
     }).to_string()
 }
 
+fn sanitize(input: &str) -> String {
+    let input_escaped = input.replace("&", "&amp;")
+         .replace("<", "&lt;")
+         .replace(">", "&gt;")
+         .replace("\"", "&quot;")
+         .replace("'", "&#39;");
+
+    sanitize_str(&DEFAULT, &input_escaped).unwrap()
+}
+
 pub fn format(input: &str) -> String {
+    let input = sanitize(input);
+
     let formatted_input = enref(&enquote(&underline(&italicize(&embold(
-	input
+	&input
     )))));
 
     let formatted_input = enlink(&embed(
