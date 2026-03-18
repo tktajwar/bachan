@@ -97,7 +97,9 @@ fn enlink(input: &str) -> String {
 }
 
 fn sanitize(input: &str) -> String {
-    let input_escaped = input.replace("&", "&amp;")
+    let input_trimmed = input.trim();
+
+    let input_escaped = input_trimmed.replace("&", "&amp;")
          .replace("<", "&lt;")
          .replace(">", "&gt;")
          .replace("\"", "&quot;")
