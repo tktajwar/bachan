@@ -66,6 +66,11 @@ fn embed(input: &str) -> String {
     let re = Regex::new(
 	r"\[\[((?:http|https|ftp)://.+?(?:jpeg|jpg|png|webp))\]\]"
     ).unwrap();
+
+    if re.find_iter(input).count() > 5 {
+	return input.to_string()
+    }
+
     re.replace_all(
 	input,
 	r#"<img class="img-comment" src="$1" alt="$1" />"#
