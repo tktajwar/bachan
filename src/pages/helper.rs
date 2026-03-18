@@ -287,23 +287,25 @@ pub async fn create_thread(
     comment: &str,
     board: String,
     pool: PgPool,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<i32, Box<dyn Error>> {
     let comment_formatted = formatting::format(comment);
 
     let query = "\
     INSERT INTO thread (uid, subject, comment, board) \
     VALUES ($1, $2, $3, $4) \
+    RETURNING id \
     ";
 
-    sqlx::query(query)
+
+    let id: i32 = sqlx::query_scalar(query)
 	.bind(hashed(ip))
 	.bind(subject)
 	.bind(comment_formatted)
 	.bind(board)
-	.execute(&pool)
+	.fetch_one(&pool)
 	.await?;
 
-    Ok(())
+    Ok(id)
 }
 
 pub async fn thread_replies(

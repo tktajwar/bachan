@@ -5,7 +5,10 @@ use axum::{
 	Path,
 	State,
     },
-    response::Html,
+    response::{
+	Html,
+	Redirect,
+    },
 };
 use sqlx::PgPool;
 use std::error::Error;
@@ -92,20 +95,16 @@ async fn board_submission(
     addr: SocketAddr,
     thread_form: ThreadForm,
     boardname: &str,
-) -> &'static str {
-    match create_thread(
+) -> Result<i32, Box<dyn Error>> {
+    let id = create_thread(
 	addr.ip(),
 	&thread_form.subject,
 	&thread_form.comment,
 	boardname.to_string(),
 	pool,
-    ).await {
-	Ok(()) => "Hello! Your thread has been posted.",
-	Err(e) => {
-	    eprintln!("{}", e);
-	    "Couldn't process query."
-	}
-    }
+    ).await?;
+
+    Ok(id)
 }
 
 pub async fn board_x_page(
@@ -123,11 +122,20 @@ pub async fn board_x_submission(
     Path(boardname): Path<String>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Form(thread_form): Form<ThreadForm>,
-) -> &'static str {
-    board_submission(
+) -> Result<Redirect, axum::http::StatusCode> {
+    match board_submission(
 	pool,
 	addr,
 	thread_form,
 	&boardname,
-    ).await
+    ).await {
+	Ok(id) => {
+	    let id_hex = format!("{:03x}", id);
+	    Ok(Redirect::to(&format!("/k/{}", id_hex)))
+	},
+	Err(e) => {
+	    eprintln!("Error submitting thread: {}", e);
+	    Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    }
 }
