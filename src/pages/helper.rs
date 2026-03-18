@@ -24,7 +24,27 @@ pub struct Thread {
 }
 
 #[derive(sqlx::FromRow)]
+pub struct ThreadLight {
+    pub id: i32,
+    pub uid: i32,
+    pub subject: String,
+    pub comment: String,
+    pub ctime: chrono::NaiveDateTime,
+    pub redacted: bool,
+}
+
+#[derive(sqlx::FromRow)]
 pub struct Reply {
+    pub id: i32,
+    pub uid: i32,
+    pub tid: i32,
+    pub comment: String,
+    pub ctime: chrono::NaiveDateTime,
+    pub redacted: bool,
+}
+
+#[derive(sqlx::FromRow)]
+pub struct ReplyLight {
     pub id: i32,
     pub uid: i32,
     pub tid: i32,
@@ -54,6 +74,16 @@ pub struct ReplySerializable {
     pub ctime: String,
 }
 
+#[derive(Serialize)]
+pub struct ThreadOrReplySerializable {
+    pub id: String,
+    pub utid: String,
+    pub subject: String,
+    pub comment: String,
+    pub ctime: String,
+    pub redacted: bool,
+}
+
 impl Thread {
     pub fn into_serializable(self) -> ThreadSerializable {
 	ThreadSerializable {
@@ -73,6 +103,63 @@ impl Thread {
 	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
 	    mtime: self.mtime.format("%Y-%m-%d %H:%M").to_string(),
 	    reply_count: self.reply_count,
+	    redacted: self.redacted,
+	}
+    }
+
+    pub fn hashed_utid(&self) -> u16 {
+	let mut hasher = DefaultHasher::new();
+
+	self.id.hash(&mut hasher);
+	self.uid.hash(&mut hasher);
+	crate::SECRET_NUMBER.hash(&mut hasher);
+
+	hasher.finish() as u16
+    }
+}
+
+impl ThreadLight {
+    async fn try_from(
+	id: i32,
+	State(pool): State<PgPool>,
+    ) -> Result<ThreadLight, Box<dyn Error>> {
+	let q = "\
+	SELECT \
+	id, \
+	uid, \
+	subject, \
+	comment, \
+	ctime, \
+	redacted \
+	FROM Thread \
+	WHERE id = $1
+	";
+
+	let thread: ThreadLight = sqlx::query_as::<_, ThreadLight>(q)
+	    .bind(id)
+	    .fetch_one(&pool)
+	    .await?;
+
+	Ok(thread)
+    }
+}
+
+impl ThreadLight {
+    pub fn into_serializable(self) -> ThreadOrReplySerializable {
+	ThreadOrReplySerializable {
+	    id: format!("{:03x}", self.id as u32),
+	    utid: format!("{:04x}", self.hashed_utid()),
+	    subject: if self.redacted {
+		"স#ম্পা#দি#ত".to_string()
+	    } else {
+		self.subject
+	    },
+	    comment: if self.redacted {
+		"<del>###সম্পাদিত###</del>".to_string()
+	    } else {
+		self.comment
+	    },
+	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
 	    redacted: self.redacted,
 	}
     }
@@ -113,6 +200,59 @@ impl Reply {
     }
 }
 
+impl ReplyLight {
+    async fn try_from(
+	id: i32,
+	State(pool): State<PgPool>,
+    ) -> Result<ReplyLight, Box<dyn Error>> {
+	let q = "\
+	SELECT \
+	id, \
+	uid, \
+	tid, \
+	comment, \
+	ctime, \
+	redacted \
+	FROM Reply \
+	WHERE id = $1 \
+	";
+
+	let reply: ReplyLight = sqlx::query_as::<_, ReplyLight>(q)
+	    .bind(id)
+	    .fetch_one(&pool)
+	    .await?;
+
+	Ok(reply)
+    }
+}
+
+impl ReplyLight {
+    pub fn into_serializable(self) -> ThreadOrReplySerializable {
+	ThreadOrReplySerializable {
+	    id: format!("{:03x}", self.id as u32),
+	    utid: format!("{:04x}", self.hashed_utid()),
+	    subject: format!("Reply to {:03x}", self.tid).to_string(),
+	    comment: if self.redacted {
+		"<del>###সম্পাদিত###</del>".to_string()
+	    } else {
+		self.comment
+	    },
+	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
+	    redacted: self.redacted,
+	}
+    }
+
+    pub fn hashed_utid(&self) -> u16 {
+	let mut hasher = DefaultHasher::new();
+
+	self.tid.hash(&mut hasher);
+	self.uid.hash(&mut hasher);
+	crate::SECRET_NUMBER.hash(&mut hasher);
+
+	hasher.finish() as u16
+    }
+}
+
 #[derive(sqlx::FromRow, Serialize)]
 pub struct Board {
     pub url: String,
@@ -126,6 +266,19 @@ pub fn hashed(ip: IpAddr) -> i32 {
     crate::SECRET_NUMBER.hash(&mut hasher);
 
     hasher.finish() as i32
+}
+
+pub async fn thread_or_reply_with_id(
+    id: i32,
+    state_pool: State<PgPool>,
+) -> Result<ThreadOrReplySerializable, Box<dyn Error>> {
+    let Ok(thread) = ThreadLight::try_from(id, state_pool.clone()).await else {
+	let reply: ReplyLight = ReplyLight::try_from(id, state_pool).await?;
+	let serialize_reply = reply.into_serializable();
+	return Ok(serialize_reply)
+    };
+    let serializable_thread = thread.into_serializable();
+    Ok(serializable_thread)
 }
 
 pub async fn create_thread(

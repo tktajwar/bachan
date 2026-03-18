@@ -11,7 +11,6 @@ use argon2::{
 use axum::extract::State;
 use sqlx::PgPool;
 use std::error::Error;
-use std::hash::{DefaultHasher, Hash, Hasher};
 use std::io::Write;
 
 pub async fn register_mod(

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderate {{thread_or_reply.id}} - বাchan</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://kit.fontawesome.com/9187eb4d30.js"
+	    crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <header>
+      <h1 id="mod-title">
+	<center>Moderate {{thread_or_reply.id}} - বাchan</center>
+      </h1>
+    </header>
+
+    <div class="showcase">
+      <div class="thread-body">
+	<a href="/k/{{thread_or_reply.id}}">
+	  <h3 class="thread-headline">{{thread_or_reply.subject}}</h3>
+	</a>
+	<div class="thread-comment">{{thread_or_reply.comment|safe}}</div>
+      </div>
+    </div>
+
+    <div class="mod">
+      <h2>Moderate post</h2>
+      <form id="mod-form" action="/mod/{{thread_or_reply.id}}" method="POST">
+	<label for="username">Username:</label>
+	<input type="text" id="username" name="username"
+	required><br />
+	<label for="passphrase">Passphrase:</label>
+	<input type="password" id="passphrase" name="passphrase"
+	       required><br />
+	<label for="action">Action:</label>
+	<select id="action" multiple required>
+	  <option value="redact">Redact</option>
+	  <option value="suspend">Suspend</option>
+	</select><br />
+	<label for="reason">Reason:</label>
+	<textarea id="passphrase" name="passphrase" minlength="20"
+	maxlength="256" required ></textarea> <br />
+	<button type="submit">Submit</button>
+      </form>
+    </div>
+
+  </body>
+</html>
