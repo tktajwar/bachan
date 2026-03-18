@@ -179,7 +179,7 @@ pub async fn reply_submission(
     Path(tid_hex): Path<String>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Form(reply_form): Form<ReplyForm>,
-) -> Result<&'static str, axum::http::StatusCode> {
+) -> Result<Redirect, axum::http::StatusCode> {
     let Ok(tid_u32) = u32::from_str_radix(&tid_hex, 16) else {
 	return Err(axum::http::StatusCode::BAD_REQUEST)
     };
@@ -191,9 +191,12 @@ pub async fn reply_submission(
 	&reply_form.comment,
 	pool,
     ).await {
-	Ok(()) => Ok("Hello! Your reply has been posted."),
+	Ok(id) => {
+	    let id_hex = format!("{:03x}", id);
+	    Ok(Redirect::to(&format!("/k/{}#{}", tid_hex, id_hex)))
+	},
 	Err(e) => {
-	    eprintln!("{}", e);
+	    eprintln!("Error submitting reply: {}", e);
 	    Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
 	}
     }
