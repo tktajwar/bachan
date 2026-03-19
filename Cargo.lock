@@ -126,6 +126,7 @@ dependencies = [
  "sqlx",
  "tera",
  "tokio",
+ "tower",
  "tower-http",
 ]
 

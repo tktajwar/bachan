@@ -5,7 +5,12 @@ use axum::{
 };
 use lazy_static::lazy_static;
 use std::net::SocketAddr;
-use tower_http::services::ServeDir;
+use std::time::Duration;
+use tower::ServiceBuilder;
+use tower_http::{
+    services::ServeDir,
+    timeout::TimeoutLayer,
+};
 
 mod pages;
 use pages::*;
@@ -34,7 +39,11 @@ async fn main() {
 	.route("/{boardname}", get(board_x_page).post(board_x_submission))
 	.fallback(fallback)
 	.with_state(pool)
-	.nest_service("/static", ServeDir::new("static"));
+	.nest_service("/static", ServeDir::new("static"))
+	.layer(
+	    ServiceBuilder::new()
+		.layer(TimeoutLayer::new(Duration::from_secs(10)))
+	);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
 
