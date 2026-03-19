@@ -69,6 +69,7 @@ pub struct ThreadSerializable {
 #[derive(Serialize)]
 pub struct ReplySerializable {
     pub id: String,
+    pub tid: String,
     pub utid: String,
     pub comment: String,
     pub ctime: String,
@@ -77,6 +78,7 @@ pub struct ReplySerializable {
 #[derive(Serialize)]
 pub struct ThreadOrReplySerializable {
     pub id: String,
+    pub tid: Option<String>,
     pub utid: String,
     pub subject: String,
     pub comment: String,
@@ -132,7 +134,7 @@ impl ThreadLight {
 	ctime, \
 	redacted \
 	FROM Thread \
-	WHERE id = $1
+	WHERE id = $1 \
 	";
 
 	let thread: ThreadLight = sqlx::query_as::<_, ThreadLight>(q)
@@ -148,6 +150,7 @@ impl ThreadLight {
     pub fn into_serializable(self) -> ThreadOrReplySerializable {
 	ThreadOrReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
+	    tid: None,
 	    utid: format!("{:04x}", self.hashed_utid()),
 	    subject: if self.redacted {
 		"স#ম্পা#দি#ত".to_string()
@@ -179,6 +182,7 @@ impl Reply {
     pub fn into_serializable(self) -> ReplySerializable {
 	ReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
+	    tid: format!("{:03x}", self.tid as u32),
 	    utid: format!("{:04x}", self.hashed_utid()),
 	    comment: if self.redacted {
 		"<del>###সম্পাদিত###</del>".to_string()
@@ -230,6 +234,7 @@ impl ReplyLight {
     pub fn into_serializable(self) -> ThreadOrReplySerializable {
 	ThreadOrReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
+	    tid: Some(format!("{:03x}", self.tid as u32)),
 	    utid: format!("{:04x}", self.hashed_utid()),
 	    subject: format!("Reply to {:03x}", self.tid).to_string(),
 	    comment: if self.redacted {
@@ -359,6 +364,59 @@ pub async fn create_reply(
 	.await?;
 
     Ok(id)
+}
+
+pub async fn redact_thread_or_reply(
+    id: i32,
+    moderator_username: &str,
+    reason: &str,
+    State(pool): State<PgPool>,
+) -> Result<(), Box<dyn Error>> {
+    let (moderator_id,): (i32,) = sqlx::query_as::<_, (i32,)>(
+	"\
+	SELECT id \
+	FROM mod \
+	WHERE username = $1 \
+	"
+    )
+	.bind(moderator_username)
+	.fetch_one(&pool)
+	.await?;
+
+    sqlx::query(
+	"\
+	INSERT INTO redacted(thread_or_reply_id, mod_id, reason) \
+	VALUES ($1, $2, $3) \
+	"
+    )
+	.bind(id)
+	.bind(moderator_id)
+	.bind(reason)
+	.execute(&pool)
+	    .await?;
+
+    sqlx::query(
+	"\
+	UPDATE thread \
+	SET redacted = true \
+	WHERE id = $1 \
+	"
+    )
+	.bind(id)
+	.execute(&pool)
+	.await?;
+    sqlx::query(
+	"\
+	UPDATE reply \
+	SET redacted = true \
+	WHERE id = $1 \
+	"
+    )
+	.bind(id)
+	.execute(&pool)
+	.await?;
+
+    Ok(())
 }
 
 pub async fn boards_in_category(

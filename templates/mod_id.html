@@ -26,22 +26,31 @@
 
     <div class="mod">
       <h2>Moderate post</h2>
-      <form id="mod-form" action="/mod/{{thread_or_reply.id}}" method="POST">
+      <form id="mod-form" action="/mod/{{thread_or_reply.id}}"
+	    method="POST">
+
 	<label for="username">Username:</label>
 	<input type="text" id="username" name="username"
 	required><br />
+
 	<label for="passphrase">Passphrase:</label>
 	<input type="password" id="passphrase" name="passphrase"
 	       required><br />
-	<label for="action">Action:</label>
-	<select id="action" multiple required>
-	  <option value="redact">Redact</option>
-	  <option value="suspend">Suspend</option>
-	</select><br />
+
+	<label>Action:</label><br/>
+	<input type="checkbox" name="redact"
+	       value="redact" />
+	<label for="redact">Redact Post</label><br />
+	<input type="checkbox" name="suspend"
+	       value="suspend" />
+	<label for="suspend">Suspend User</label><br />
+
 	<label for="reason">Reason:</label>
-	<textarea id="passphrase" name="passphrase" minlength="20"
+	<textarea id="reason" name="reason" minlength="20"
 	maxlength="256" required ></textarea> <br />
+
 	<button type="submit">Submit</button>
+
       </form>
     </div>
 

@@ -29,7 +29,7 @@ async fn main() {
 	.route("/k/", get(k_page))
 	.route("/k", get(|| async {Redirect::to("/k/")}))
 	.route("/k/{tid_hex}", get(k_thread_page).post(reply_submission))
-	.route("/mod/{tid_hex}", get(mod_id_page))
+	.route("/mod/{tid_hex}", get(mod_id_page).post(mod_id_submission))
 	.route("/{boardname}/", get(board_x_page).post(board_x_submission))
 	.route("/{boardname}", get(board_x_page).post(board_x_submission))
 	.fallback(fallback)
