@@ -1,9 +1,13 @@
 {
   "version": 2,
   "builds": [
-    { "src": "src/main.rs", "use": "@vercel/rust" }
+      {
+	  "src": "src/main.rs",
+	  "use": "@vercel/rust",
+	  "config": { "bin": "bachan" }
+      }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/src/main.rs" }
+      { "src": "/(.*)", "dest": "/src/main.rs" }
   ]
 }
