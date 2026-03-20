@@ -69,3 +69,23 @@ pub async fn suspend_user (
 
     Ok(())
 }
+
+pub async fn is_user_suspended(
+    uid: i32,
+    State(pool): State<PgPool>,
+) -> Result<bool, Box<dyn Error>> {
+    let (is_suspended,): (bool,) = sqlx::query_as(
+	"\
+	SELECT EXISTS( \
+	    SELECT 1 \
+	    FROM suspended \
+	    WHERE uid = $1 AND until > NOW() \
+	) \
+	"
+    )
+	.bind(uid)
+	.fetch_one(&pool)
+	.await?;
+
+    Ok(is_suspended)
+}
