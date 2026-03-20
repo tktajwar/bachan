@@ -20,12 +20,14 @@ use crate::helper::{
     ThreadSerializable,
     create_thread,
     get_board_ctx,
+    hashed,
 };
+use crate::moderation::is_user_suspended;
 use crate::template::*;
 
 pub async fn board_threads(
     board: &str,
-    pool: PgPool,
+    State(pool): State<PgPool>,
 ) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
     let q = "\
     SELECT \
@@ -58,13 +60,13 @@ pub async fn board_threads(
 }
 
 async fn board_page(
-    pool: PgPool,
+    state_pool: State<PgPool>,
     url: &str,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
     let Ok(board) = get_board_ctx(
 	url,
-	pool.clone(),
+	state_pool.clone(),
     ).await else {
 	return Err(axum::http::StatusCode::NOT_FOUND)
     };
@@ -72,7 +74,7 @@ async fn board_page(
     ctx.insert("board", &board);
     let threads = board_threads(
 	url,
-	pool,
+	state_pool,
     ).await.unwrap_or(
 	vec![]
     );
@@ -91,41 +93,52 @@ async fn board_page(
 }
 
 async fn board_submission(
-    pool: PgPool,
-    addr: SocketAddr,
+    state_pool: State<PgPool>,
+    uid: i32,
     thread_form: ThreadForm,
     boardname: &str,
 ) -> Result<i32, Box<dyn Error>> {
     let id = create_thread(
-	addr.ip(),
+	uid,
 	&thread_form.subject,
 	&thread_form.comment,
 	boardname.to_string(),
-	pool,
+	state_pool,
     ).await?;
 
     Ok(id)
 }
 
 pub async fn board_x_page(
-    State(pool): State<PgPool>,
+    state_pool: State<PgPool>,
     Path(url): Path<String>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     board_page(
-	pool,
+	state_pool,
 	&url,
     ).await
 }
 
 pub async fn board_x_submission(
-    State(pool): State<PgPool>,
+    state_pool: State<PgPool>,
     Path(boardname): Path<String>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Form(thread_form): Form<ThreadForm>,
 ) -> Result<Redirect, axum::http::StatusCode> {
+    let uid = hashed(addr.ip());
+
+    match is_user_suspended(uid, state_pool.clone()).await {
+	Ok(true) => return Err(axum::http::StatusCode::FORBIDDEN),
+	Ok(false) => (),
+	Err(e) => {
+	    eprintln!("Error checking user suspension: {}", e);
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    }
+
     match board_submission(
-	pool,
-	addr,
+	state_pool,
+	uid,
 	thread_form,
 	&boardname,
     ).await {

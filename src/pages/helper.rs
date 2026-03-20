@@ -287,11 +287,11 @@ pub async fn thread_or_reply_with_id(
 }
 
 pub async fn create_thread(
-    ip: IpAddr,
+    uid: i32,
     subject: &str,
     comment: &str,
     board: String,
-    pool: PgPool,
+    State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let comment_formatted = formatting::format(comment);
 
@@ -303,7 +303,7 @@ pub async fn create_thread(
 
 
     let id: i32 = sqlx::query_scalar(query)
-	.bind(hashed(ip))
+	.bind(uid)
 	.bind(subject)
 	.bind(comment_formatted)
 	.bind(board)
@@ -343,10 +343,10 @@ pub async fn thread_replies(
 }
 
 pub async fn create_reply(
-    ip: IpAddr,
+    uid: i32,
     tid: i32,
     comment: &str,
-    pool: PgPool,
+    State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let comment_formatted = formatting::format(comment);
 
@@ -357,7 +357,7 @@ pub async fn create_reply(
     ";
 
     let id: i32 = sqlx::query_scalar(query)
-	.bind(hashed(ip))
+	.bind(uid)
 	.bind(tid)
 	.bind(comment_formatted)
 	.fetch_one(&pool)
@@ -442,7 +442,7 @@ pub async fn boards_in_category(
 
 pub async fn get_board_ctx(
     url: &str,
-    pool: PgPool,
+    State(pool): State<PgPool>,
 ) -> Result<Board, Box<dyn Error>> {
     let q = "\
     SELECT \

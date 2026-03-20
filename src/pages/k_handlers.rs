@@ -19,10 +19,12 @@ use crate::template::{
     TERA,
 };
 use crate::helper::{
-    Thread,
     ThreadSerializable,
     create_reply,
+    hashed,
+    Thread,
 };
+use crate::moderation::is_user_suspended;
 
 async fn all_threads(
     pool: PgPool,
@@ -175,7 +177,7 @@ pub async fn k_thread_page(
 }
 
 pub async fn reply_submission(
-    State(pool): State<PgPool>,
+    state_pool: State<PgPool>,
     Path(tid_hex): Path<String>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Form(reply_form): Form<ReplyForm>,
@@ -185,11 +187,22 @@ pub async fn reply_submission(
     };
     let tid = tid_u32 as i32;
 
+    let uid = hashed(addr.ip());
+
+    match is_user_suspended(uid, state_pool.clone()).await {
+	Ok(true) => return Err(axum::http::StatusCode::FORBIDDEN),
+	Ok(false) => (),
+	Err(e) => {
+	    eprintln!("Error checking user suspension: {}", e);
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    }
+
     match create_reply(
-	addr.ip(),
+	uid,
 	tid,
 	&reply_form.comment,
-	pool,
+	state_pool,
     ).await {
 	Ok(id) => {
 	    let id_hex = format!("{:03x}", id);
