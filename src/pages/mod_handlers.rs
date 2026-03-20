@@ -14,7 +14,10 @@ use sqlx::PgPool;
 use std::net::SocketAddr;
 
 use crate::forms::ModerationForm;
-use crate::moderation::verify_mod;
+use crate::moderation::{
+    suspend_user,
+    verify_mod,
+};
 use crate::template::{
     TERA,
 };
@@ -87,9 +90,24 @@ pub async fn mod_id_submission(
 		id,
 		&moderation_form.username,
 		&moderation_form.reason,
-		state_pool,
+		state_pool.clone(),
 	    ).await {
 		eprintln!("Failed redacting post: {}", e);
+		return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	    }
+	}
+    }
+
+    if let Some(suspend) = moderation_form.suspend {
+	if suspend == "suspend" {
+	    if let Err(e) = suspend_user (
+		id,
+		&moderation_form.username,
+		7,
+		&moderation_form.reason,
+		state_pool,
+	    ).await {
+		eprintln!("Failed suspending user: {}", e);
 		return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
 	    }
 	}
