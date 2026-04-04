@@ -1,3 +1,4 @@
+use censor::*;
 use regex::Regex;
 use sanitize_html::{
     rules::predefined::DEFAULT,
@@ -87,8 +88,32 @@ fn sanitize(input: &str) -> String {
     sanitize_str(&DEFAULT, &input_escaped).unwrap()
 }
 
+fn redact_profane_words(input: &str) -> String {
+    let censor = Censor::Standard + Censor::Sex
+	+ "porn"
+	+ "xhamster"
+	+ "xvideo"
+	+ "xnxx"
+	+ "jav"
+	+ "xhwide"
+	+ "jizz"
+	+ "redtube"
+	+ "freeones"
+	+ "motherless"
+	+ "fatherless"
+	+ "brazzer"
+	+ "bang"
+	+ "adult"
+	+ "চোদ"
+	+ "choda"
+	+ "ভুষ্কি"
+	+ "bhuski"
+	;
+    censor.censor(input)
+}
+
 pub fn format(input: &str) -> String {
-    let input = sanitize(input);
+    let input = redact_profane_words(&sanitize(input));
 
     let formatted_input = enref(&enquote(&underline(&italicize(&embold(
 	&input
