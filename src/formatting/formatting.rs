@@ -1,29 +1,8 @@
-// use std::sync::LazyLock;
 use regex::Regex;
 use sanitize_html::{
     rules::predefined::DEFAULT,
     sanitize_str,
 };
-
-// static RE_TAG_NUMBER: LazyLock<Regex> =
-//     LazyLock::new(|| Regex::new(
-// 	r"^\s*@([0-9]+\.?[0-9]*)\s*$"
-//     ).unwrap());
-
-// static RE_FLAG: LazyLock<Regex> =
-//     LazyLock::new(|| Regex::new(
-// 	r"#[0-9a-zA-Z_\-]+"
-//     ).unwrap());
-
-// static RE_FLAGS: LazyLock<Regex> =
-//     LazyLock::new(|| Regex::new(
-// 	r"^\s*(#[0-9a-zA-Z_\-]+(?:\s*#[0-9a-zA-Z_\-]+)*)\s*$"
-//     ).unwrap());
-
-// static RE_ATTRIBUTE: LazyLock<Regex> =
-//     LazyLock::new(|| Regex::new(
-// 	r"^\s*:(.+?)?:\s*(.+?)?\s*$"
-//     ).unwrap());
 
 fn embold(input: &str) -> String {
     let re = Regex::new(
