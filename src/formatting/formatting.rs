@@ -64,7 +64,7 @@ fn enref(input: &str) -> String {
 
 fn embed(input: &str) -> String {
     let re = Regex::new(
-	r"\[\[((?:http|https|ftp)://.+?(?:jpeg|jpg|png|webp))\]\]"
+	r"\[\[((?:http|https|ftp)://.+?(?:jpeg|jpg|png|webp|gif))\]\]"
     ).unwrap();
 
     if re.find_iter(input).count() > 5 {
