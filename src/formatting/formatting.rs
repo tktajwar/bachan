@@ -47,7 +47,7 @@ fn underline(input: &str) -> String {
 }
 
 fn enquote(input: &str) -> String {
-    let re = Regex::new(r"(?m)^>[ a-zA-Z0-9].*$").unwrap();
+    let re = Regex::new(r"(?m)^(>|&gt;)[ a-zA-Z0-9].*$").unwrap();
     re.replace_all(
 	input,
 	r#"<span class="quote">$0</span>"#
@@ -55,7 +55,7 @@ fn enquote(input: &str) -> String {
 }
 
 fn enref(input: &str) -> String {
-    let re = Regex::new(r"(?m)^>> *([0-9a-fA-F]{3,8})(\r)*$").unwrap();
+    let re = Regex::new(r"(?m)^(>|&gt;)(>|&gt;) *([0-9a-fA-F]{3,8})(\r)*$").unwrap();
     re.replace_all(
 	input,
 	r#"<a class="ref" href="/k/$1">$0</a>"#
