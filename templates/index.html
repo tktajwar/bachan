@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>বাchan</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://kit.fontawesome.com/9187eb4d30.js"
+	    crossorigin="anonymous"></script>
   </head>
   <body>
     <header>
@@ -51,6 +53,18 @@
       <div id="highlights">
 	<h2>Highlights</h2>
 	<!-- List of highlighted threads -->
+
+	<div id="thread-container">
+	{% for thread in threads %}
+	<div class="thread" id="{{thread.id}}">
+	  {% include "thread-tagline-with-boardname.html" %}
+	  {% include "thread-body.html" %}
+	  {% include "thread-buttons.html" %}
+	</div>
+	{% else %}
+	<p> এখনো কোনো কথোপকথন হয়নি। </p>
+	{% endfor %}
+      </div>
 
       </div>
       <div id="announcements">

@@ -5,7 +5,10 @@ use axum::{
 use sqlx::PgPool;
 
 use crate::template::TERA;
-use crate::helper::boards_in_category;
+use crate::helper::{
+    boards_in_category,
+    top_threads,
+};
 
 pub async fn root_page(
     pool_state: State<PgPool>,
@@ -38,11 +41,18 @@ pub async fn root_page(
 
     let misc = boards_in_category(
 	"Misc",
-	pool_state,
+	pool_state.clone(),
     ).await.unwrap_or(
 	vec![]
     );
     ctx.insert("misc", &misc);
+
+    let threads = top_threads(
+	pool_state,
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("threads", &threads);
 
     let rendered = TERA.render("index.html", &ctx);
     let content = match rendered {
