@@ -8,6 +8,7 @@
     --yellow:#E6AF2E;
     --green:#A4D65E;
     --lgreen:#D0E7D4;
+    --dgreen:#4A7A2E;
     --wgreen:#F2F8F3;
 
     --fg:var(--black);
@@ -25,6 +26,7 @@ body {
     font-family: Helvetica, 'Noto Sans Bengali', Arial, sans-serif;
     font-size: 16px;
     line-height: 1.6;
+    margin: 0px;
 }
 
 h1 {
@@ -246,4 +248,29 @@ h1 {
 
 .yellow {
     color: var(--yellow);
+}
+
+.navbar {
+    margin-bottom: 10px;
+}
+
+.navbar ul {
+    list-style-type: none;
+    padding: 0px;
+    display: flex;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+}
+
+.navbar li {
+    /* flex: 1; */
+}
+
+.navbar a {
+    text-decoration: none;
+    padding: 5px;
+    color: var(--dgreen);
 }
