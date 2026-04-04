@@ -27,23 +27,23 @@ use sanitize_html::{
 
 fn embold(input: &str) -> String {
     let re = Regex::new(
-	r"(?:\s|^)\*(\S+?)\*(?:\s|$)"
+	r"(\s|^)\*(\S+?(?: +\S+?)*)\*(\s|$)"
     ).unwrap();
-    re.replace_all(input, "<b>$1</b>").to_string()
+    re.replace_all(input, "$1<b>$2</b>$3").to_string()
 }
 
 fn italicize(input: &str) -> String {
     let re = Regex::new(
-	r"(?:\s|^)/(\S+?)/(?:\s|$)"
+	r"(\s|^)/(\S+?(?: +\S+?)*)/(\s|$)"
     ).unwrap();
-    re.replace_all(input, "<i>$1</i>").to_string()
+    re.replace_all(input, "$1<i>$2</i>$3").to_string()
 }
 
 fn underline(input: &str) -> String {
     let re = Regex::new(
-	r"(?:\s|^)_(\S+?)_(?:\s|$)"
+	r"(\s|^)_(\S+?(?: +\S+?)*)_(\s|$)"
     ).unwrap();
-    re.replace_all(input, "<u>$1</u>").to_string()
+    re.replace_all(input, "$1<u>$2</u>$3").to_string()
 }
 
 fn enquote(input: &str) -> String {
