@@ -43,6 +43,7 @@ pub async fn board_threads(
     FROM thread t \
     LEFT JOIN reply r ON r.tid = t.id \
     WHERE t.board = $1 \
+    AND t.redacted = false \
     GROUP BY t.id \
     ORDER BY mtime desc \
     ";
