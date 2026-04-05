@@ -274,3 +274,32 @@ h1 {
     padding: 5px;
     color: var(--dgreen);
 }
+
+#notice {
+    max-width: 600px;
+    margin: auto;
+    padding: 0;
+    border: 2px solid black;
+    font-size: 0.9em;
+}
+
+#notice h3 {
+    margin: 0;
+    padding: 0;
+    color: var(--green);
+    background-color: var(--black);
+}
+
+#notice-msg {
+    margin: 0;
+    padding: 0;
+    background-color: var(--wgreen);
+}
+
+#notice-msg p {
+    margin: 0;
+}
+
+#notice-msg a {
+    color: var(--dgreen);
+}
