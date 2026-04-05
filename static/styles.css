@@ -286,8 +286,9 @@ h1 {
 #notice h3 {
     margin: 0;
     padding: 0;
-    color: var(--green);
-    background-color: var(--black);
+    color: var(--black);
+    background-color: var(--yellow);
+    border-bottom: 2px solid black;
 }
 
 #notice-msg {
