@@ -105,7 +105,12 @@ fn redact_profane_words(input: &str) -> String {
 	+ "bang"
 	+ "adult"
 	+ "চোদ"
+	+ "bainc"
 	+ "choda"
+	+ "chodn"
+	+ "chodi"
+	+ "chuda"
+	+ "chudi"
 	+ "ভুষ্কি"
 	+ "bhuski"
 	;
