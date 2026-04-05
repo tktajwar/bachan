@@ -109,7 +109,7 @@ fn redact_profane_words(input: &str) -> String {
 	+ "ভুষ্কি"
 	+ "bhuski"
 	;
-    censor.censor(input)
+    censor.replace(input, "🥰🫶😘🌹🫂")
 }
 
 pub fn format(input: &str) -> String {
