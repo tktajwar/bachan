@@ -18,8 +18,10 @@ sqlx = { version = "0.8.6", features = [
      "macros",
      "postgres",
      "runtime-tokio-rustls",
+     "uuid",
 ] }
 tera = "1.20.1"
 tokio = { version = "1.49.0", features = ["full"] }
 tower = "0.5.3"
 tower-http = { version = "0.6.8", features = ["fs", "timeout"] }
+uuid = { version = "1.23.0", features = ["serde"] }

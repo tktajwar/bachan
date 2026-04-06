@@ -9,6 +9,7 @@ use axum::extract::State;
 use sqlx::PgPool;
 use std::error::Error;
 use std::io::Write;
+use uuid::Uuid;
 
 pub async fn verify_mod(
     State(pool): State<PgPool>,
@@ -69,4 +70,36 @@ pub async fn verify_mod_from_cli(
     let passphrase = passphrase.trim();
 
     verify_mod(state_pool, username, passphrase).await
+}
+
+pub async fn verify_mod_token (
+    State(pool): State<PgPool>,
+    id: Uuid,
+    passphrase: &str,
+) -> Result<bool, Box<dyn Error>> {
+    let row: Option<(String,)> = sqlx::query_as(
+        r#"
+        SELECT hash 
+        FROM ModToken 
+        WHERE id = $1
+        "#
+    )
+    .bind(id)
+    .fetch_optional(&pool)
+    .await?;
+
+    let (stored_hash,) = match row {
+        Some((hash,)) => (hash,),
+        None => return Ok(false),
+    };
+
+    let argon2 = Argon2::default();
+    let Ok(pass_hash) = PasswordHash::new(&stored_hash) else {
+	return Err(Box::<dyn Error>::from("Argon couldn't hash passphrase"))
+    };
+
+    Ok(argon2
+       .verify_password(passphrase.as_bytes(), &pass_hash)
+       .is_ok()
+    )
 }

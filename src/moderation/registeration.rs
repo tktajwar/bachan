@@ -10,6 +10,7 @@ use axum::extract::State;
 use sqlx::PgPool;
 use std::error::Error;
 use std::io::Write;
+use uuid::Uuid;
 
 pub async fn register_mod(
     State(pool): State<PgPool>,
@@ -69,4 +70,31 @@ pub async fn register_mod_from_cli(
     let id = register_mod(state_pool, username, passphrase.as_bytes()).await?;
 
     Ok(id)
+}
+
+pub async fn create_mod_token (
+    State(pool): State<PgPool>,
+    passphrase: &[u8],
+) -> Result<Uuid, Box<dyn Error>> {
+    let salt = SaltString::generate(&mut OsRng);
+
+    let argon2 = Argon2::default();
+
+    let Ok(pass_hash) = argon2.hash_password(passphrase, &salt) else {
+	return Err(Box::<dyn Error>::from("Argon couldn't hash passphrase"))
+    };
+
+    let q = "\
+    INSERT INTO ModToken \
+    (hash) VALUES \
+    ($1)\
+    RETURNING id \
+    ";
+
+    let id: (Uuid,) = sqlx::query_as(q)
+	.bind(pass_hash.to_string())
+	.fetch_one(&pool)
+	.await?;
+
+    Ok(id.0)
 }
