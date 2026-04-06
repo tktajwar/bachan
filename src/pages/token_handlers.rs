@@ -11,6 +11,7 @@ use axum::{
     },
 };
 use sqlx::PgPool;
+use uuid::Uuid;
 
 use crate::forms::TokenForm;
 use crate::moderation::{
@@ -64,4 +65,22 @@ pub async fn token_submission (
     };
 
     Ok( token_id.to_string() )
+}
+
+pub async fn register_id_page (
+    Path(token_id): Path<Uuid>
+) -> Result<Html<String>, axum::http::StatusCode> {
+    let mut ctx = tera::Context::new();
+    ctx.insert("id", &token_id.to_string());
+
+    let rendered = TERA.render("register_token.html", &ctx);
+    let content = match rendered {
+	Ok(s) => s,
+	Err(e) => {
+	    eprintln!("{e}");
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    };
+
+    Ok(Html(content))
 }

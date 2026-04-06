@@ -38,6 +38,7 @@ async fn main() {
 	.route("/{boardname}/", get(board_x_page).post(board_x_submission))
 	.route("/{boardname}", get(board_x_page).post(board_x_submission))
 	.route("/token", get(token_page).post(token_submission))
+	.route("/register/{token_id}", get(register_id_page))
 	.route("/favicon.ico", get(|| async {
 	    Redirect::permanent("static/favicon.ico")
 	}))
