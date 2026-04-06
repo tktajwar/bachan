@@ -37,6 +37,9 @@ async fn main() {
 	.route("/mod/{tid_hex}", get(mod_id_page).post(mod_id_submission))
 	.route("/{boardname}/", get(board_x_page).post(board_x_submission))
 	.route("/{boardname}", get(board_x_page).post(board_x_submission))
+	.route("/favicon.ico", get(|| async {
+	    Redirect::permanent("static/favicon.ico")
+	}))
 	.fallback(fallback)
 	.with_state(pool)
 	.nest_service("/static", ServeDir::new("static"))
