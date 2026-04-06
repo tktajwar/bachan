@@ -11,11 +11,11 @@ use axum::{
     },
 };
 use sqlx::PgPool;
-use std::net::SocketAddr;
 
-use crate::forms::ModerationForm;
+use crate::forms::TokenForm;
 use crate::moderation::{
     create_mod_token,
+    verify_admin,
     verify_mod_token,
 };
 use crate::template::{
@@ -35,4 +35,33 @@ pub async fn token_page () -> Result<Html<String>, axum::http::StatusCode> {
     };
 
     Ok(Html(content))
+}
+
+pub async fn token_submission (
+    state_pool: State<PgPool>,
+    Form(token_form): Form<TokenForm>,
+) -> Result<String, axum::http::StatusCode> {
+    match verify_admin(
+	&token_form.server_pin,
+	&token_form.server_passphrase,
+    ).await {
+	Ok(verification) => {
+	    if verification == false {
+		return Err(axum::http::StatusCode::UNAUTHORIZED)
+	    }
+	},
+	Err(e) => {
+	    eprintln!("Error validating admin: {e}");
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    };
+
+    let Ok(token_id) = create_mod_token(
+	state_pool,
+	&token_form.token_passphrase.as_bytes(),
+    ).await else {
+	return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+    };
+
+    Ok( token_id.to_string() )
 }

@@ -20,3 +20,11 @@ pub struct ModerationForm {
     pub suspend: Option<String>,
     pub reason: String,
 }
+
+#[derive(Deserialize)]
+#[derive(Debug)]
+pub struct TokenForm {
+    pub server_pin: String,
+    pub server_passphrase: String,
+    pub token_passphrase: String,
+}

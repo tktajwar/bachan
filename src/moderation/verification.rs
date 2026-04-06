@@ -11,6 +11,16 @@ use std::error::Error;
 use std::io::Write;
 use uuid::Uuid;
 
+pub async fn verify_admin (
+    pin: &str,
+    passphrase: &str,
+) -> Result<bool, Box<dyn Error>> {
+    let server_pin = std::env::var("PIN")?;
+    let server_passphrase = std::env::var("PASSPHRASE")?;
+
+    Ok( pin == server_pin && passphrase == server_passphrase )
+}
+
 pub async fn verify_mod(
     State(pool): State<PgPool>,
     username: &str,

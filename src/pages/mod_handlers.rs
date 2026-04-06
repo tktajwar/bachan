@@ -11,7 +11,6 @@ use axum::{
     },
 };
 use sqlx::PgPool;
-use std::net::SocketAddr;
 
 use crate::forms::ModerationForm;
 use crate::moderation::{
@@ -60,7 +59,6 @@ pub async fn mod_id_page(
 pub async fn mod_id_submission(
     state_pool: State<PgPool>,
     Path(id_hex): Path<String>,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Form(moderation_form): Form<ModerationForm>,
 ) -> Result<Redirect, axum::http::StatusCode> {
     match verify_mod(
