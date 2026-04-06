@@ -113,3 +113,23 @@ pub async fn verify_mod_token (
        .is_ok()
     )
 }
+
+pub async fn is_mod_username_taken (
+    State(pool): State<PgPool>,
+    username: &str,
+) -> Result<bool, Box<dyn Error>> {
+    let username_taken: (bool,) = sqlx::query_as (
+        r#"
+        SELECT EXISTS (
+        SELECT 1
+        FROM mod
+        WHERE username = $1
+        )
+        "#
+    )
+	.bind(username)
+	.fetch_one(&pool)
+	.await?;
+
+    Ok( username_taken.0 )
+}

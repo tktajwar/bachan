@@ -1,13 +1,12 @@
 use axum::{
     Form,
     extract::{
-	ConnectInfo,
 	Path,
 	State,
     },
     response::{
 	Html,
-	Redirect,
+	IntoResponse,
     },
 };
 use sqlx::PgPool;
@@ -20,6 +19,7 @@ use crate::forms::{
 use crate::moderation::{
     create_mod_token,
     delete_mod_token,
+    is_mod_username_taken,
     register_mod,
     verify_admin,
     verify_mod_token,
@@ -94,7 +94,7 @@ pub async fn registeration_submission (
     state_pool: State<PgPool>,
     Path(token_id): Path<Uuid>,
     Form(registeration_form): Form<RegisterationForm>,
-) -> Result<String, axum::http::StatusCode> {
+) -> impl IntoResponse {
     match verify_mod_token (
 	state_pool.clone(),
 	token_id,
@@ -102,12 +102,31 @@ pub async fn registeration_submission (
     ).await {
 	Ok(verification) => {
 	    if verification == false {
-		return Err(axum::http::StatusCode::UNAUTHORIZED)
+		return Err(Err(axum::http::StatusCode::UNAUTHORIZED))
 	    }
 	},
 	Err(e) => {
 	    eprintln!("Error validating token: {e}");
-	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	    return Err(Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR))
+	},
+    };
+
+    match is_mod_username_taken (
+	state_pool.clone(),
+	&registeration_form.username,
+    ).await {
+	Ok(true) => {
+	    return Err(Ok(
+		(
+		    axum::http::StatusCode::CONFLICT,
+		    "The username is already taken",
+		)
+	    ))
+	},
+	Ok(false) => {},
+	Err(e) => {
+	    eprintln!("Error checking username availability: {e}");
+	    return Err(Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR))
 	},
     };
 
@@ -118,7 +137,7 @@ pub async fn registeration_submission (
 	Ok(_) => {},
 	Err(e) => {
 	    eprintln!("Error deleting token: {e}");
-	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	    return Err(Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR))
 	},
     };
 
@@ -130,7 +149,7 @@ pub async fn registeration_submission (
 	Ok(id) => id,
 	Err(e) => {
 	    eprintln!("Error registering mod: {e}");
-	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	    return Err(Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR))
 	},
     };
 
