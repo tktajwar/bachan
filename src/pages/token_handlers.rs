@@ -13,9 +13,14 @@ use axum::{
 use sqlx::PgPool;
 use uuid::Uuid;
 
-use crate::forms::TokenForm;
+use crate::forms::{
+    TokenForm,
+    RegisterationForm,
+};
 use crate::moderation::{
     create_mod_token,
+    delete_mod_token,
+    register_mod,
     verify_admin,
     verify_mod_token,
 };
@@ -83,4 +88,51 @@ pub async fn register_id_page (
     };
 
     Ok(Html(content))
+}
+
+pub async fn registeration_submission (
+    state_pool: State<PgPool>,
+    Path(token_id): Path<Uuid>,
+    Form(registeration_form): Form<RegisterationForm>,
+) -> Result<String, axum::http::StatusCode> {
+    match verify_mod_token (
+	state_pool.clone(),
+	token_id,
+	&registeration_form.token_passphrase,
+    ).await {
+	Ok(verification) => {
+	    if verification == false {
+		return Err(axum::http::StatusCode::UNAUTHORIZED)
+	    }
+	},
+	Err(e) => {
+	    eprintln!("Error validating token: {e}");
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    };
+
+    match delete_mod_token (
+	state_pool.clone(),
+	token_id,
+    ).await {
+	Ok(_) => {},
+	Err(e) => {
+	    eprintln!("Error deleting token: {e}");
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    };
+
+    let id = match register_mod (
+	state_pool,
+	&registeration_form.username,
+	&registeration_form.passphrase.as_bytes(),
+    ).await {
+	Ok(id) => id,
+	Err(e) => {
+	    eprintln!("Error registering mod: {e}");
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    };
+
+    Ok( format!("Moderator {id} has been registered.") )
 }

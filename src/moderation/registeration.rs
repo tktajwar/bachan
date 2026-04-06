@@ -98,3 +98,20 @@ pub async fn create_mod_token (
 
     Ok(id.0)
 }
+
+pub async fn delete_mod_token (
+    State(pool): State<PgPool>,
+    id: Uuid,
+) -> Result<(), Box<dyn Error>> {
+    let q = "\
+    DELETE FROM ModToken \
+    WHERE id = $1 \
+    ";
+
+    sqlx::query(q)
+	.bind(id)
+	.execute(&pool)
+	.await?;
+
+    Ok(())
+}

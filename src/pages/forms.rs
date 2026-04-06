@@ -28,3 +28,11 @@ pub struct TokenForm {
     pub server_passphrase: String,
     pub token_passphrase: String,
 }
+
+#[derive(Deserialize)]
+#[derive(Debug)]
+pub struct RegisterationForm {
+    pub token_passphrase: String,
+    pub username: String,
+    pub passphrase: String,
+}
