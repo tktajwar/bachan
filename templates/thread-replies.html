@@ -2,7 +2,7 @@
   <h3 id="replies"> Replies </h3>
   {% for reply in replies %}
   <div class="reply" id="{{reply.id}}">
-    {% include "reply-tagline-without-boardname.html" %}
+    {% include "reply-tagline.html" %}
     <div class="reply-body">
       <div class="reply-comment">{{reply.comment|safe}}</div>
     </div>

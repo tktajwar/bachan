@@ -114,11 +114,7 @@
     <main>
       <div id="thread-container">
 	{% for thread in threads %}
-	<div class="thread" id="{{thread.id}}">
-	  {% include "thread-tagline-without-boardname.html" %}
-	  {% include "thread-body.html" %}
-	  {% include "thread-buttons.html" %}
-	</div>
+	{% include "thread.html" %}
 	{% else %}
 	<p> এই বোর্ডে এখনো কোনো কথোপকথন হয়নি। </p>
 	{% endfor %}

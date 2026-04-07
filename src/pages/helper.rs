@@ -90,7 +90,7 @@ impl Thread {
     pub fn into_serializable(self) -> ThreadSerializable {
 	ThreadSerializable {
 	    id: format!("{:03x}", self.id as u32),
-	    utid: format!("{:04x}", self.hashed_utid()),
+	    utid: utid(self.uid, self.id),
 	    subject: if self.redacted {
 		"স#ম্পা#দি#ত".to_string()
 	    } else {
@@ -107,16 +107,6 @@ impl Thread {
 	    reply_count: self.reply_count,
 	    redacted: self.redacted,
 	}
-    }
-
-    pub fn hashed_utid(&self) -> u16 {
-	let mut hasher = DefaultHasher::new();
-
-	self.id.hash(&mut hasher);
-	self.uid.hash(&mut hasher);
-	crate::SECRET_NUMBER.hash(&mut hasher);
-
-	hasher.finish() as u16
     }
 }
 
@@ -151,7 +141,7 @@ impl ThreadLight {
 	ThreadOrReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
 	    tid: None,
-	    utid: format!("{:04x}", self.hashed_utid()),
+	    utid: utid(self.uid, self.id),
 	    subject: if self.redacted {
 		"স#ম্পা#দি#ত".to_string()
 	    } else {
@@ -166,16 +156,6 @@ impl ThreadLight {
 	    redacted: self.redacted,
 	}
     }
-
-    pub fn hashed_utid(&self) -> u16 {
-	let mut hasher = DefaultHasher::new();
-
-	self.id.hash(&mut hasher);
-	self.uid.hash(&mut hasher);
-	crate::SECRET_NUMBER.hash(&mut hasher);
-
-	hasher.finish() as u16
-    }
 }
 
 impl Reply {
@@ -183,7 +163,7 @@ impl Reply {
 	ReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
 	    tid: format!("{:03x}", self.tid as u32),
-	    utid: format!("{:04x}", self.hashed_utid()),
+	    utid: utid(self.uid, self.tid),
 	    comment: if self.redacted {
 		"<del>###সম্পাদিত###</del>".to_string()
 	    } else {
@@ -191,16 +171,6 @@ impl Reply {
 	    },
 	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
 	}
-    }
-
-    pub fn hashed_utid(&self) -> u16 {
-	let mut hasher = DefaultHasher::new();
-
-	self.tid.hash(&mut hasher);
-	self.uid.hash(&mut hasher);
-	crate::SECRET_NUMBER.hash(&mut hasher);
-
-	hasher.finish() as u16
     }
 }
 
@@ -235,7 +205,7 @@ impl ReplyLight {
 	ThreadOrReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
 	    tid: Some(format!("{:03x}", self.tid as u32)),
-	    utid: format!("{:04x}", self.hashed_utid()),
+	    utid: utid(self.uid, self.tid),
 	    subject: format!("Reply to {:03x}", self.tid).to_string(),
 	    comment: if self.redacted {
 		"<del>###সম্পাদিত###</del>".to_string()
@@ -245,16 +215,6 @@ impl ReplyLight {
 	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
 	    redacted: self.redacted,
 	}
-    }
-
-    pub fn hashed_utid(&self) -> u16 {
-	let mut hasher = DefaultHasher::new();
-
-	self.tid.hash(&mut hasher);
-	self.uid.hash(&mut hasher);
-	crate::SECRET_NUMBER.hash(&mut hasher);
-
-	hasher.finish() as u16
     }
 }
 
@@ -271,6 +231,44 @@ pub fn hashed(ip: IpAddr) -> i32 {
     crate::SECRET_NUMBER.hash(&mut hasher);
 
     hasher.finish() as i32
+}
+
+pub fn utid(uid: i32, tid: i32) -> String {
+    let mut hasher = DefaultHasher::new();
+
+    uid.hash(&mut hasher);
+    tid.hash(&mut hasher);
+    crate::SECRET_NUMBER.hash(&mut hasher);
+
+    let utid = hasher.finish();
+
+    let utid = format!("{:05}", utid as u16);
+
+    bengali_digits(&utid)
+}
+
+pub fn bengali_digits(s: &str) -> String {
+    s.chars().map(|c| {
+	match c {
+	    '0' => '০',
+            '1' => '১',
+            '2' => '২',
+            '3' => '৩',
+            '4' => '৪',
+            '5' => '৫',
+            '6' => '৬',
+            '7' => '৭',
+            '8' => '৮',
+            '9' => '৯',
+	    'a' => 'ক',
+            'b' => 'খ',
+            'c' => 'গ',
+            'd' => 'ঘ',
+            'e' => 'ঙ',
+            'f' => 'চ',
+            _ => c,
+	}
+    }).collect()
 }
 
 pub async fn thread_or_reply_with_id(

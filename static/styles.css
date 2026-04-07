@@ -10,6 +10,7 @@
     --lgreen:#D0E7D4;
     --dgreen:#4A7A2E;
     --wgreen:#F2F8F3;
+    --blue:teal;
 
     --fg:var(--black);
     --bg:var(--lgreen);
@@ -17,7 +18,7 @@
     --thread-bg:white;
     --reply-bg:white;
     --quote:var(--green);
-    --ref:var(--red);
+    --ref:var(--blue);
 }
 
 body {
@@ -213,10 +214,21 @@ h1 {
 .thread-time,
 .reply-id,
 .reply-utid,
-.reply-time,
-.thread-board {
+.reply-time {
     color: var(--fg);
     font-family: "Lucida Console", "Courier New", monospace;
+}
+
+.thread-utid,
+.reply-utid {
+    color: var(--red);
+    font-family: Helvetica, 'Noto Sans Bengali', Arial, sans-serif;
+    font-weight: bold;
+}
+
+.thread-id,
+.reply-id {
+    color: var(--blue);
 }
 
 #k-title {

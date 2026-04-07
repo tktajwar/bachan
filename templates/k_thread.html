@@ -14,15 +14,11 @@
     </header>
     <main>
       <div id="thread-container">
-	<div class="thread" id="{{thread.id}}">
-	  {% include "thread-tagline-with-boardname.html" %}
-	  {% include "thread-body.html" %}
-	  {% include "thread-buttons.html" %}
-	  {% if not thread.redacted %}
-	  {% include "thread-replies.html" %}
-	  {% include "thread-reply-form.html" %}
-	  {% endif %}
-	</div>
+	{% include "thread.html" %}
+	{% if not thread.redacted %}
+	{% include "thread-replies.html" %}
+	{% include "thread-reply-form.html" %}
+	{% endif %}
       </div>
     </main>
   </body>
