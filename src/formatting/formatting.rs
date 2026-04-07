@@ -38,7 +38,7 @@ fn enref(input: &str) -> String {
     let re = Regex::new(r"(?m)^(>|&gt;)(>|&gt;) *([0-9a-fA-F]{3,8})(\r)*$").unwrap();
     re.replace_all(
 	input,
-	r#"<a class="ref" href="/k/$1">$0</a>"#
+	r#"<a class="ref" href="/k/$3">$0</a>"#
     ).to_string()
 }
 
