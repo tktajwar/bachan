@@ -7,6 +7,7 @@ use axum::{
     },
     response::{
 	Html,
+	IntoResponse,
 	Redirect,
     },
 };
@@ -60,7 +61,7 @@ pub async fn mod_id_submission(
     state_pool: State<PgPool>,
     Path(id_hex): Path<String>,
     Form(moderation_form): Form<ModerationForm>,
-) -> Result<Redirect, axum::http::StatusCode> {
+) -> impl IntoResponse {
     match verify_mod(
 	state_pool.clone(),
 	&moderation_form.username,
@@ -68,17 +69,35 @@ pub async fn mod_id_submission(
     ).await {
 	Ok(verification) => {
 	    if verification == false {
-		return Err(axum::http::StatusCode::UNAUTHORIZED)
+		return Err (
+		    (
+			axum::http::StatusCode::UNAUTHORIZED,
+			"Unauthorized! Recheck your username and passphrase.",
+		    )
+		)
 	    }
 	},
 	Err(e) => {
 	    eprintln!("Error validating moderator: {e}");
-	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	    return Err (
+		(
+		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+		    "\
+		    The server had an internal error processing your\
+		    credentials.\
+		    ",
+		)
+	    )
 	},
     };
 
     let Ok(id_u32) = u32::from_str_radix(&id_hex, 16) else {
-	return Err(axum::http::StatusCode::BAD_REQUEST)
+	return Err (
+	    (
+		axum::http::StatusCode::BAD_REQUEST,
+		"The server couldn't process the ID",
+	    )
+	)
     };
     let id = id_u32 as i32;
 
@@ -91,7 +110,12 @@ pub async fn mod_id_submission(
 		state_pool.clone(),
 	    ).await {
 		eprintln!("Failed redacting post: {}", e);
-		return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+		return Err (
+		    (
+			axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+			"Internal Server Error: Failed to redact",
+		    )
+		)
 	    }
 	}
     }
@@ -106,7 +130,12 @@ pub async fn mod_id_submission(
 		state_pool,
 	    ).await {
 		eprintln!("Failed suspending user: {}", e);
-		return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+		return Err (
+		    (
+			axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+			"Internal Server Error: Failed to suspend",
+		    )
+		)
 	    }
 	}
     }
