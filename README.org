@@ -6,6 +6,9 @@ anonymity and the freedom of speech.
 #+CAPTION: Homepage of Bachan on April 5, 2026
 [[file:static/bachan-homepage.png]]
 
+The source code for বাchan is licensed under GNU Affero General Public
+License. See [[file:COPYING][COPYING]] for more information.
+
 * Core Philosophy
 
 বাchan lets Bengali netizens post without revealing their identity.
