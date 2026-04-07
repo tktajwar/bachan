@@ -118,7 +118,7 @@ fn redact_profane_words(input: &str) -> String {
 }
 
 pub fn format(input: &str) -> String {
-    let input = redact_profane_words(&sanitize(input));
+    let input = sanitize(input);
 
     let formatted_input = enref(&enquote(&underline(&italicize(&embold(
 	&input
