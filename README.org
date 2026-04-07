@@ -16,3 +16,9 @@ users without having to register an account. Each thread or reply has
 a unique ID and a hashed user ID indicating the person who posted it.
 The user ID is unique per thread to preserve users' anonymity across
 threads.
+
+* Visit বাchan
+
+[[https://bachan-production.up.railway.app/]]
+
+Be sure to read the rules before participating on the site.
