@@ -211,6 +211,11 @@ h1 {
     white-space: pre-wrap;
 }
 
+.thread-comment a,
+.reply-comment a {
+    overflow-wrap: anywhere;
+}
+
 .thread-id,
 .thread-utid,
 .thread-time,
