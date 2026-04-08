@@ -214,7 +214,8 @@ h1 {
 .thread-time,
 .reply-id,
 .reply-utid,
-.reply-time {
+.reply-time,
+.thread-board {
     color: var(--fg);
 }
 
@@ -227,6 +228,10 @@ h1 {
 .thread-id,
 .reply-id {
     color: var(--blue);
+}
+
+.thread-board > a {
+    text-decoration: none;
 }
 
 #k-title {
