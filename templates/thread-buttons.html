@@ -1,6 +1,15 @@
 <ul class="thread-buttons">
   <li class="thread-reply">
-    <a href="/k/{{thread.id}}" title="(cite) পোস্টটি উদ্ধৃত করুন">
+    <a href="/k/{{thread.id}}?enref={{thread.id}}"
+       onclick="
+		if (typeof window['add_ref']=='function') {
+		window['add_ref']('{{thread.id}}');
+		return false;
+		} else {
+		return true;
+		}
+		"
+       title="(cite) পোস্টটি উদ্ধৃত করুন">
       <i class="fa-solid fa-angles-right"></i>{{thread.id}}
     </a>
   </li>
