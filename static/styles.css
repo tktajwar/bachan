@@ -57,8 +57,10 @@ h1 {
 }
 
 .img-comment {
-    max-width: 200px;
-    max-height: 400px;
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    margin: auto;
 }
 
 #boards, #highlights, #announcements {
