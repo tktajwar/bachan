@@ -1,4 +1,3 @@
-use censor::*;
 use regex::Regex;
 use sanitize_html::{
     rules::predefined::DEFAULT,
@@ -96,35 +95,6 @@ fn sanitize(input: &str) -> String {
          .replace("'", "&#39;");
 
     sanitize_str(&DEFAULT, &input_escaped).unwrap()
-}
-
-fn redact_profane_words(input: &str) -> String {
-    let censor = Censor::Standard + Censor::Sex
-	+ "porn"
-	+ "xhamster"
-	+ "xvideo"
-	+ "xnxx"
-	+ "jav"
-	+ "xhwide"
-	+ "jizz"
-	+ "redtube"
-	+ "freeones"
-	+ "motherless"
-	+ "fatherless"
-	+ "brazzer"
-	+ "bang"
-	+ "adult"
-	+ "চোদ"
-	+ "bainc"
-	+ "choda"
-	+ "chodn"
-	+ "chodi"
-	+ "chuda"
-	+ "chudi"
-	+ "ভুষ্কি"
-	+ "bhuski"
-	;
-    censor.replace(input, "🥰🫶😘🌹🫂")
 }
 
 pub fn format(input: &str) -> String {

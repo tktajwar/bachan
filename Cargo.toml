@@ -6,10 +6,10 @@ edition = "2024"
 [dependencies]
 argon2 = "0.5.3"
 axum = "0.8.8"
-censor = "0.3.0"
 dotenv = "0.15.0"
 lazy_static = "1.5.0"
 regex = "1.12.3"
+rustrict = { version = "0.7.38", features = ["censor"] }
 sanitize_html = "0.10.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
