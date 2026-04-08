@@ -216,13 +216,11 @@ h1 {
 .reply-utid,
 .reply-time {
     color: var(--fg);
-    font-family: "Lucida Console", "Courier New", monospace;
 }
 
 .thread-utid,
 .reply-utid {
     color: var(--red);
-    font-family: Helvetica, 'Noto Sans Bengali', Arial, sans-serif;
     font-weight: bold;
 }
 

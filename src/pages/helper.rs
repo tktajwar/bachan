@@ -102,8 +102,8 @@ impl Thread {
 		self.comment
 	    },
 	    board: self.board,
-	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
-	    mtime: self.mtime.format("%Y-%m-%d %H:%M").to_string(),
+	    ctime: self.ctime.format("%Y-%m-%d %H:%MZ").to_string(),
+	    mtime: self.mtime.format("%Y-%m-%d %H:%MZ").to_string(),
 	    reply_count: self.reply_count,
 	    redacted: self.redacted,
 	}
@@ -152,7 +152,7 @@ impl ThreadLight {
 	    } else {
 		self.comment
 	    },
-	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
+	    ctime: self.ctime.format("%Y-%m-%d %H:%MZ").to_string(),
 	    redacted: self.redacted,
 	}
     }
@@ -169,7 +169,7 @@ impl Reply {
 	    } else {
 		self.comment
 	    },
-	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
+	    ctime: self.ctime.format("%Y-%m-%d %H:%MZ").to_string(),
 	}
     }
 }
@@ -212,7 +212,7 @@ impl ReplyLight {
 	    } else {
 		self.comment
 	    },
-	    ctime: self.ctime.format("%Y-%m-%d %H:%M").to_string(),
+	    ctime: self.ctime.format("%Y-%m-%d %H:%MZ").to_string(),
 	    redacted: self.redacted,
 	}
     }
