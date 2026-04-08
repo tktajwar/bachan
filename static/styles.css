@@ -199,6 +199,7 @@ h1 {
     max-width: 90%;
     margin: auto;
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .thread-tagline,
@@ -206,11 +207,6 @@ h1 {
     color: #0E3D55;
     margin: 0;
     font-size: 0.8rem;
-}
-
-.thread-comment a,
-.reply-comment a {
-    overflow-wrap: anywhere;
 }
 
 .thread-id,
