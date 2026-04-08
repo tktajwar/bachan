@@ -21,6 +21,7 @@ use crate::helper::{
     create_thread,
     get_board_ctx,
     hashed,
+    list_of_boards,
 };
 use crate::moderation::is_user_suspended;
 use crate::template::*;
@@ -60,20 +61,28 @@ pub async fn board_threads(
     Ok(serializable_threads)
 }
 
-async fn board_page(
+async fn board_page (
     state_pool: State<PgPool>,
     url: &str,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
-    let Ok(board) = get_board_ctx(
+
+    let Ok(board) = get_board_ctx (
 	url,
 	state_pool.clone(),
     ).await else {
 	return Err(axum::http::StatusCode::NOT_FOUND)
     };
-
     ctx.insert("board", &board);
-    let threads = board_threads(
+
+    let boards = list_of_boards (
+	state_pool.clone(),
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("boards", &boards);
+
+    let threads = board_threads (
 	url,
 	state_pool,
     ).await.unwrap_or(

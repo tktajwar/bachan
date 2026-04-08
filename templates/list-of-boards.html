@@ -1,0 +1,11 @@
+<nav class="navbar" id="list-of-boards">
+  <ul>
+    {% for board in boards %}
+    <li>
+      <a href="/{{board.url}}" title="{{board.label}}">
+	/{{board.url}}/
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</nav>

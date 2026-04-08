@@ -525,3 +525,21 @@ pub async fn top_threads (
 
     Ok(serializable_threads)
 }
+
+pub async fn list_of_boards (
+    State(pool): State<PgPool>,
+) -> Result<Vec<Board>, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    url, \
+    label \
+    FROM board \
+    ORDER BY url ASC \
+    ";
+
+    let boards: Vec<Board> = sqlx::query_as::<_, Board>(q)
+	.fetch_all(&pool)
+	.await?;
+
+    Ok(boards)
+}
