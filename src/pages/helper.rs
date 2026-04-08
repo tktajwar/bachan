@@ -459,7 +459,41 @@ pub async fn get_board_ctx(
     Ok(board)
 }
 
-pub async fn top_threads(
+pub async fn top_announcements (
+    State(pool): State<PgPool>,
+) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    t.id, \
+    t.uid, \
+    t.subject, \
+    t.comment, \
+    t.board, \
+    t.ctime, \
+    t.mtime, \
+    t.redacted, \
+    COUNT(r.id) AS reply_count \
+    FROM thread t \
+    LEFT JOIN reply r ON r.tid = t.id \
+    WHERE t.redacted = false \
+    AND t.board = 'g' \
+    GROUP BY t.id \
+    ORDER BY t.id desc \
+    LIMIT 3 \
+    ";
+
+    let threads = sqlx::query_as::<_, Thread>(q)
+	.fetch_all(&pool)
+	.await?;
+
+    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
+        .map(Thread::into_serializable)
+        .collect();
+
+    Ok(serializable_threads)
+}
+
+pub async fn top_threads (
     State(pool): State<PgPool>,
 ) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
     let q = "\

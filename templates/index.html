@@ -84,6 +84,14 @@
 	<h2>Announcements</h2>
 	<!-- List of announcements -->
 
+	<div class="thread-container">
+	  {% for thread in announcements %}
+	  {% include "thread.html" %}
+	  {% else %}
+	  <p> এখনো কোনো ঘোষণা করা হয়নি। </p>
+	  {% endfor %}
+	</div>
+
       </div>
     </main>
     <script src="/static/format_local_time.js"></script>

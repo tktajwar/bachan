@@ -7,6 +7,7 @@ use sqlx::PgPool;
 use crate::template::TERA;
 use crate::helper::{
     boards_in_category,
+    top_announcements,
     top_threads,
 };
 
@@ -47,12 +48,19 @@ pub async fn root_page(
     );
     ctx.insert("misc", &misc);
 
-    let threads = top_threads(
-	pool_state,
+    let threads = top_threads (
+	pool_state.clone(),
     ).await.unwrap_or(
 	vec![]
     );
     ctx.insert("threads", &threads);
+
+    let announcements = top_announcements (
+	pool_state,
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("announcements", &announcements);
 
     let rendered = TERA.render("index.html", &ctx);
     let content = match rendered {
