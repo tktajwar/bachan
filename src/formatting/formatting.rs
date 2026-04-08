@@ -35,10 +35,20 @@ fn enquote(input: &str) -> String {
 }
 
 fn enref(input: &str) -> String {
-    let re = Regex::new(r"(?m)^(>|&gt;)(>|&gt;) *([0-9a-fA-F]{3,8})(\r)*$").unwrap();
-    re.replace_all(
+    let re = Regex::new(
+	r"(?m)^(>|&gt;)(>|&gt;) *([0-9a-fA-F]{3,8})(\r)*$"
+    ).unwrap();
+    let input = &re.replace_all(
 	input,
 	r#"<a class="ref" href="/k/$3">$0</a>"#
+    );
+
+    let re = Regex::new(
+	r"\[\[((?:প|প্রকাশনা|[Pp]ost|)[.: \-] *([0-9a-fA-F]{1,8}))\]\]"
+    ).unwrap();
+    re.replace_all(
+	input,
+	r#"<a class="ref" href="/k/$2">$1</a>"#
     ).to_string()
 }
 
