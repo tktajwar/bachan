@@ -194,8 +194,9 @@ h1 {
     text-align: center;
 }
 
-.thread-comment {
-    max-width: 480px;
+.thread-comment,
+.reply-comment {
+    max-width: 90%;
     margin: auto;
     white-space: pre-wrap;
 }
@@ -205,10 +206,6 @@ h1 {
     color: #0E3D55;
     margin: 0;
     font-size: 0.8rem;
-}
-
-.reply-comment {
-    white-space: pre-wrap;
 }
 
 .thread-comment a,
