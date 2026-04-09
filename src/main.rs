@@ -50,7 +50,10 @@ async fn main() {
 	.nest_service("/static", ServeDir::new("static"))
 	.layer(
 	    ServiceBuilder::new()
-		.layer(TimeoutLayer::new(Duration::from_secs(10)))
+		.layer(TimeoutLayer::with_status_code(
+		    axum::http::StatusCode::REQUEST_TIMEOUT,
+		    Duration::from_secs(10),
+		))
 	);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
