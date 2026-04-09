@@ -1,0 +1,33 @@
+:root {
+    --button:#B1D3A5;
+    --button-shadow:#659226;
+}
+
+.btn,
+button {
+    postion: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0.25em 0.5em;
+    margin: 0.25em;
+    border: 0;
+    border-radius: 0.75em;
+    font-weight: 500;
+    transition: 0.3s;
+    background-color: var(--button);
+    box-shadow: 0 6px 0 var(--button-shadow);
+}
+
+.btn:hover,
+button:hover {
+    transform: translateY(2px);
+    box-shadow: 0 4px 0 var(--button-shadow);
+}
+
+.btn:active,
+button:active {
+    transform: translateY(5px);
+    box-shadow: 0 3px 0 var(--button-shadow);
+}
