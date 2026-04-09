@@ -205,8 +205,7 @@ pub async fn reply_submission(
 	state_pool,
     ).await {
 	Ok(id) => {
-	    let id_hex = format!("{:03x}", id);
-	    Ok(Redirect::to(&format!("/k/{}#{}", tid_hex, id_hex)))
+	    Ok(Redirect::to(&format!("/submission/{}", id)))
 	},
 	Err(e) => {
 	    eprintln!("Error submitting reply: {}", e);

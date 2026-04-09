@@ -15,7 +15,7 @@
       </h1>
     </header>
 
-    <div class="showcase">
+    <div class="thread-container">
       <div class="thread-body">
 	<a href="/k/{{thread_or_reply.id}}">
 	  <h3 class="thread-headline">{{thread_or_reply.subject}}</h3>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="mod">
-      <h2>Moderate post</h2>
+      <h2><center>Moderate post</center></h2>
       <form id="mod-form" action="/mod/{{thread_or_reply.id}}"
 	    method="POST">
 

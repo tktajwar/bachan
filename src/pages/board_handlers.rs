@@ -13,6 +13,7 @@ use axum::{
 use sqlx::PgPool;
 use std::error::Error;
 use std::net::SocketAddr;
+use uuid::Uuid;
 
 use crate::forms::ThreadForm;
 use crate::helper::{
@@ -107,8 +108,8 @@ async fn board_submission(
     uid: i32,
     thread_form: ThreadForm,
     boardname: &str,
-) -> Result<i32, Box<dyn Error>> {
-    let id = create_thread(
+) -> Result<Uuid, Box<dyn Error>> {
+    let id = create_thread (
 	uid,
 	&thread_form.subject,
 	&thread_form.comment,
@@ -119,7 +120,7 @@ async fn board_submission(
     Ok(id)
 }
 
-pub async fn board_x_page(
+pub async fn board_x_page (
     state_pool: State<PgPool>,
     Path(url): Path<String>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
@@ -129,7 +130,7 @@ pub async fn board_x_page(
     ).await
 }
 
-pub async fn board_x_submission(
+pub async fn board_x_submission (
     state_pool: State<PgPool>,
     Path(boardname): Path<String>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
@@ -153,8 +154,7 @@ pub async fn board_x_submission(
 	&boardname,
     ).await {
 	Ok(id) => {
-	    let id_hex = format!("{:03x}", id);
-	    Ok(Redirect::to(&format!("/k/{}", id_hex)))
+	    Ok(Redirect::to(&format!("/submission/{}", id)))
 	},
 	Err(e) => {
 	    eprintln!("Error submitting thread: {}", e);

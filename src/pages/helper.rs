@@ -7,6 +7,7 @@ use sqlx::{
     PgPool,
     types::chrono,
 };
+use uuid::Uuid;
 
 use crate::formatting;
 
@@ -51,6 +52,17 @@ pub struct ReplyLight {
     pub comment: String,
     pub ctime: chrono::NaiveDateTime,
     pub redacted: bool,
+}
+
+#[derive(sqlx::FromRow)]
+#[derive(Serialize)]
+pub struct PendingPost {
+    pub id: Uuid,
+    pub is_thread: bool,
+    pub subject: Option<String>,
+    pub comment: String,
+    pub board: Option<String>,
+    pub tid: Option<i32>,
 }
 
 #[derive(Serialize)]
@@ -284,23 +296,23 @@ pub async fn thread_or_reply_with_id(
     Ok(serializable_thread)
 }
 
-pub async fn create_thread(
+pub async fn create_thread (
     uid: i32,
     subject: &str,
     comment: &str,
     board: String,
     State(pool): State<PgPool>,
-) -> Result<i32, Box<dyn Error>> {
+) -> Result<Uuid, Box<dyn Error>> {
     let comment_formatted = formatting::format(comment);
 
     let query = "\
-    INSERT INTO thread (uid, subject, comment, board) \
-    VALUES ($1, $2, $3, $4) \
+    INSERT INTO PendingPost (is_thread, uid, subject, comment, board) \
+    VALUES (TRUE, $1, $2, $3, $4) \
     RETURNING id \
     ";
 
 
-    let id: i32 = sqlx::query_scalar(query)
+    let id: Uuid = sqlx::query_scalar(query)
 	.bind(uid)
 	.bind(subject)
 	.bind(comment_formatted)
@@ -340,21 +352,21 @@ pub async fn thread_replies(
     Ok(serializable_replies)
 }
 
-pub async fn create_reply(
+pub async fn create_reply (
     uid: i32,
     tid: i32,
     comment: &str,
     State(pool): State<PgPool>,
-) -> Result<i32, Box<dyn Error>> {
+) -> Result<Uuid, Box<dyn Error>> {
     let comment_formatted = formatting::format(comment);
 
     let query = "\
-    INSERT INTO reply (uid, tid, comment) \
-    VALUES ($1, $2, $3) \
+    INSERT INTO PendingPost (is_thread, uid, tid, comment) \
+    VALUES (False, $1, $2, $3) \
     RETURNING id \
     ";
 
-    let id: i32 = sqlx::query_scalar(query)
+    let id: Uuid = sqlx::query_scalar(query)
 	.bind(uid)
 	.bind(tid)
 	.bind(comment_formatted)
@@ -542,4 +554,124 @@ pub async fn list_of_boards (
 	.await?;
 
     Ok(boards)
+}
+
+pub async fn pending_post_with_id (
+    id: Uuid,
+    State(pool): State<PgPool>,
+) -> Result<Option<PendingPost>, Box<dyn Error>> {
+    let q = "
+    SELECT \
+    id, \
+    is_thread, \
+    subject, \
+    comment, \
+    board, \
+    tid \
+    FROM PendingPost \
+    WHERE id = $1 \
+    ";
+
+    let pending_post: Option<PendingPost> = sqlx::query_as::<_, PendingPost>(q)
+	.bind(id)
+	.fetch_optional(&pool)
+	.await?;
+
+    Ok(pending_post)
+}
+
+pub async fn confirm_post (
+    id: Uuid,
+    uid: i32,
+    state_pool: State<PgPool>,
+) -> Result<Option<i32>, Box<dyn Error>> {
+    let Some(pending_post) = pending_post_with_id(
+	id,
+	state_pool.clone(),
+    ).await? else {
+	return Ok(None)
+    };
+
+    let pending_post_id = pending_post.id;
+
+    let posted_id = if pending_post.is_thread {
+	confirm_thread(
+	    pending_post,
+	    uid,
+	    state_pool.clone(),
+	).await?
+    } else {
+	confirm_reply(
+	    pending_post,
+	    uid,
+	    state_pool.clone(),
+	).await?
+    };
+
+    delete_pending_post(
+	pending_post_id,
+	state_pool,
+    ).await?;
+
+    Ok(Some(posted_id))
+}
+
+async fn confirm_thread (
+    pending_post: PendingPost,
+    uid: i32,
+    State(pool): State<PgPool>,
+) -> Result<i32, Box<dyn Error>> {
+    let query = "\
+    INSERT INTO thread (uid, subject, comment, board) \
+    VALUES ($1, $2, $3, $4) \
+    RETURNING id \
+    ";
+
+    let id: i32 = sqlx::query_scalar(query)
+	.bind(uid)
+	.bind(pending_post.subject)
+	.bind(pending_post.comment)
+	.bind(pending_post.board)
+	.fetch_one(&pool)
+	.await?;
+
+    Ok(id)
+}
+
+async fn confirm_reply (
+    pending_post: PendingPost,
+    uid: i32,
+    State(pool): State<PgPool>,
+) -> Result<i32, Box<dyn Error>> {
+    let query = "\
+    INSERT INTO reply (uid, tid, comment) \
+    VALUES ($1, $2, $3) \
+    RETURNING id \
+    ";
+
+    let id: i32 = sqlx::query_scalar(query)
+	.bind(uid)
+	.bind(pending_post.tid)
+	.bind(pending_post.comment)
+	.fetch_one(&pool)
+	.await?;
+
+    Ok(id)
+}
+
+pub async fn delete_pending_post (
+    id: Uuid,
+    State(pool): State<PgPool>,
+) -> Result<(), Box<dyn Error>> {
+    let q = "\
+    DELETE FROM PendingPost \
+    WHERE id = $1 \
+    ";
+
+    sqlx::query(q)
+	.bind(id)
+	.execute(&pool)
+	.await?;
+
+    Ok(())
 }

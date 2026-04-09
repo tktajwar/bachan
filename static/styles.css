@@ -319,3 +319,17 @@ h1 {
 #notice-msg a {
     color: var(--dgreen);
 }
+
+.mod,
+.submission {
+    background-color: var(--wgreen);
+    max-width: 700px;
+    margin: auto;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+}
+
+.mod form,
+.submission form {
+    padding: 13px 20px;
+}

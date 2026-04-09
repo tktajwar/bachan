@@ -18,5 +18,8 @@ pub use mod_handlers::*;
 pub mod token_handlers;
 pub use token_handlers::*;
 
+pub mod submission_handlers;
+pub use submission_handlers::*;
+
 pub mod fallback_handler;
 pub use fallback_handler::*;

@@ -42,6 +42,10 @@ async fn main() {
 	    "/register/{token_id}",
 	    get(register_id_page).post(registeration_submission),
 	)
+	.route(
+	    "/submission/{id}",
+	    get(submission_id_page).post(confirmation_submission),
+	)
 	.route("/favicon.ico", get(|| async {
 	    Redirect::permanent("static/favicon.ico")
 	}))

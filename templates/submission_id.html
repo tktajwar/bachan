@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রকাশনা জমা দিন - বাchan</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://kit.fontawesome.com/9187eb4d30.js"
+	    crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <header>
+      <h1 id="submission-title">
+	<center>প্রকাশনা জমা দিন</center>
+      </h1>
+    </header>
+
+    <div class="thread-container">
+      <div class="thread-body">
+	<u>
+	  <h3 class="thread-headline">{{pending_post.subject}}</h3>
+	</u>
+	<div class="thread-comment">{{pending_post.comment|safe}}</div>
+      </div>
+    </div>
+
+    <div class="submission">
+      <form id="submission-form" action="/submission/{{pending_post.id}}"
+	    method="POST">
+
+	আপনি নিশ্চিত হলে প্রকাশনাটি জমা দিন।<br/>
+	<button type="submit">জমা দিন</button>
+
+      </form>
+    </div>
+
+  </body>
+</html>
