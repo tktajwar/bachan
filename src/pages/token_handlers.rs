@@ -29,7 +29,7 @@ use crate::template::{
 };
 
 pub async fn token_page () -> Result<Html<String>, axum::http::StatusCode> {
-    let mut ctx = tera::Context::new();
+    let ctx = tera::Context::new();
 
     let rendered = TERA.render("mod_token.html", &ctx);
     let content = match rendered {
