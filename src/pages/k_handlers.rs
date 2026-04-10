@@ -7,6 +7,7 @@ use axum::{
     Form,
     response::{
 	Html,
+	IntoResponse,
 	Redirect,
     },
 };
@@ -14,15 +15,20 @@ use std::error::Error;
 use std::net::SocketAddr;
 use sqlx::PgPool;
 
+use crate::{
+    INTERNAL_SERVER_ERROR_REPLY,
+    USER_SUSPENDED_REPLY,
+};
 use crate::forms::ReplyForm;
 use crate::template::{
     TERA,
 };
 use crate::helper::{
+    Thread,
     ThreadSerializable,
     create_reply,
     hashed,
-    Thread,
+    number_of_pending_posts_in_last_hour,
 };
 use crate::moderation::is_user_suspended;
 
@@ -181,22 +187,62 @@ pub async fn reply_submission(
     Path(tid_hex): Path<String>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Form(reply_form): Form<ReplyForm>,
-) -> Result<Redirect, axum::http::StatusCode> {
+) -> impl IntoResponse {
     let Ok(tid_u32) = u32::from_str_radix(&tid_hex, 16) else {
-	return Err(axum::http::StatusCode::BAD_REQUEST)
+	return Err(
+	    (
+		axum::http::StatusCode::BAD_REQUEST,
+		"অবৈধ আর্টিকেল আইডি! অনুগ্রহ করে আপনার URL পুনরায় যাচাই করুন।",
+	    )
+	)
     };
     let tid = tid_u32 as i32;
 
     let uid = hashed(addr.ip());
 
     match is_user_suspended(uid, state_pool.clone()).await {
-	Ok(true) => return Err(axum::http::StatusCode::FORBIDDEN),
+	Ok(true) => return Err(
+	    (
+		axum::http::StatusCode::FORBIDDEN,
+		USER_SUSPENDED_REPLY,
+	    )
+	),
 	Ok(false) => (),
 	Err(e) => {
 	    eprintln!("Error checking user suspension: {}", e);
-	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	    return Err(
+		(
+		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
 	},
     }
+
+    let number_of_posts_by_user = match number_of_pending_posts_in_last_hour(
+	uid,
+	state_pool.clone(),
+    ).await {
+	Ok(number) => number,
+	Err(e) => {
+	    eprintln!("Error checking user pending posts number: {}", e);
+	    return Err(
+		(
+		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
+	},
+    };
+    if number_of_posts_by_user > 10 {
+	return Err(
+	    (
+		axum::http::StatusCode::TOO_MANY_REQUESTS,
+		"আপনার গত এক ঘণ্টায় অনেক অনির্বাচিত পোস্ট রয়েছে। পুনরায় পোস্ট \
+		 করার আগে অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।",
+	    )
+	)
+    };
 
     match create_reply(
 	uid,
@@ -209,7 +255,12 @@ pub async fn reply_submission(
 	},
 	Err(e) => {
 	    eprintln!("Error submitting reply: {}", e);
-	    Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	    Err(
+		(
+		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
 	}
     }
 }

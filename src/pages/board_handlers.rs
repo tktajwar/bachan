@@ -7,6 +7,7 @@ use axum::{
     },
     response::{
 	Html,
+	IntoResponse,
 	Redirect,
     },
 };
@@ -15,6 +16,10 @@ use std::error::Error;
 use std::net::SocketAddr;
 use uuid::Uuid;
 
+use crate::{
+    INTERNAL_SERVER_ERROR_REPLY,
+    USER_SUSPENDED_REPLY,
+};
 use crate::forms::ThreadForm;
 use crate::helper::{
     Thread,
@@ -23,6 +28,7 @@ use crate::helper::{
     get_board_ctx,
     hashed,
     list_of_boards,
+    number_of_pending_posts_in_last_hour,
 };
 use crate::moderation::is_user_suspended;
 use crate::template::*;
@@ -135,17 +141,52 @@ pub async fn board_x_submission (
     Path(boardname): Path<String>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Form(thread_form): Form<ThreadForm>,
-) -> Result<Redirect, axum::http::StatusCode> {
+) -> impl IntoResponse {
     let uid = hashed(addr.ip());
 
     match is_user_suspended(uid, state_pool.clone()).await {
-	Ok(true) => return Err(axum::http::StatusCode::FORBIDDEN),
+	Ok(true) => return Err(
+	    (
+		axum::http::StatusCode::FORBIDDEN,
+		USER_SUSPENDED_REPLY,
+	    ),
+	),
 	Ok(false) => (),
 	Err(e) => {
 	    eprintln!("Error checking user suspension: {}", e);
-	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	    return Err(
+		(
+		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
 	},
     }
+
+    let number_of_posts_by_user = match number_of_pending_posts_in_last_hour(
+	uid,
+	state_pool.clone(),
+    ).await {
+	Ok(number) => number,
+	Err(e) => {
+	    eprintln!("Error checking user pending posts number: {}", e);
+	    return Err(
+		(
+		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
+	},
+    };
+    if number_of_posts_by_user > 10 {
+	return Err(
+	    (
+		axum::http::StatusCode::TOO_MANY_REQUESTS,
+		"আপনার গত এক ঘণ্টায় অনেক অনির্বাচিত পোস্ট রয়েছে। পুনরায় পোস্ট \
+		 করার আগে অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।",
+	    )
+	)
+    };
 
     match board_submission(
 	state_pool,
@@ -158,7 +199,12 @@ pub async fn board_x_submission (
 	},
 	Err(e) => {
 	    eprintln!("Error submitting thread: {}", e);
-	    Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	    Err(
+		(
+		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
 	},
     }
 }
