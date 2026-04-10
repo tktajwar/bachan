@@ -58,6 +58,14 @@
 	    </ul>
 	  </div>
 	  <div class="column">
+	    <h3>Local</h3>
+	    <ul>
+	      {% for board in local %}
+	      <li><a href="{{board.url}}/">{{board.label}}</a></li>
+	      {% endfor %}
+	    </ul>
+	  </div>
+	  <div class="column">
 	    <h3>Misc</h3>
 	    <ul>
 	      {% for board in misc %}

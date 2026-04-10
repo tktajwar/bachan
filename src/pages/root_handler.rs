@@ -40,6 +40,14 @@ pub async fn root_page(
     );
     ctx.insert("lifestyle", &lifestyle);
 
+    let local = boards_in_category(
+	"Local",
+	pool_state.clone(),
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("local", &local);
+
     let misc = boards_in_category(
 	"Misc",
 	pool_state.clone(),
