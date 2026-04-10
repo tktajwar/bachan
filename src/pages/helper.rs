@@ -522,6 +522,7 @@ pub async fn top_threads (
     FROM thread t \
     LEFT JOIN reply r ON r.tid = t.id \
     WHERE t.redacted = false \
+    AND t.board <> 'g' \
     GROUP BY t.id \
     ORDER BY mtime desc \
     LIMIT 3 \
