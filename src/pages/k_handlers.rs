@@ -19,49 +19,22 @@ use crate::{
     INTERNAL_SERVER_ERROR_REPLY,
     USER_SUSPENDED_REPLY,
 };
-use crate::forms::ReplyForm;
+use crate::forms::{
+    PaginationID,
+    ReplyForm,
+};
 use crate::template::{
     TERA,
 };
 use crate::helper::{
     Thread,
     ThreadSerializable,
+    paginated_threads,
     create_reply,
     hashed,
     number_of_pending_posts_in_last_hour,
 };
 use crate::moderation::is_user_suspended;
-
-async fn all_threads(
-    pool: PgPool,
-) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
-    let q = "\
-    SELECT \
-    t.id, \
-    t.uid, \
-    t.subject, \
-    t.comment, \
-    t.board, \
-    t.ctime, \
-    t.mtime, \
-    t.redacted, \
-    COUNT(r.id) AS reply_count \
-    FROM thread t \
-    LEFT JOIN reply r ON r.tid = t.id \
-    GROUP BY t.id \
-    ORDER BY t.id desc \
-    ";
-
-    let threads: Vec<Thread> = sqlx::query_as::<_, Thread>(q)
-	.fetch_all(&pool)
-	.await?;
-
-    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
-        .map(Thread::into_serializable)
-        .collect();
-
-    Ok(serializable_threads)
-}
 
 async fn thread_with_id(
     id: i32,
@@ -113,16 +86,32 @@ async fn thread_with_reply_id(
     Ok(thread_id.0)
 }
 
-pub async fn k_page(
-    State(pool): State<PgPool>,
+pub async fn k_page (
+    state_pool: State<PgPool>,
+    pagination: axum::extract::Query<PaginationID>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
-    let threads = all_threads(
-	pool,
+
+    let before = if let Some(id_hex) = &pagination.before {
+	let Ok(id) = i32::from_str_radix(&id_hex, 16) else {
+	    return Err(axum::http::StatusCode::BAD_REQUEST)
+	};
+	Some(id)
+    } else {
+	None
+    };
+
+    let (threads, has_more) = paginated_threads(
+	before,
+	state_pool,
     ).await.unwrap_or(
-	vec![]
+	(vec![], false)
     );
     ctx.insert("threads", &threads);
+    ctx.insert("has_more", &has_more);
+    if let Some(last_thread) = threads.last() {
+	ctx.insert("last_thread_id", &last_thread.id);
+    }
 
     let rendered = TERA.render("k.html", &ctx);
     let content = match rendered {

@@ -733,3 +733,69 @@ pub async fn number_of_replies_in_last_hour (
 
     Ok(number)
 }
+
+pub async fn paginated_threads (
+    before_id_optional: Option<i32>,
+    State(pool): State<PgPool>,
+) -> Result<(Vec<ThreadSerializable>, bool), Box<dyn Error>> {
+    let threads: Vec<Thread> = {
+	if let Some(before_id) = before_id_optional {
+	    let q = "\
+	    SELECT \
+	    t.id, \
+	    t.uid, \
+	    t.subject, \
+	    t.comment, \
+	    t.board, \
+	    t.ctime, \
+	    t.mtime, \
+	    t.redacted, \
+	    COUNT(r.id) AS reply_count \
+	    FROM thread t \
+	    LEFT JOIN reply r ON r.tid = t.id \
+	    WHERE t.id < $1 \
+	    GROUP BY t.id \
+	    ORDER BY t.id desc \
+	    LIMIT 21 \
+	    ";
+
+	    sqlx::query_as::<_, Thread>(q)
+		.bind(before_id)
+		.fetch_all(&pool)
+		.await?
+	} else {
+	    let q = "\
+	    SELECT \
+	    t.id, \
+	    t.uid, \
+	    t.subject, \
+	    t.comment, \
+	    t.board, \
+	    t.ctime, \
+	    t.mtime, \
+	    t.redacted, \
+	    COUNT(r.id) AS reply_count \
+	    FROM thread t \
+	    LEFT JOIN reply r ON r.tid = t.id \
+	    GROUP BY t.id \
+	    ORDER BY t.id desc \
+	    LIMIT 21 \
+	    ";
+
+	    sqlx::query_as::<_, Thread>(q)
+		.fetch_all(&pool)
+		.await?
+	}
+    };
+
+    let mut serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
+        .map(Thread::into_serializable)
+        .collect();
+
+    let has_more = serializable_threads.len() > 20;
+    if has_more {
+	serializable_threads.pop();
+    }
+
+    Ok((serializable_threads, has_more))
+}

@@ -36,3 +36,8 @@ pub struct RegisterationForm {
     pub username: String,
     pub passphrase: String,
 }
+
+#[derive(Deserialize)]
+pub struct PaginationID {
+    pub before: Option<String>,
+}
