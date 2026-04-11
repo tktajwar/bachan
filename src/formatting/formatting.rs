@@ -56,7 +56,7 @@ fn embed(input: &str) -> String {
 	r"\[\[((?:http|https|ftp)://.+?(?i:(?:jpeg|jpg|png|webp|gif)))\]\]"
     ).unwrap();
 
-    if re.find_iter(input).count() > 5 {
+    if re.find_iter(input).count() > 10 {
 	return input.to_string()
     }
 
