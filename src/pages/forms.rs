@@ -42,3 +42,9 @@ pub struct PaginationWithID {
     pub limit: Option<i32>,
     pub before_id: Option<String>,
 }
+
+#[derive(Deserialize)]
+pub struct PaginationWithMTime {
+    pub limit: Option<i32>,
+    pub before_mtime: Option<i64>,
+}

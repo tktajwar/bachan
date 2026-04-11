@@ -20,7 +20,10 @@ use crate::{
     INTERNAL_SERVER_ERROR_REPLY,
     USER_SUSPENDED_REPLY,
 };
-use crate::forms::ThreadForm;
+use crate::forms::{
+    PaginationWithMTime,
+    ThreadForm,
+};
 use crate::helper::{
     Thread,
     ThreadSerializable,
@@ -29,47 +32,14 @@ use crate::helper::{
     hashed,
     list_of_boards,
     number_of_pending_posts_in_last_hour,
+    paginated_board_threads,
 };
 use crate::moderation::is_user_suspended;
 use crate::template::*;
 
-pub async fn board_threads(
-    board: &str,
-    State(pool): State<PgPool>,
-) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
-    let q = "\
-    SELECT \
-    t.id, \
-    t.uid, \
-    t.subject, \
-    t.comment, \
-    t.board, \
-    t.ctime, \
-    t.mtime, \
-    t.redacted, \
-    COUNT(r.id) AS reply_count \
-    FROM thread t \
-    LEFT JOIN reply r ON r.tid = t.id \
-    WHERE t.board = $1 \
-    AND t.redacted = false \
-    GROUP BY t.id \
-    ORDER BY mtime desc \
-    ";
-
-    let threads = sqlx::query_as::<_, Thread>(q)
-	.bind(board)
-	.fetch_all(&pool)
-	.await?;
-
-    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
-        .map(Thread::into_serializable)
-        .collect();
-
-    Ok(serializable_threads)
-}
-
 async fn board_page (
     state_pool: State<PgPool>,
+    pagination: axum::extract::Query<PaginationWithMTime>,
     url: &str,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
@@ -89,13 +59,21 @@ async fn board_page (
     );
     ctx.insert("boards", &boards);
 
-    let threads = board_threads (
+    let (threads, has_more, limit, last_mtime) = paginated_board_threads (
+	pagination.before_mtime,
+	pagination.limit,
 	url,
 	state_pool,
     ).await.unwrap_or(
-	vec![]
+	(vec![], false, 0, 0)
     );
     ctx.insert("threads", &threads);
+
+    ctx.insert("threads", &threads);
+    ctx.insert("has_more", &has_more);
+    ctx.insert("last_mtime", &last_mtime);
+    ctx.insert("limit", &limit);
+
 
     let rendered = TERA.render("board.html", &ctx);
     let content = match rendered {
@@ -129,9 +107,11 @@ async fn board_submission(
 pub async fn board_x_page (
     state_pool: State<PgPool>,
     Path(url): Path<String>,
-) -> Result<Html<String>, axum::http::StatusCode> {
+    pagination: axum::extract::Query<PaginationWithMTime>,
+) -> impl IntoResponse {
     board_page(
 	state_pool,
+	pagination,
 	&url,
     ).await
 }

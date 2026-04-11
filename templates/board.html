@@ -37,6 +37,19 @@
 	<p> এই বোর্ডে এখনো কোনো কথোপকথন হয়নি। </p>
 	{% endfor %}
       </div>
+      <div id="load-more"><center>
+	  {% if has_more %}
+	  <div class="btn">
+	    <a href="/{{board.url}}/?limit={{limit}}&before_mtime={{last_mtime}}"
+	       style="text-decoration:none;
+		      color:black;">
+	      পরবর্তী পৃষ্ঠা
+	    </a>
+	  </div>
+	  {% else %}
+	  শেষ পৃষ্ঠা
+	  {% endif %}
+      </center></div>
     </main>
     <script src="/static/new_thread.js"></script>
     <script src="/static/format_local_time.js"></script>

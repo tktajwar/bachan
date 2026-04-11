@@ -6,6 +6,7 @@ use std::net::IpAddr;
 use sqlx::{
     PgPool,
     types::chrono,
+    types::chrono::DateTime,
 };
 use uuid::Uuid;
 
@@ -808,4 +809,89 @@ pub async fn paginated_threads (
     }
 
     Ok((serializable_threads, has_more, limit))
+}
+
+pub async fn paginated_board_threads (
+    before_mtime_optional: Option<i64>,
+    limit_opt: Option<i32>,
+    board: &str,
+    State(pool): State<PgPool>,
+) -> Result<(Vec<ThreadSerializable>, bool, i32, i64), Box<dyn Error>> {
+    let limit = match limit_opt {
+	Some(limit) => limit,
+	None => 20,
+    };
+
+    let mut threads = if let Some(before_mtime) = before_mtime_optional {
+	let q = "\
+	SELECT \
+	t.id, \
+	t.uid, \
+	t.subject, \
+	t.comment, \
+	t.board, \
+	t.ctime, \
+	t.mtime, \
+	t.redacted, \
+	COUNT(r.id) AS reply_count \
+	FROM thread t \
+	LEFT JOIN reply r ON r.tid = t.id \
+	WHERE t.board = $1 \
+	AND t.redacted = false \
+	AND t.mtime < $2
+	GROUP BY t.id \
+	ORDER BY mtime desc \
+	LIMIT $3 \
+	";
+
+	sqlx::query_as::<_, Thread>(q)
+	    .bind(board)
+	    .bind(DateTime::from_timestamp(before_mtime, 0))
+	    .bind(limit+1)
+	    .fetch_all(&pool)
+	    .await?
+    } else {
+	let q = "\
+	SELECT \
+	t.id, \
+	t.uid, \
+	t.subject, \
+	t.comment, \
+	t.board, \
+	t.ctime, \
+	t.mtime, \
+	t.redacted, \
+	COUNT(r.id) AS reply_count \
+	FROM thread t \
+	LEFT JOIN reply r ON r.tid = t.id \
+	WHERE t.board = $1 \
+	AND t.redacted = false \
+	GROUP BY t.id \
+	ORDER BY mtime desc \
+	LIMIT $2 \
+	";
+
+	sqlx::query_as::<_, Thread>(q)
+	    .bind(board)
+	    .bind(limit+1)
+	    .fetch_all(&pool)
+	    .await?
+    };
+
+    let has_more = threads.len() > limit as usize;
+    if has_more {
+	threads.pop();
+    }
+
+    let last_mtime = if threads.len() > 0 {
+	threads.last().unwrap().mtime.and_utc().timestamp()
+    } else {
+	0
+    };
+
+    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
+        .map(Thread::into_serializable)
+        .collect();
+
+    Ok((serializable_threads, has_more, limit, last_mtime))
 }
