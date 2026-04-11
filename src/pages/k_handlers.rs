@@ -20,7 +20,7 @@ use crate::{
     USER_SUSPENDED_REPLY,
 };
 use crate::forms::{
-    PaginationID,
+    PaginationWithID,
     ReplyForm,
 };
 use crate::template::{
@@ -88,11 +88,11 @@ async fn thread_with_reply_id(
 
 pub async fn k_page (
     state_pool: State<PgPool>,
-    pagination: axum::extract::Query<PaginationID>,
+    pagination: axum::extract::Query<PaginationWithID>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
 
-    let before = if let Some(id_hex) = &pagination.before {
+    let before = if let Some(id_hex) = &pagination.before_id {
 	let Ok(id) = i32::from_str_radix(&id_hex, 16) else {
 	    return Err(axum::http::StatusCode::BAD_REQUEST)
 	};
@@ -101,17 +101,19 @@ pub async fn k_page (
 	None
     };
 
-    let (threads, has_more) = paginated_threads(
+    let (threads, has_more, limit) = paginated_threads(
 	before,
+	pagination.limit,
 	state_pool,
     ).await.unwrap_or(
-	(vec![], false)
+	(vec![], false, 0)
     );
     ctx.insert("threads", &threads);
     ctx.insert("has_more", &has_more);
     if let Some(last_thread) = threads.last() {
 	ctx.insert("last_thread_id", &last_thread.id);
     }
+    ctx.insert("limit", &limit);
 
     let rendered = TERA.render("k.html", &ctx);
     let content = match rendered {

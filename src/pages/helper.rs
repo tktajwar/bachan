@@ -738,8 +738,14 @@ pub async fn number_of_replies_in_last_hour (
 
 pub async fn paginated_threads (
     before_id_optional: Option<i32>,
+    limit_opt: Option<i32>,
     State(pool): State<PgPool>,
-) -> Result<(Vec<ThreadSerializable>, bool), Box<dyn Error>> {
+) -> Result<(Vec<ThreadSerializable>, bool, i32), Box<dyn Error>> {
+    let limit = match limit_opt {
+	Some(limit) => limit,
+	None => 20,
+    };
+
     let threads: Vec<Thread> = {
 	if let Some(before_id) = before_id_optional {
 	    let q = "\
@@ -758,11 +764,12 @@ pub async fn paginated_threads (
 	    WHERE t.id < $1 \
 	    GROUP BY t.id \
 	    ORDER BY t.id desc \
-	    LIMIT 21 \
+	    LIMIT $2 \
 	    ";
 
 	    sqlx::query_as::<_, Thread>(q)
 		.bind(before_id)
+		.bind(limit+1)
 		.fetch_all(&pool)
 		.await?
 	} else {
@@ -781,10 +788,11 @@ pub async fn paginated_threads (
 	    LEFT JOIN reply r ON r.tid = t.id \
 	    GROUP BY t.id \
 	    ORDER BY t.id desc \
-	    LIMIT 21 \
+	    LIMIT $1 \
 	    ";
 
 	    sqlx::query_as::<_, Thread>(q)
+		.bind(limit+1)
 		.fetch_all(&pool)
 		.await?
 	}
@@ -794,10 +802,10 @@ pub async fn paginated_threads (
         .map(Thread::into_serializable)
         .collect();
 
-    let has_more = serializable_threads.len() > 20;
+    let has_more = serializable_threads.len() > limit as usize;
     if has_more {
 	serializable_threads.pop();
     }
 
-    Ok((serializable_threads, has_more))
+    Ok((serializable_threads, has_more, limit))
 }

@@ -38,6 +38,7 @@ pub struct RegisterationForm {
 }
 
 #[derive(Deserialize)]
-pub struct PaginationID {
-    pub before: Option<String>,
+pub struct PaginationWithID {
+    pub limit: Option<i32>,
+    pub before_id: Option<String>,
 }
