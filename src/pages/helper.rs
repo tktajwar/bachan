@@ -506,6 +506,7 @@ pub async fn top_announcements (
 }
 
 pub async fn top_threads (
+    limit: i32,
     State(pool): State<PgPool>,
 ) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
     let q = "\
@@ -525,10 +526,11 @@ pub async fn top_threads (
     AND t.board <> 'g' \
     GROUP BY t.id \
     ORDER BY mtime desc \
-    LIMIT 3 \
+    LIMIT $1 \
     ";
 
     let threads = sqlx::query_as::<_, Thread>(q)
+	.bind(limit)
 	.fetch_all(&pool)
 	.await?;
 
