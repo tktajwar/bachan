@@ -52,9 +52,12 @@ fn enref(input: &str) -> String {
 }
 
 fn embed(input: &str) -> String {
-    let re = Regex::new(
-	r"\[\[((?:http|https|ftp)://.+?(?i:(?:jpeg|jpg|png|webp|gif)))\]\]"
-    ).unwrap();
+    let re = Regex::new(concat!(
+	r"\[",
+	r"\[((?:http|https|ftp)://.+?(?i:(?:jpeg|jpg|png|webp|gif)))\]",
+	r"(?:\[([^\n]+)?\])?",
+	r"\]",
+    )).unwrap();
 
     if re.find_iter(input).count() > 10 {
 	return input.to_string()
@@ -62,7 +65,12 @@ fn embed(input: &str) -> String {
 
     re.replace_all(
 	input,
-	r#"<img class="img-comment" src="$1" alt="$1" />"#
+	concat!(
+	    r#"<figure class="fig-comment">"#,
+	    r#"<img src="$1" alt="$1" class="img-comment">"#,
+	    r#"<figcaption>$2</figcaption>"#,
+	    r"</figure>",
+	),
     ).to_string()
 }
 
