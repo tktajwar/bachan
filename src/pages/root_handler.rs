@@ -71,7 +71,7 @@ pub async fn root_page(
     );
     ctx.insert("announcements", &announcements);
 
-    let rendered = TERA.render("index.html", &ctx);
+    let rendered = TERA.render("root.html", &ctx);
     let content = match rendered {
 	Ok(s) => s,
 	Err(_) => {
