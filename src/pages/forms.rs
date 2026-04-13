@@ -48,3 +48,8 @@ pub struct PaginationWithMTime {
     pub limit: Option<i32>,
     pub before_mtime: Option<i64>,
 }
+
+#[derive(Deserialize)]
+pub struct SubmissionForm {
+    pub action: String,
+}

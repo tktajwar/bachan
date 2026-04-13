@@ -1,4 +1,5 @@
 use axum::{
+    Form,
     extract::{
 	ConnectInfo,
 	Path,
@@ -19,8 +20,10 @@ use crate::{
     INTERNAL_SERVER_ERROR_REPLY,
     USER_SUSPENDED_REPLY,
 };
+use crate::forms::SubmissionForm;
 use crate::helper::{
     confirm_post,
+    delete_pending_post,
     hashed,
     number_of_replies_in_last_hour,
     number_of_threads_in_last_hour,
@@ -84,6 +87,7 @@ pub async fn confirmation_submission (
     state_pool: State<PgPool>,
     Path(id): Path<Uuid>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    Form(submission): Form<SubmissionForm>,
 ) -> impl IntoResponse {
     let uid = hashed(addr.ip());
 
@@ -106,6 +110,23 @@ pub async fn confirmation_submission (
 	},
     }
 
+    match submission.action.as_str() {
+	"submit" => Ok(confirm_submission(state_pool, id, uid).await),
+	"cancel" => Ok(cancel_submission(state_pool, id).await),
+	_ =>  Err(
+	    (
+		StatusCode::BAD_REQUEST,
+		"ERROR 400: Bad Request! Invalid 'Action' value.",
+	    )
+	),
+    }
+}
+
+async fn confirm_submission (
+    state_pool: State<PgPool>,
+    id: Uuid,
+    uid: i32,
+) -> Result<Redirect, (StatusCode, &'static str)> {
     let number_of_threads_by_user = match number_of_threads_in_last_hour(
 	uid,
 	state_pool.clone(),
@@ -185,5 +206,23 @@ pub async fn confirmation_submission (
 
     Ok(Redirect::to(
 	&format!("/k/{}", tid_hex)
+    ))
+}
+
+async fn cancel_submission (
+    state_pool: State<PgPool>,
+    id: Uuid,
+) -> Result<Redirect, (StatusCode, &'static str)> {
+    let Ok(_) = delete_pending_post(id, state_pool).await else {
+	return Err(
+	    (
+		StatusCode::INTERNAL_SERVER_ERROR,
+		INTERNAL_SERVER_ERROR_REPLY,
+	    )
+	)
+    };
+
+    Ok(Redirect::to(
+	"/"
     ))
 }
