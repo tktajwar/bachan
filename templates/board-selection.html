@@ -1,0 +1,35 @@
+<select for="বোর্ড" required>
+  <option disabled selected value>একটি বোর্ড নির্বাচন করুন</option>
+  <option disabled> -- misc -- </option>
+  {% for board in misc %}
+  {% if board.url != 'g' %}
+  <option value="{{board.url}}">
+    /{{board.url}}/ {{board.label}}
+  </option>
+  {% endif %}
+  {% endfor %}
+  <option disabled> -- hobbies -- </option>
+  {% for board in hobbies %}
+  <option value="{{board.url}}">
+    /{{board.url}}/ {{board.label}}
+  </option>
+  {% endfor %}
+  <option disabled> -- interests -- </option>
+  {% for board in interests %}
+  <option value="{{board.url}}">
+    /{{board.url}}/ {{board.label}}
+  </option>
+  {% endfor %}
+  <option disabled> -- lifestyle -- </option>
+  {% for board in lifestyle %}
+  <option value="{{board.url}}">
+    /{{board.url}}/ {{board.label}}
+  </option>
+  {% endfor %}
+  <option disabled> -- local -- </option>
+  {% for board in local %}
+  <option value="{{board.url}}">
+    /{{board.url}}/ {{board.label}}
+  </option>
+  {% endfor %}
+</select>
