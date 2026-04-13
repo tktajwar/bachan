@@ -30,7 +30,7 @@ async fn main() {
 	.expect("Couldn't do database migration.");
 
     let app = Router::new()
-	.route("/", get(root_page))
+	.route("/", get(root_page).post(thread_submission))
 	.route("/k/", get(k_page))
 	.route("/k", get(|| async {Redirect::to("/k/")}))
 	.route("/k/{tid_hex}", get(k_thread_page).post(reply_submission))

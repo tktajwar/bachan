@@ -25,8 +25,6 @@ use crate::forms::{
     ThreadForm,
 };
 use crate::helper::{
-    Thread,
-    ThreadSerializable,
     create_thread,
     get_board_ctx,
     hashed,
@@ -87,7 +85,7 @@ async fn board_page (
     Ok(Html(content))
 }
 
-async fn board_submission(
+pub async fn board_submission(
     state_pool: State<PgPool>,
     uid: i32,
     thread_form: ThreadForm,
