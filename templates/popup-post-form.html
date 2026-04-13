@@ -1,0 +1,34 @@
+<div id="postPopup">
+  <input id="closePopupThreadButton" class="btn"
+	 type="button" value="বন্ধ করুন" title="close"
+	 />
+  <div class="container">
+    <table id="postForm"><form method="post">
+	<tbody>
+	  <tr>
+	    <td title="Subject">
+	      বিষয়
+	    </td>
+	    <td>
+	      <input name="subject" type="text" style="width:300px;
+						       min-height:30px;
+						       font-weight:bold;"
+		     required />
+	      <input class="btn" name="submit" type="submit" value="জমা দিন"
+		     title="Submit"/>
+	    </td>
+	  <tr>
+	    <td title="Comment">
+	      মন্তব্য
+	    </td>
+	    <td>
+	      <textarea name="comment" cols="48" rows="4"
+			maxlength="4096" style="width: 385px;
+						height: 200px;" required ></textarea>
+	    </td>
+	  </tr>
+	</tbody>
+    </form></table>
+    {% include "formatting-guide-tables.html" %}
+  </div>
+</div>

@@ -39,6 +39,8 @@
 	  />
 
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/button.css">
+    <link rel="stylesheet" href="/static/popup.css">
     <script src="https://kit.fontawesome.com/9187eb4d30.js"
 	    crossorigin="anonymous"></script>
   </head>
@@ -46,6 +48,12 @@
     <header>
       <h1><center><a href="/" id="logo">বাchan</a></center></h1>
       {% include "notice.html" %}
+      <center>
+	<input id="popupThreadButton" class="btn" type="button"
+	       value="নতুন কিছু বলুন" title="add something new"
+	       />
+      </center>
+      {% include "popup-post-form.html" %}
     </header>
     <main>
       <div id="boards">
@@ -120,6 +128,7 @@
 
       </div>
     </main>
+    <script src="/static/popup.js"></script>
     <script src="/static/format_local_time.js"></script>
   </body>
 </html>

@@ -7,6 +7,13 @@ pub struct ThreadForm {
 }
 
 #[derive(Deserialize)]
+pub struct PopupThreadForm {
+    pub subject: String,
+    pub comment: String,
+    pub board: String,
+}
+
+#[derive(Deserialize)]
 pub struct ReplyForm {
     pub comment: String,
 }
