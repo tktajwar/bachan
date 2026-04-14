@@ -125,7 +125,7 @@ pub async fn confirmation_submission (
 async fn confirm_submission (
     state_pool: State<PgPool>,
     id: Uuid,
-    uid: i32,
+    uid: i64,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
     let number_of_threads_by_user = match number_of_threads_in_last_hour(
 	uid,

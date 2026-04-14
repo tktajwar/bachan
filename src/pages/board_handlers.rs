@@ -87,7 +87,7 @@ async fn board_page (
 
 pub async fn board_submission(
     state_pool: State<PgPool>,
-    uid: i32,
+    uid: i64,
     thread_form: ThreadForm,
     boardname: &str,
 ) -> Result<Uuid, Box<dyn Error>> {

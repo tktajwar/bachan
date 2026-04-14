@@ -15,7 +15,7 @@ use crate::formatting;
 #[derive(sqlx::FromRow)]
 pub struct Thread {
     pub id: i32,
-    pub uid: i32,
+    pub uid: i64,
     pub subject: String,
     pub comment: String,
     pub board: String,
@@ -28,7 +28,7 @@ pub struct Thread {
 #[derive(sqlx::FromRow)]
 pub struct ThreadLight {
     pub id: i32,
-    pub uid: i32,
+    pub uid: i64,
     pub subject: String,
     pub comment: String,
     pub ctime: chrono::NaiveDateTime,
@@ -38,7 +38,7 @@ pub struct ThreadLight {
 #[derive(sqlx::FromRow)]
 pub struct Reply {
     pub id: i32,
-    pub uid: i32,
+    pub uid: i64,
     pub tid: i32,
     pub comment: String,
     pub ctime: chrono::NaiveDateTime,
@@ -48,7 +48,7 @@ pub struct Reply {
 #[derive(sqlx::FromRow)]
 pub struct ReplyLight {
     pub id: i32,
-    pub uid: i32,
+    pub uid: i64,
     pub tid: i32,
     pub comment: String,
     pub ctime: chrono::NaiveDateTime,
@@ -237,16 +237,15 @@ pub struct Board {
     pub label: String,
 }
 
-pub fn hashed(ip: IpAddr) -> i32 {
+pub fn hashed(ip: IpAddr) -> i64 {
     let mut hasher = DefaultHasher::new();
 
     ip.hash(&mut hasher);
-    crate::SECRET_NUMBER.hash(&mut hasher);
 
-    hasher.finish() as i32
+    hasher.finish() as i64
 }
 
-pub fn utid(uid: i32, tid: i32) -> String {
+pub fn utid(uid: i64, tid: i32) -> String {
     let mut hasher = DefaultHasher::new();
 
     uid.hash(&mut hasher);
@@ -298,7 +297,7 @@ pub async fn thread_or_reply_with_id(
 }
 
 pub async fn create_thread (
-    uid: i32,
+    uid: i64,
     subject: &str,
     comment: &str,
     board: String,
@@ -354,7 +353,7 @@ pub async fn thread_replies(
 }
 
 pub async fn create_reply (
-    uid: i32,
+    uid: i64,
     tid: i32,
     comment: &str,
     State(pool): State<PgPool>,
@@ -588,7 +587,7 @@ pub async fn pending_post_with_id (
 
 pub async fn confirm_post (
     id: Uuid,
-    uid: i32,
+    uid: i64,
     state_pool: State<PgPool>,
 ) -> Result<Option<i32>, Box<dyn Error>> {
     let Some(pending_post) = pending_post_with_id(
@@ -624,7 +623,7 @@ pub async fn confirm_post (
 
 async fn confirm_thread (
     pending_post: PendingPost,
-    uid: i32,
+    uid: i64,
     State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let query = "\
@@ -646,7 +645,7 @@ async fn confirm_thread (
 
 async fn confirm_reply (
     pending_post: PendingPost,
-    uid: i32,
+    uid: i64,
     State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let query = "\
@@ -683,7 +682,7 @@ pub async fn delete_pending_post (
 }
 
 pub async fn number_of_pending_posts_in_last_hour (
-    uid: i32,
+    uid: i64,
     State(pool): State<PgPool>,
 ) -> Result<i64, Box<dyn Error>> {
     let q = "
@@ -702,7 +701,7 @@ pub async fn number_of_pending_posts_in_last_hour (
 }
 
 pub async fn number_of_threads_in_last_hour (
-    uid: i32,
+    uid: i64,
     State(pool): State<PgPool>,
 ) -> Result<i64, Box<dyn Error>> {
     let q = "
@@ -721,7 +720,7 @@ pub async fn number_of_threads_in_last_hour (
 }
 
 pub async fn number_of_replies_in_last_hour (
-    uid: i32,
+    uid: i64,
     State(pool): State<PgPool>,
 ) -> Result<i64, Box<dyn Error>> {
     let q = "

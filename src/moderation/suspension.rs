@@ -13,7 +13,7 @@ pub async fn suspend_user (
     reason: &str,
     State(pool): State<PgPool>,
 ) -> Result<(), Box<dyn Error>> {
-    let (uid,) = match sqlx::query_as::<_, (i32,)>(
+    let (uid,) = match sqlx::query_as::<_, (i64,)>(
 	"\
 	SELECT uid \
 	FROM thread \
@@ -25,7 +25,7 @@ pub async fn suspend_user (
 	.await {
 	    Ok(uid) => uid,
 	    Err(_) => {
-		sqlx::query_as::<_, (i32,)>(
+		sqlx::query_as::<_, (i64,)>(
 		    "\
 		    SELECT uid \
 		    FROM  reply \
@@ -71,7 +71,7 @@ pub async fn suspend_user (
 }
 
 pub async fn is_user_suspended(
-    uid: i32,
+    uid: i64,
     State(pool): State<PgPool>,
 ) -> Result<bool, Box<dyn Error>> {
     let (is_suspended,): (bool,) = sqlx::query_as(
