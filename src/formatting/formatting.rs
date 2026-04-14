@@ -105,6 +105,26 @@ fn sanitize(input: &str) -> String {
     sanitize_str(&DEFAULT, &input_escaped).unwrap()
 }
 
+fn sup(input: &str) -> String {
+    let re = Regex::new(
+	r"\^\{(.+)\}"
+    ).unwrap();
+    re.replace_all(
+	input,
+	r#"<sup>$1</sup>"#
+    ).to_string()
+}
+
+fn sub(input: &str) -> String {
+    let re = Regex::new(
+	r"_\{(.+)\}"
+    ).unwrap();
+    re.replace_all(
+	input,
+	r#"<sub>$1</sub>"#
+    ).to_string()
+}
+
 pub fn format(input: &str) -> String {
     let input = sanitize(input);
 
@@ -113,6 +133,10 @@ pub fn format(input: &str) -> String {
     )))));
 
     let formatted_input = enlink(&embed(
+	&formatted_input
+    ));
+
+    let formatted_input = sub(&sup(
 	&formatted_input
     ));
 
