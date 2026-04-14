@@ -49,11 +49,17 @@
     <header>
       <h1><center><a href="/" id="logo">বাchan</a></center></h1>
       {% include "notice.html" %}
-      <center>
-	<input id="popupThreadButton" class="btn" type="button"
-	       value="নতুন কিছু বলুন" title="add something new"
-	       />
-      </center>
+      <div id="welcome">
+	<h2>বাchan ফোরামে আপনাকে স্বাগতম!</h2>
+	<nav class="navbar">
+	  <ul>
+	    <li>
+	      <a id="popupThreadButton" title="add something new"
+		 class="popup-btn"> নতুন কিছু বলুন </a>
+	    </li>
+	  </ul>
+	</nav>
+      </div>
       {% include "popup-post-form.html" %}
     </header>
     <main>
