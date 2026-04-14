@@ -489,6 +489,7 @@ pub async fn top_announcements (
     FROM thread \
     WHERE redacted = false \
     AND board = 'g' \
+    AND mtime > NOW() - interval'7 day'
     ORDER BY id desc \
     LIMIT 3 \
     ";
@@ -522,6 +523,11 @@ pub async fn top_threads (
     FROM thread \
     WHERE redacted = false \
     AND board <> 'g' \
+    AND ( \
+    mtime > NOW() - interval'6 hour' \
+    OR \
+    ( mtime > NOW() - interval'7 day' AND reply_count > 3 ) \
+    ) \
     ORDER BY mtime desc \
     LIMIT $1 \
     ";
