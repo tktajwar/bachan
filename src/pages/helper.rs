@@ -254,7 +254,7 @@ pub fn utid(uid: i64, tid: i32) -> String {
 
     let utid = hasher.finish();
 
-    let utid = format!("{:05}", utid as u16);
+    let utid = format!("{:08x}", utid as u32);
 
     bengali_digits(&utid)
 }
