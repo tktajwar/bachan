@@ -41,6 +41,7 @@
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="stylesheet" href="/static/button.css">
     <link rel="stylesheet" href="/static/popup.css">
+    <link rel="stylesheet" href="/static/read-more.css">
     <script src="https://kit.fontawesome.com/9187eb4d30.js"
 	    crossorigin="anonymous"></script>
   </head>
@@ -107,7 +108,7 @@
 
 	<div class="thread-container">
 	  {% for thread in threads %}
-	  {% include "thread.html" %}
+	  {% include "thread-collapsed.html" %}
 	  {% else %}
 	  <p> এখনো কোনো কথোপকথন হয়নি। </p>
 	  {% endfor %}
@@ -120,7 +121,7 @@
 
 	<div class="thread-container">
 	  {% for thread in announcements %}
-	  {% include "thread.html" %}
+	  {% include "thread-collapsed.html" %}
 	  {% else %}
 	  <p> এখনো কোনো ঘোষণা করা হয়নি। </p>
 	  {% endfor %}

@@ -1,0 +1,13 @@
+<div class="thread-body">
+  <a href="/k/{{thread.id}}">
+    <h3 class="thread-headline">{{thread.subject}}</h3>
+  </a>
+  <div class="thread-comment">{{thread.comment|safe}}</div>
+  {% if thread.comment|length > 250 %}
+  <div class="read-more">
+    <a href="/k/{{thread.id}}">
+      সম্পূর্ণ নিবন্ধটি পড়ুন
+    </a>
+  </div>
+  {% endif %}
+</div>
