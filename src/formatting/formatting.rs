@@ -35,7 +35,7 @@ fn enquote(input: &str) -> String {
 
 fn enref(input: &str) -> String {
     let re = Regex::new(
-	r"(?m)^(>|&gt;)(>|&gt;) *([0-9a-fA-F]{3,8})(\r)*$"
+	r"(>|&gt;)(>|&gt;) *([0-9a-fA-F]{3,8})"
     ).unwrap();
     let input = &re.replace_all(
 	input,
