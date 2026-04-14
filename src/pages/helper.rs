@@ -22,7 +22,7 @@ pub struct Thread {
     pub ctime: chrono::NaiveDateTime,
     pub mtime: chrono::NaiveDateTime,
     pub redacted: bool,
-    pub reply_count: i64,
+    pub reply_count: i32,
 }
 
 #[derive(sqlx::FromRow)]
@@ -75,7 +75,7 @@ pub struct ThreadSerializable {
     pub board: String,
     pub ctime: String,
     pub mtime: String,
-    pub reply_count: i64,
+    pub reply_count: i32,
     pub redacted: bool,
 }
 
@@ -477,21 +477,19 @@ pub async fn top_announcements (
 ) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
     let q = "\
     SELECT \
-    t.id, \
-    t.uid, \
-    t.subject, \
-    t.comment, \
-    t.board, \
-    t.ctime, \
-    t.mtime, \
-    t.redacted, \
-    COUNT(r.id) AS reply_count \
-    FROM thread t \
-    LEFT JOIN reply r ON r.tid = t.id \
-    WHERE t.redacted = false \
-    AND t.board = 'g' \
-    GROUP BY t.id \
-    ORDER BY t.id desc \
+    id, \
+    uid, \
+    subject, \
+    comment, \
+    board, \
+    ctime, \
+    mtime, \
+    redacted, \
+    reply_count \
+    FROM thread \
+    WHERE redacted = false \
+    AND board = 'g' \
+    ORDER BY id desc \
     LIMIT 3 \
     ";
 
@@ -512,20 +510,18 @@ pub async fn top_threads (
 ) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
     let q = "\
     SELECT \
-    t.id, \
-    t.uid, \
-    t.subject, \
-    t.comment, \
-    t.board, \
-    t.ctime, \
-    t.mtime, \
-    t.redacted, \
-    COUNT(r.id) AS reply_count \
-    FROM thread t \
-    LEFT JOIN reply r ON r.tid = t.id \
-    WHERE t.redacted = false \
-    AND t.board <> 'g' \
-    GROUP BY t.id \
+    id, \
+    uid, \
+    subject, \
+    comment, \
+    board, \
+    ctime, \
+    mtime, \
+    redacted, \
+    reply_count \
+    FROM thread \
+    WHERE redacted = false \
+    AND board <> 'g' \
     ORDER BY mtime desc \
     LIMIT $1 \
     ";
@@ -751,20 +747,18 @@ pub async fn paginated_threads (
 	if let Some(before_id) = before_id_optional {
 	    let q = "\
 	    SELECT \
-	    t.id, \
-	    t.uid, \
-	    t.subject, \
-	    t.comment, \
-	    t.board, \
-	    t.ctime, \
-	    t.mtime, \
-	    t.redacted, \
-	    COUNT(r.id) AS reply_count \
-	    FROM thread t \
-	    LEFT JOIN reply r ON r.tid = t.id \
-	    WHERE t.id < $1 \
-	    GROUP BY t.id \
-	    ORDER BY t.id desc \
+	    id, \
+	    uid, \
+	    subject, \
+	    comment, \
+	    board, \
+	    ctime, \
+	    mtime, \
+	    redacted, \
+	    reply_count \
+	    FROM thread \
+	    WHERE id < $1 \
+	    ORDER BY id desc \
 	    LIMIT $2 \
 	    ";
 
@@ -776,19 +770,17 @@ pub async fn paginated_threads (
 	} else {
 	    let q = "\
 	    SELECT \
-	    t.id, \
-	    t.uid, \
-	    t.subject, \
-	    t.comment, \
-	    t.board, \
-	    t.ctime, \
-	    t.mtime, \
-	    t.redacted, \
-	    COUNT(r.id) AS reply_count \
-	    FROM thread t \
-	    LEFT JOIN reply r ON r.tid = t.id \
-	    GROUP BY t.id \
-	    ORDER BY t.id desc \
+	    id, \
+	    uid, \
+	    subject, \
+	    comment, \
+	    board, \
+	    ctime, \
+	    mtime, \
+	    redacted, \
+	    reply_count \
+	    FROM thread \
+	    ORDER BY id desc \
 	    LIMIT $1 \
 	    ";
 
@@ -825,21 +817,19 @@ pub async fn paginated_board_threads (
     let mut threads = if let Some(before_mtime) = before_mtime_optional {
 	let q = "\
 	SELECT \
-	t.id, \
-	t.uid, \
-	t.subject, \
-	t.comment, \
-	t.board, \
-	t.ctime, \
-	t.mtime, \
-	t.redacted, \
-	COUNT(r.id) AS reply_count \
-	FROM thread t \
-	LEFT JOIN reply r ON r.tid = t.id \
-	WHERE t.board = $1 \
-	AND t.redacted = false \
-	AND t.mtime < $2
-	GROUP BY t.id \
+	id, \
+	uid, \
+	subject, \
+	comment, \
+	board, \
+	ctime, \
+	mtime, \
+	redacted, \
+	reply_count \
+	FROM thread \
+	WHERE board = $1 \
+	AND redacted = false \
+	AND mtime < $2
 	ORDER BY mtime desc \
 	LIMIT $3 \
 	";
@@ -853,20 +843,18 @@ pub async fn paginated_board_threads (
     } else {
 	let q = "\
 	SELECT \
-	t.id, \
-	t.uid, \
-	t.subject, \
-	t.comment, \
-	t.board, \
-	t.ctime, \
-	t.mtime, \
-	t.redacted, \
-	COUNT(r.id) AS reply_count \
-	FROM thread t \
-	LEFT JOIN reply r ON r.tid = t.id \
-	WHERE t.board = $1 \
-	AND t.redacted = false \
-	GROUP BY t.id \
+	id, \
+	uid, \
+	subject, \
+	comment, \
+	board, \
+	ctime, \
+	mtime, \
+	redacted, \
+	reply_count \
+	FROM thread \
+	WHERE board = $1 \
+	AND redacted = false \
 	ORDER BY mtime desc \
 	LIMIT $2 \
 	";

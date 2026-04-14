@@ -36,25 +36,23 @@ use crate::helper::{
 };
 use crate::moderation::is_user_suspended;
 
-async fn thread_with_id(
+async fn thread_with_id (
     id: i32,
     pool: PgPool,
 ) -> Result<ThreadSerializable, Box<dyn Error>> {
     let q = "\
     SELECT \
-    t.id, \
-    t.uid, \
-    t.subject, \
-    t.comment, \
-    t.board, \
-    t.ctime, \
-    t.mtime, \
-    t.redacted, \
-    COUNT(r.id) AS reply_count \
-    FROM thread t \
-    LEFT JOIN reply r ON r.tid = t.id \
-    WHERE t.id = $1 \
-    GROUP BY t.id \
+    id, \
+    uid, \
+    subject, \
+    comment, \
+    board, \
+    ctime, \
+    mtime, \
+    redacted, \
+    reply_count \
+    FROM thread \
+    WHERE id = $1 \
     ";
 
     let thread: Thread = sqlx::query_as::<_, Thread>(q)
