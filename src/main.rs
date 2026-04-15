@@ -8,6 +8,7 @@ use std::net::SocketAddr;
 use std::time::Duration;
 use tower::ServiceBuilder;
 use tower_http::{
+    compression::CompressionLayer,
     services::ServeDir,
     timeout::TimeoutLayer,
 };
@@ -58,7 +59,8 @@ async fn main() {
 		    axum::http::StatusCode::REQUEST_TIMEOUT,
 		    Duration::from_secs(10),
 		))
-	);
+	)
+	.layer(CompressionLayer::new());
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
 
