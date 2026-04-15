@@ -25,6 +25,7 @@ pub struct Thread {
     pub mtime: chrono::NaiveDateTime,
     pub redacted: bool,
     pub reply_count: i32,
+    pub country: String,
 }
 
 #[derive(sqlx::FromRow)]
@@ -45,6 +46,7 @@ pub struct Reply {
     pub comment: String,
     pub ctime: chrono::NaiveDateTime,
     pub redacted: bool,
+    pub country: String,
 }
 
 #[derive(sqlx::FromRow)]
@@ -79,6 +81,7 @@ pub struct ThreadSerializable {
     pub mtime: String,
     pub reply_count: i32,
     pub redacted: bool,
+    pub country: String,
 }
 
 #[derive(Serialize)]
@@ -88,6 +91,7 @@ pub struct ReplySerializable {
     pub utid: String,
     pub comment: String,
     pub ctime: String,
+    pub country: String,
 }
 
 #[derive(Serialize)]
@@ -121,6 +125,7 @@ impl Thread {
 	    mtime: self.mtime.format("%Y-%m-%d %H:%MZ").to_string(),
 	    reply_count: self.reply_count,
 	    redacted: self.redacted,
+	    country: self.country,
 	}
     }
 }
@@ -185,6 +190,7 @@ impl Reply {
 		self.comment
 	    },
 	    ctime: self.ctime.format("%Y-%m-%d %H:%MZ").to_string(),
+	    country: self.country,
 	}
     }
 }
@@ -336,7 +342,8 @@ pub async fn thread_replies(
     tid, \
     comment, \
     ctime, \
-    redacted
+    redacted, \
+    country \
     FROM reply \
     WHERE tid = $1 \
     ORDER BY id ASC \
@@ -486,7 +493,8 @@ pub async fn top_announcements (
     ctime, \
     mtime, \
     redacted, \
-    reply_count \
+    reply_count, \
+    country \
     FROM thread \
     WHERE redacted = false \
     AND board = 'g' \
@@ -520,7 +528,8 @@ pub async fn top_threads (
     ctime, \
     mtime, \
     redacted, \
-    reply_count \
+    reply_count, \
+    country \
     FROM thread \
     WHERE redacted = false \
     AND board <> 'g' \
@@ -769,7 +778,8 @@ pub async fn paginated_threads (
 	    ctime, \
 	    mtime, \
 	    redacted, \
-	    reply_count \
+	    reply_count, \
+	    country \
 	    FROM thread \
 	    WHERE id < $1 \
 	    ORDER BY id desc \
@@ -792,7 +802,8 @@ pub async fn paginated_threads (
 	    ctime, \
 	    mtime, \
 	    redacted, \
-	    reply_count \
+	    reply_count, \
+	    country \
 	    FROM thread \
 	    ORDER BY id desc \
 	    LIMIT $1 \
@@ -839,7 +850,8 @@ pub async fn paginated_board_threads (
 	ctime, \
 	mtime, \
 	redacted, \
-	reply_count \
+	reply_count, \
+	country \
 	FROM thread \
 	WHERE board = $1 \
 	AND redacted = false \
@@ -865,7 +877,8 @@ pub async fn paginated_board_threads (
 	ctime, \
 	mtime, \
 	redacted, \
-	reply_count \
+	reply_count, \
+	country \
 	FROM thread \
 	WHERE board = $1 \
 	AND redacted = false \
@@ -913,4 +926,53 @@ pub fn country_code (
     };
 
     Ok( "ZZ".to_string() )
+}
+
+pub async fn thread_with_id (
+    id: i32,
+    pool: PgPool,
+) -> Result<ThreadSerializable, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    id, \
+    uid, \
+    subject, \
+    comment, \
+    board, \
+    ctime, \
+    mtime, \
+    redacted, \
+    reply_count, \
+    country \
+    FROM thread \
+    WHERE id = $1 \
+    ";
+
+    let thread: Thread = sqlx::query_as::<_, Thread>(q)
+	.bind(&id)
+	.fetch_one(&pool)
+	.await?;
+
+    let serializable_thread = thread.into_serializable();
+
+    Ok(serializable_thread)
+}
+
+pub async fn thread_with_reply_id(
+    reply_id: i32,
+    pool: PgPool,
+) -> Result<i32, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    tid \
+    FROM reply \
+    WHERE id = $1
+    ";
+
+    let thread_id: (i32,) = sqlx::query_as::<_, (i32,)>(q)
+	.bind(&reply_id)
+	.fetch_one(&pool)
+	.await?;
+
+    Ok(thread_id.0)
 }

@@ -11,7 +11,6 @@ use axum::{
 	Redirect,
     },
 };
-use std::error::Error;
 use std::net::SocketAddr;
 use sqlx::PgPool;
 
@@ -27,62 +26,14 @@ use crate::template::{
     TERA,
 };
 use crate::helper::{
-    Thread,
-    ThreadSerializable,
-    paginated_threads,
     create_reply,
     hashed,
     number_of_pending_posts_in_last_hour,
+    paginated_threads,
+    thread_with_id,
+    thread_with_reply_id,
 };
 use crate::moderation::is_user_suspended;
-
-async fn thread_with_id (
-    id: i32,
-    pool: PgPool,
-) -> Result<ThreadSerializable, Box<dyn Error>> {
-    let q = "\
-    SELECT \
-    id, \
-    uid, \
-    subject, \
-    comment, \
-    board, \
-    ctime, \
-    mtime, \
-    redacted, \
-    reply_count \
-    FROM thread \
-    WHERE id = $1 \
-    ";
-
-    let thread: Thread = sqlx::query_as::<_, Thread>(q)
-	.bind(&id)
-	.fetch_one(&pool)
-	.await?;
-
-    let serializable_thread = thread.into_serializable();
-
-    Ok(serializable_thread)
-}
-
-async fn thread_with_reply_id(
-    reply_id: i32,
-    pool: PgPool,
-) -> Result<i32, Box<dyn Error>> {
-    let q = "\
-    SELECT \
-    tid \
-    FROM reply \
-    WHERE id = $1
-    ";
-
-    let thread_id: (i32,) = sqlx::query_as::<_, (i32,)>(q)
-	.bind(&reply_id)
-	.fetch_one(&pool)
-	.await?;
-
-    Ok(thread_id.0)
-}
 
 pub async fn k_page (
     state_pool: State<PgPool>,
