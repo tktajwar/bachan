@@ -23,6 +23,7 @@ use crate::{
 use crate::forms::SubmissionForm;
 use crate::helper::{
     confirm_post,
+    country_code,
     delete_pending_post,
     hashed,
     number_of_replies_in_last_hour,
@@ -110,8 +111,21 @@ pub async fn confirmation_submission (
 	},
     }
 
+    let country = match country_code(addr.ip()) {
+	Ok(code) => code,
+	Err(e) => {
+	    eprintln!("Error checking country code: {}", e);
+	    return Err(
+		(
+		    StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
+	},
+    };
+
     match submission.action.as_str() {
-	"submit" => Ok(confirm_submission(state_pool, id, uid).await),
+	"submit" => Ok(confirm_submission(state_pool, id, uid, country).await),
 	"cancel" => Ok(cancel_submission(state_pool, id).await),
 	_ =>  Err(
 	    (
@@ -126,6 +140,7 @@ async fn confirm_submission (
     state_pool: State<PgPool>,
     id: Uuid,
     uid: i64,
+    country: String,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
     let number_of_threads_by_user = match number_of_threads_in_last_hour(
 	uid,
@@ -179,6 +194,7 @@ async fn confirm_submission (
     let posted_id = match confirm_post(
 	id,
 	uid,
+	country,
 	state_pool,
     ).await {
 	Ok(Some(id)) => id,

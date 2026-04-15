@@ -1,4 +1,5 @@
 use axum::extract::State;
+use maxminddb::{Reader, PathElement};
 use serde::Serialize;
 use std::error::Error;
 use std::hash::{DefaultHasher, Hash, Hasher};
@@ -588,6 +589,7 @@ pub async fn pending_post_with_id (
 pub async fn confirm_post (
     id: Uuid,
     uid: i64,
+    country: String,
     state_pool: State<PgPool>,
 ) -> Result<Option<i32>, Box<dyn Error>> {
     let Some(pending_post) = pending_post_with_id(
@@ -603,12 +605,14 @@ pub async fn confirm_post (
 	confirm_thread(
 	    pending_post,
 	    uid,
+	    country,
 	    state_pool.clone(),
 	).await?
     } else {
 	confirm_reply(
 	    pending_post,
 	    uid,
+	    country,
 	    state_pool.clone(),
 	).await?
     };
@@ -624,11 +628,12 @@ pub async fn confirm_post (
 async fn confirm_thread (
     pending_post: PendingPost,
     uid: i64,
+    country: String,
     State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let query = "\
-    INSERT INTO thread (uid, subject, comment, board) \
-    VALUES ($1, $2, $3, $4) \
+    INSERT INTO thread (uid, subject, comment, board, country) \
+    VALUES ($1, $2, $3, $4, $5) \
     RETURNING id \
     ";
 
@@ -637,6 +642,7 @@ async fn confirm_thread (
 	.bind(pending_post.subject)
 	.bind(pending_post.comment)
 	.bind(pending_post.board)
+	.bind(country)
 	.fetch_one(&pool)
 	.await?;
 
@@ -646,11 +652,12 @@ async fn confirm_thread (
 async fn confirm_reply (
     pending_post: PendingPost,
     uid: i64,
+    country: String,
     State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let query = "\
-    INSERT INTO reply (uid, tid, comment) \
-    VALUES ($1, $2, $3) \
+    INSERT INTO reply (uid, tid, comment, country) \
+    VALUES ($1, $2, $3, $4) \
     RETURNING id \
     ";
 
@@ -658,6 +665,7 @@ async fn confirm_reply (
 	.bind(uid)
 	.bind(pending_post.tid)
 	.bind(pending_post.comment)
+	.bind(country)
 	.fetch_one(&pool)
 	.await?;
 
@@ -887,4 +895,21 @@ pub async fn paginated_board_threads (
         .collect();
 
     Ok((serializable_threads, has_more, limit, last_mtime))
+}
+
+pub fn country_code (
+    ip: IpAddr
+) -> Result<String, Box<dyn Error>> {
+    let reader = Reader::open_readfile("static/GeoLite2-City.mmdb")?;
+
+    let result = reader.lookup(ip)?;
+
+    if let Some(country_code) = result.decode_path(&[
+	PathElement::Key("country"),
+	PathElement::Key("iso_code"),
+    ])? {
+	return Ok(country_code)
+    };
+
+    Ok( "ZZ".to_string() )
 }
