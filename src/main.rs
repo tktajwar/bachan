@@ -47,6 +47,9 @@ async fn main() {
 	    "/submission/{id}",
 	    get(submission_id_page).post(confirmation_submission),
 	)
+	.route("/formatting-guide", get(|| async {
+	    Redirect::to("/static/formatting-guide.html")
+	}))
 	.route("/favicon.ico", get(|| async {
 	    Redirect::permanent("static/favicon.ico")
 	}))

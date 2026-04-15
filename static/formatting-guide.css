@@ -1,0 +1,30 @@
+#formatting-guide {
+    margin: auto;
+    max-width: 980px;
+    display: grid;
+}
+
+table {
+    border-collapse: collapse;
+    padding: 5px;
+    margin: 5px;
+    min-width: 300px;
+    max-width: 580px;
+}
+
+table > tbody > tr > td {
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 5px;
+    background: white;
+}
+
+table > tbody > tr > td:first-child {
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+
+@media (min-width: 900px) {
+  #formatting-guide {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

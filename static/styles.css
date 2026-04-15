@@ -112,44 +112,22 @@ h1 {
 
 #postFormContainer {
     display: none;
-}
-
-#postFormContainer > table {
-    flex: 1;
-    margin: 0 10px;
+    margin: auto;
     min-width: 150px;
+    text-align: center;
 }
 
 #postForm {
     margin: 10px;
     border-spacing: 1px;
     width: 468px;
+    margin: auto;
 }
 
 #postForm > tbody > tr > td:first-child {
     border: 1px solid var(--border);
     border-radius: 2px;
     background-color: var(--green);
-}
-
-#style-format,
-#link-format {
-    border-collapse: collapse;
-    padding: 5px;
-    max-width: 450px;
-}
-
-#style-format > tbody > tr > td,
-#link-format > tbody > tr > td {
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 5px;
-    background: white;
-}
-
-#style-format > tbody > tr > td:first-child,
-#link-format > tbody > tr > td:first-child {
-    font-family: "Lucida Console", "Courier New", monospace;
 }
 
 #board-title {
