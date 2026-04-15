@@ -107,7 +107,7 @@ fn sanitize(input: &str) -> String {
 
 fn sup(input: &str) -> String {
     let re = Regex::new(
-	r"\^\{(.+)\}"
+	r"\^\{(.+?)\}"
     ).unwrap();
     re.replace_all(
 	input,
@@ -117,7 +117,7 @@ fn sup(input: &str) -> String {
 
 fn sub(input: &str) -> String {
     let re = Regex::new(
-	r"_\{(.+)\}"
+	r"_\{(.+?)\}"
     ).unwrap();
     re.replace_all(
 	input,
