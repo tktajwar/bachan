@@ -1,6 +1,7 @@
 use axum::extract::State;
 use maxminddb::{Reader, PathElement};
 use serde::Serialize;
+use siphasher::sip::SipHasher13;
 use std::error::Error;
 use std::hash::{DefaultHasher, Hash, Hasher};
 use std::net::IpAddr;
@@ -239,10 +240,11 @@ pub struct Board {
 }
 
 pub fn hashed(ip: IpAddr) -> i64 {
-    let mut hasher = DefaultHasher::new();
-
+    let mut hasher = SipHasher13::new_with_keys(
+	0x0123_4567_89ab_cdef,
+	0xfedc_ba98_7654_3210,
+    );
     ip.hash(&mut hasher);
-
     hasher.finish() as i64
 }
 
@@ -251,7 +253,6 @@ pub fn utid(uid: i64, tid: i32) -> String {
 
     uid.hash(&mut hasher);
     tid.hash(&mut hasher);
-    crate::SECRET_NUMBER.hash(&mut hasher);
 
     let utid = hasher.finish();
 

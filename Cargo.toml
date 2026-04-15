@@ -13,6 +13,7 @@ regex = "1.12.3"
 sanitize_html = "0.10.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
+siphasher = "1.0.2"
 sqlx = { version = "0.8.6", features = [
      "chrono",
      "macros",

@@ -124,6 +124,7 @@ dependencies = [
  "sanitize_html",
  "serde",
  "serde_json",
+ "siphasher",
  "sqlx",
  "tera",
  "tokio",
