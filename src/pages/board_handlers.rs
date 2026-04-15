@@ -32,7 +32,10 @@ use crate::helper::{
     number_of_pending_posts_in_last_hour,
     paginated_board_threads,
 };
-use crate::moderation::is_user_suspended;
+use crate::moderation::{
+    is_g_open,
+    is_user_suspended,
+};
 use crate::template::*;
 
 async fn board_page (
@@ -139,6 +142,26 @@ pub async fn board_x_submission (
 		)
 	    )
 	},
+    }
+
+    if boardname == "g" {
+	let Ok(g_ok) = is_g_open().await else {
+	    return Err(
+		(
+		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
+	};
+
+	if !g_ok {
+	    return Err (
+		(
+		    axum::http::StatusCode::UNAUTHORIZED,
+		    "আপনি এই বোর্ডে পোস্ট করতে পারবেন না।",
+		)
+	    )
+	}
     }
 
     let number_of_posts_by_user = match number_of_pending_posts_in_last_hour(

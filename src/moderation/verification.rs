@@ -133,3 +133,7 @@ pub async fn is_mod_username_taken (
 
     Ok( username_taken.0 )
 }
+
+pub async fn is_g_open () -> Result<bool, Box<dyn Error>> {
+    Ok( std::env::var("G_OPEN")? == "true" )
+}
