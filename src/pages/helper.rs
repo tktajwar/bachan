@@ -728,24 +728,24 @@ pub async fn number_of_threads_in_last_hour (
     Ok(number)
 }
 
-pub async fn number_of_replies_in_last_hour (
-    uid: i64,
-    State(pool): State<PgPool>,
-) -> Result<i64, Box<dyn Error>> {
-    let q = "
-    SELECT COUNT(1) \
-    FROM reply \
-    WHERE uid = $1 \
-    AND ctime > NOW() - interval'1 hour' \
-    ";
+// pub async fn number_of_replies_in_last_hour (
+//     uid: i64,
+//     State(pool): State<PgPool>,
+// ) -> Result<i64, Box<dyn Error>> {
+//     let q = "
+//     SELECT COUNT(1) \
+//     FROM reply \
+//     WHERE uid = $1 \
+//     AND ctime > NOW() - interval'1 hour' \
+//     ";
 
-    let (number,): (i64,) = sqlx::query_as::<_, (i64,)>(q)
-	.bind(uid)
-	.fetch_one(&pool)
-	.await?;
+//     let (number,): (i64,) = sqlx::query_as::<_, (i64,)>(q)
+// 	.bind(uid)
+// 	.fetch_one(&pool)
+// 	.await?;
 
-    Ok(number)
-}
+//     Ok(number)
+// }
 
 pub async fn paginated_threads (
     before_id_optional: Option<i32>,
