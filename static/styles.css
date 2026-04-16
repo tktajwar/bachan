@@ -314,3 +314,111 @@ h1 {
 .submission form {
     padding: 13px 20px;
 }
+
+#postPopup {
+    top: 0;
+    bottom: 0;
+    display: none;
+    position: fixed;
+    background-color: #FFEE;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+#postPopup > .container > table {
+    flex: 1;
+    margin: 0 10px;
+    min-width: 150px;
+}
+
+.popup-btn {
+    postion: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0.15em 0.25em;
+    margin: 0.15em;
+    border: 0;
+    border-radius: 0.75em;
+    font-weight: 500;
+    background-color: var(--lgreen);
+    border: 2px solid var(--dgreen);
+    color: var(--dgreen);
+}
+
+.popup-btn:hover {
+    animation: shake .3s linear infinite;
+}
+
+.popup-btn:active {
+    animation: jump .15s ease-in-out;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0) }
+    25% { transform: translateX(3px) }
+    50% { transform: translateX(0) }
+    75% { transform: translateX(-3px) }
+    100% { transform: translateX(0) }
+}
+
+@keyframes jump {
+    0% { transform: translateX(0) }
+    25% { transform: translateY(-3px) }
+    35% { transform: translateY(-3px) rotate(9deg) }
+    55% { transform: translateY(-3px) rotate(-9deg) }
+    65% { transform: translateY(-3px) rotate(9deg) }
+    75% { transform: translateY(-3px) rotate(-9deg) }
+    100% { transform: translateY(0) rotate(0) }
+}
+
+.thread-comment {
+    max-height: 200px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.read-more {
+    margin: auto;
+    text-align: center;
+}
+
+.read-more a {
+    text-decoration: none;
+}
+
+:root {
+    --button:#B1D3A5;
+    --button-shadow:#659226;
+}
+
+.btn,
+button {
+    postion: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0.25em 0.5em;
+    margin: 0.25em;
+    border: 0;
+    border-radius: 0.75em;
+    font-weight: 500;
+    transition: 0.3s;
+    background-color: var(--button);
+    box-shadow: 0 6px 0 var(--button-shadow);
+}
+
+.btn:hover,
+button:hover {
+    transform: translateY(2px);
+    box-shadow: 0 4px 0 var(--button-shadow);
+}
+
+.btn:active,
+button:active {
+    transform: translateY(5px);
+    box-shadow: 0 3px 0 var(--button-shadow);
+}
