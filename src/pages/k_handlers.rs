@@ -1,6 +1,5 @@
 use axum::{
     extract::{
-	ConnectInfo,
 	Path,
 	State,
     },
@@ -11,7 +10,7 @@ use axum::{
 	Redirect,
     },
 };
-use std::net::SocketAddr;
+use real::RealIp;
 use sqlx::PgPool;
 
 use crate::{
@@ -125,7 +124,7 @@ pub async fn k_thread_page(
 pub async fn reply_submission(
     state_pool: State<PgPool>,
     Path(tid_hex): Path<String>,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    RealIp(ip): RealIp,
     Form(reply_form): Form<ReplyForm>,
 ) -> impl IntoResponse {
     let Ok(tid_u32) = u32::from_str_radix(&tid_hex, 16) else {
@@ -138,7 +137,7 @@ pub async fn reply_submission(
     };
     let tid = tid_u32 as i32;
 
-    let uid = hashed(addr.ip());
+    let uid = hashed(ip);
 
     match is_user_suspended(uid, state_pool.clone()).await {
 	Ok(true) => return Err(

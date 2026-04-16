@@ -1,7 +1,6 @@
 use axum::{
     Form,
     extract::{
-	ConnectInfo,
 	Path,
 	State,
     },
@@ -11,9 +10,9 @@ use axum::{
 	Redirect,
     },
 };
+use real::RealIp;
 use sqlx::PgPool;
 use std::error::Error;
-use std::net::SocketAddr;
 use uuid::Uuid;
 
 use crate::{
@@ -120,10 +119,10 @@ pub async fn board_x_page (
 pub async fn board_x_submission (
     state_pool: State<PgPool>,
     Path(boardname): Path<String>,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    RealIp(ip): RealIp,
     Form(thread_form): Form<ThreadForm>,
 ) -> impl IntoResponse {
-    let uid = hashed(addr.ip());
+    let uid = hashed(ip);
 
     match is_user_suspended(uid, state_pool.clone()).await {
 	Ok(true) => return Err(

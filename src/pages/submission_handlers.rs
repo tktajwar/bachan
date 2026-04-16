@@ -11,7 +11,7 @@ use axum::{
     },
     http::StatusCode,
 };
-use axum_client_ip::XRealIp;
+use real::RealIp;
 use sqlx::PgPool;
 use uuid::Uuid;
 
@@ -86,8 +86,7 @@ pub async fn submission_id_page (
 pub async fn confirmation_submission (
     state_pool: State<PgPool>,
     Path(id): Path<Uuid>,
-    // ConnectInfo(addr): ConnectInfo<SocketAddr>,
-    XRealIp(ip): XRealIp,
+    RealIp(ip): RealIp,
     Form(submission): Form<SubmissionForm>,
 ) -> impl IntoResponse {
     let uid = hashed(ip);

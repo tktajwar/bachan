@@ -4,6 +4,7 @@ use axum::{
     response::Redirect,
 };
 use lazy_static::lazy_static;
+use real::RealIpLayer;
 use std::net::SocketAddr;
 use std::time::Duration;
 use tower::ServiceBuilder;
@@ -63,7 +64,7 @@ async fn main() {
 		    Duration::from_secs(10),
 		))
 	)
-	// .layer(ClientIpSource::XRealIp)
+	.layer(RealIpLayer::default())
 	.layer(CompressionLayer::new());
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
