@@ -1,7 +1,6 @@
 use axum::{
     Form,
     extract::{
-	ConnectInfo,
 	Path,
 	State,
     },
@@ -13,9 +12,7 @@ use axum::{
     http::StatusCode,
 };
 use axum_client_ip::XRealIp;
-use axum_extra::TypedHeader;
 use sqlx::PgPool;
-use std::net::SocketAddr;
 use uuid::Uuid;
 
 use crate::{
