@@ -909,7 +909,7 @@ pub async fn paginated_board_threads (
 pub fn country_code (
     ip: IpAddr
 ) -> Result<String, Box<dyn Error>> {
-    let reader = Reader::open_readfile("static/GeoLite2-City.mmdb")?;
+    let reader = Reader::open_readfile(std::env::var("GEOIP_URL")?)?;
 
     let result = reader.lookup(ip)?;
 
