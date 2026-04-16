@@ -920,6 +920,8 @@ pub fn country_code (
 	return Ok(country_code)
     };
 
+    eprintln!("Country code not found: {:?}", result);
+
     Ok( "ZZ".to_string() )
 }
 
