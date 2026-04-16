@@ -1,15 +1,15 @@
 #formatting-guide {
     margin: auto;
-    max-width: 980px;
     display: grid;
+    justify-content: center;
 }
 
 table {
     border-collapse: collapse;
     padding: 5px;
     margin: 5px;
-    min-width: 300px;
-    max-width: 580px;
+    width: 600px;
+    table-layout: fixed;
 }
 
 table > tbody > tr > td {
@@ -23,7 +23,7 @@ table > tbody > tr > td:first-child {
     font-family: "Lucida Console", "Courier New", monospace;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1280px) {
   #formatting-guide {
     grid-template-columns: repeat(2, 1fr);
   }
