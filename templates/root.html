@@ -124,7 +124,7 @@
 
 	<div class="thread-container">
 	  {% for thread in threads %}
-	  {% include "thread-collapsed.html" %}
+	  {% include "thread.html" %}
 	  {% else %}
 	  <p> এখনো কোনো কথোপকথন হয়নি। </p>
 	  {% endfor %}
@@ -137,7 +137,7 @@
 
 	<div class="thread-container">
 	  {% for thread in announcements %}
-	  {% include "thread-collapsed.html" %}
+	  {% include "thread.html" %}
 	  {% else %}
 	  <p> এখনো কোনো ঘোষণা করা হয়নি। </p>
 	  {% endfor %}

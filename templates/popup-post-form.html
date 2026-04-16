@@ -1,42 +1,40 @@
 <div id="postPopup">
   <a id="closePopupThreadButton" class="popup-btn"
      title="close"
-	 /><i class="fa-regular fa-circle-xmark"></i> বন্ধ করুন </a>
-  <div class="container">
-    <table id="postForm"><form method="post">
-	<tbody>
-	  <tr>
-	    <td title="Subject">
-	      বিষয়
-	    </td>
-	    <td>
-	      <input name="subject" type="text" style="width:300px;
-						       min-height:30px;
-						       font-weight:bold;"
-		     required />
-	      <input class="btn" name="submit" type="submit" value="জমা দিন"
-		     title="Submit"/>
-	    </td>
-	  <tr>
-	    <td title="Board">
-	      বোর্ড
-	    </td>
-	    <td>
-	      {% include "board-selection.html" %}
-	    </td>
-	  </tr>
-	  <tr>
-	    <td title="Comment">
-	      মন্তব্য
-	    </td>
-	    <td>
-	      <textarea name="comment" cols="48" rows="4"
-			maxlength="4096" style="width: 385px;
-						height: 200px;" required ></textarea>
-	    </td>
-	  </tr>
-	</tbody>
-    </form></table>
-    <div><a href="/formatting-guide">ফরম্যাটিং গাইড</a></div>
-  </div>
+     /><i class="fa-regular fa-circle-xmark"></i> বন্ধ করুন </a>
+<table id="postForm"><form method="post">
+    <tbody>
+      <tr>
+	<td title="Subject">
+	  বিষয়
+	</td>
+	<td>
+	  <input name="subject" type="text" style="width:300px;
+						   min-height:30px;
+						   font-weight:bold;"
+		 required />
+	  <input class="btn" name="submit" type="submit" value="জমা দিন"
+		 title="Submit"/>
+	</td>
+      <tr>
+	<td title="Board">
+	  বোর্ড
+	</td>
+	<td>
+	  {% include "board-selection.html" %}
+	</td>
+      </tr>
+      <tr>
+	<td title="Comment">
+	  মন্তব্য
+	</td>
+	<td>
+	  <textarea name="comment" cols="48" rows="4"
+		    maxlength="4096" style="width: 385px;
+					    height: 200px;" required ></textarea>
+	</td>
+      </tr>
+    </tbody>
+</form></table>
+<div><a href="/formatting-guide">ফরম্যাটিং গাইড</a></div>
 </div>
