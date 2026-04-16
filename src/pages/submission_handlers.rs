@@ -12,6 +12,8 @@ use axum::{
     },
     http::StatusCode,
 };
+use axum_client_ip::XRealIp;
+use axum_extra::TypedHeader;
 use sqlx::PgPool;
 use std::net::SocketAddr;
 use uuid::Uuid;
@@ -87,10 +89,11 @@ pub async fn submission_id_page (
 pub async fn confirmation_submission (
     state_pool: State<PgPool>,
     Path(id): Path<Uuid>,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    // ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    XRealIp(ip): XRealIp,
     Form(submission): Form<SubmissionForm>,
 ) -> impl IntoResponse {
-    let uid = hashed(addr.ip());
+    let uid = hashed(ip);
 
     match is_user_suspended(uid, state_pool.clone()).await {
 	Ok(true) => return Err(
@@ -111,7 +114,7 @@ pub async fn confirmation_submission (
 	},
     }
 
-    let country = match country_code(addr.ip()) {
+    let country = match country_code(ip) {
 	Ok(code) => code,
 	Err(e) => {
 	    eprintln!("Error checking country code: {}", e);
