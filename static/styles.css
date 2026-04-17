@@ -428,11 +428,6 @@ h1 {
     100% { transform: translateY(0) rotate(0) }
 }
 
-.thread-comment, .reply-comment {
-    max-height: 650px;
-    overflow: auto;
-}
-
 :root {
     --button:#B1D3A5;
     --button-shadow:#659226;
