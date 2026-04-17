@@ -78,7 +78,7 @@ pub async fn root_page(
     ctx.insert("misc", &misc);
 
     let threads = top_threads (
-	5,
+	12,
 	pool_state.clone(),
     ).await.unwrap_or(
 	vec![]
