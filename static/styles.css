@@ -114,7 +114,6 @@ h1 {
     min-height: 150px;
     max-height: 250px;
     overflow-y: hidden;
-    -webkit-mask-image: linear-gradient(180deg, #000 180px, transparent);
 }
 
 #boards > h2,
