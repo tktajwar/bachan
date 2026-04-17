@@ -25,7 +25,7 @@ body {
     background-color: var(--bg);
     color: var(--fg);
     font-family: Helvetica, 'Noto Sans Bengali', Arial, sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.6;
 }
 
