@@ -694,43 +694,43 @@ pub async fn delete_pending_post (
     Ok(())
 }
 
-pub async fn number_of_pending_posts_in_last_hour (
-    uid: i64,
-    State(pool): State<PgPool>,
-) -> Result<i64, Box<dyn Error>> {
-    let q = "
-    SELECT COUNT(1) \
-    FROM PendingPost \
-    WHERE uid = $1 \
-    AND ctime > NOW() - interval'1 hour' \
-    ";
+// pub async fn number_of_pending_posts_in_last_hour (
+//     uid: i64,
+//     State(pool): State<PgPool>,
+// ) -> Result<i64, Box<dyn Error>> {
+//     let q = "
+//     SELECT COUNT(1) \
+//     FROM PendingPost \
+//     WHERE uid = $1 \
+//     AND ctime > NOW() - interval'1 hour' \
+//     ";
 
-    let (number,): (i64,) = sqlx::query_as::<_, (i64,)>(q)
-	.bind(uid)
-	.fetch_one(&pool)
-	.await?;
+//     let (number,): (i64,) = sqlx::query_as::<_, (i64,)>(q)
+// 	.bind(uid)
+// 	.fetch_one(&pool)
+// 	.await?;
 
-    Ok(number)
-}
+//     Ok(number)
+// }
 
-pub async fn number_of_threads_in_last_hour (
-    uid: i64,
-    State(pool): State<PgPool>,
-) -> Result<i64, Box<dyn Error>> {
-    let q = "
-    SELECT COUNT(1) \
-    FROM thread \
-    WHERE uid = $1 \
-    AND ctime > NOW() - interval'1 hour' \
-    ";
+// pub async fn number_of_threads_in_last_hour (
+//     uid: i64,
+//     State(pool): State<PgPool>,
+// ) -> Result<i64, Box<dyn Error>> {
+//     let q = "
+//     SELECT COUNT(1) \
+//     FROM thread \
+//     WHERE uid = $1 \
+//     AND ctime > NOW() - interval'1 hour' \
+//     ";
 
-    let (number,): (i64,) = sqlx::query_as::<_, (i64,)>(q)
-	.bind(uid)
-	.fetch_one(&pool)
-	.await?;
+//     let (number,): (i64,) = sqlx::query_as::<_, (i64,)>(q)
+// 	.bind(uid)
+// 	.fetch_one(&pool)
+// 	.await?;
 
-    Ok(number)
-}
+//     Ok(number)
+// }
 
 // pub async fn number_of_replies_in_last_hour (
 //     uid: i64,

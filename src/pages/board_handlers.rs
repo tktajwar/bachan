@@ -28,7 +28,7 @@ use crate::helper::{
     get_board_ctx,
     hashed,
     list_of_boards,
-    number_of_pending_posts_in_last_hour,
+    // number_of_pending_posts_in_last_hour,
     paginated_board_threads,
 };
 use crate::moderation::{
@@ -163,30 +163,30 @@ pub async fn board_x_submission (
 	}
     }
 
-    let number_of_posts_by_user = match number_of_pending_posts_in_last_hour(
-	uid,
-	state_pool.clone(),
-    ).await {
-	Ok(number) => number,
-	Err(e) => {
-	    eprintln!("Error checking user pending posts number: {}", e);
-	    return Err(
-		(
-		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-		    INTERNAL_SERVER_ERROR_REPLY,
-		)
-	    )
-	},
-    };
-    if number_of_posts_by_user > 10 {
-	return Err(
-	    (
-		axum::http::StatusCode::TOO_MANY_REQUESTS,
-		"আপনার গত এক ঘণ্টায় অনেক অনির্বাচিত পোস্ট রয়েছে। পুনরায় পোস্ট \
-		 করার আগে অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।",
-	    )
-	)
-    };
+    // let number_of_posts_by_user = match number_of_pending_posts_in_last_hour(
+    // 	uid,
+    // 	state_pool.clone(),
+    // ).await {
+    // 	Ok(number) => number,
+    // 	Err(e) => {
+    // 	    eprintln!("Error checking user pending posts number: {}", e);
+    // 	    return Err(
+    // 		(
+    // 		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+    // 		    INTERNAL_SERVER_ERROR_REPLY,
+    // 		)
+    // 	    )
+    // 	},
+    // };
+    // if number_of_posts_by_user > 10 {
+    // 	return Err(
+    // 	    (
+    // 		axum::http::StatusCode::TOO_MANY_REQUESTS,
+    // 		"আপনার গত এক ঘণ্টায় অনেক অনির্বাচিত পোস্ট রয়েছে। পুনরায় পোস্ট \
+    // 		 করার আগে অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।",
+    // 	    )
+    // 	)
+    // };
 
     match board_submission(
 	state_pool,

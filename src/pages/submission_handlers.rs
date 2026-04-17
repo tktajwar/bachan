@@ -26,7 +26,7 @@ use crate::helper::{
     delete_pending_post,
     hashed,
     // number_of_replies_in_last_hour,
-    number_of_threads_in_last_hour,
+    // number_of_threads_in_last_hour,
     pending_post_with_id,
 };
 use crate::moderation::is_user_suspended;
@@ -141,21 +141,21 @@ async fn confirm_submission (
     uid: i64,
     country: String,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
-    let number_of_threads_by_user = match number_of_threads_in_last_hour(
-	uid,
-	state_pool.clone(),
-    ).await {
-	Ok(number) => number,
-	Err(e) => {
-	    eprintln!("Error checking user threads number: {}", e);
-	    return Err(
-		(
-		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-		    INTERNAL_SERVER_ERROR_REPLY,
-		)
-	    )
-	},
-    };
+    // let number_of_threads_by_user = match number_of_threads_in_last_hour(
+    // 	uid,
+    // 	state_pool.clone(),
+    // ).await {
+    // 	Ok(number) => number,
+    // 	Err(e) => {
+    // 	    eprintln!("Error checking user threads number: {}", e);
+    // 	    return Err(
+    // 		(
+    // 		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+    // 		    INTERNAL_SERVER_ERROR_REPLY,
+    // 		)
+    // 	    )
+    // 	},
+    // };
     // let number_of_replies_by_user = match number_of_replies_in_last_hour(
     // 	uid,
     // 	state_pool.clone(),
@@ -171,15 +171,15 @@ async fn confirm_submission (
     // 	    )
     // 	},
     // };
-    if number_of_threads_by_user >= 3 {
-	return Err(
-	    (
-		axum::http::StatusCode::TOO_MANY_REQUESTS,
-		"আপনি গত এক ঘণ্টায় অতিমাত্রায় নিবন্ধ পোস্ট করেছেন। পুনরায় পোস্ট \
-		 করার আগে অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।",
-	    )
-	)
-    };
+    // if number_of_threads_by_user >= 3 {
+    // 	return Err(
+    // 	    (
+    // 		axum::http::StatusCode::TOO_MANY_REQUESTS,
+    // 		"আপনি গত এক ঘণ্টায় অতিমাত্রায় নিবন্ধ পোস্ট করেছেন। পুনরায় পোস্ট \
+    // 		 করার আগে অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।",
+    // 	    )
+    // 	)
+    // };
     // if number_of_replies_by_user >= 15 {
     // 	return Err(
     // 	    (
