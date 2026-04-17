@@ -102,6 +102,7 @@ h1 {
     flex-wrap: wrap;
     max-width: 100%;
     justify-content: center;
+    row-gap: 25px;
 }
 
 #highlights .thread {
