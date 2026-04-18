@@ -83,7 +83,7 @@ h1 {
 
 #boards {
     min-width: 125px;
-    flex: 1 1 150px;;
+    flex: 1 1 225px;;
 }
 
 #highlights {
@@ -140,6 +140,7 @@ h1 {
 .container > .column > ul {
     list-style-type: none;
     padding: 0;
+    margin: 0 0 3px 0;
 }
 
 .container > .column > ul > li {
@@ -149,6 +150,7 @@ h1 {
 .container > .column > h3 {
     text-decoration: underline;
     padding: 0;
+    margin: 3px;
 }
 
 #new-thread-button {
