@@ -1,0 +1,23 @@
+UPDATE board SET label=CASE
+       WHEN url='a' THEN 'আনিমে এবং মাঙ্গা'
+       WHEN url='kr' THEN 'খাদ্য ও রান্না'
+       WHEN url='kd' THEN 'খেলাধুলা'
+       WHEN url='s' THEN 'সঙ্গীত'
+       WHEN url='tv' THEN 'ফিল্ম ও টেলিভিশন'
+       WHEN url='vg' THEN 'ভিডিও গেমস'
+       WHEN url='desh' THEN 'বাংলাদেশ'
+       WHEN url='sh' THEN 'সাহিত্য'
+       WHEN url='me' THEN 'মানবতা ও ইতিহাস'
+       WHEN url='bg' THEN 'বিজ্ঞান ও গণিত'
+       WHEN url='gh' THEN 'ঘরের সাজসজ্জা'
+       WHEN url='shaj' THEN 'সাজগোজ'
+       WHEN url='ms' THEN 'স্বাস্থ্য ও শরীরচর্চা'
+       WHEN url='mh' THEN 'মানসিক স্বাস্থ্য'
+       WHEN url='g' THEN 'ঘোষণা'
+       WHEN url='site' THEN 'সাইট আলোচনা'
+       WHEN url='b' THEN 'বিবিধ'
+       WHEN url='dhk' THEN 'ঢাকা'
+       WHEN url='pol' THEN 'রাজনীতি'
+       WHEN url='pr' THEN 'প্রযুক্তি'
+       ELSE label
+END;
