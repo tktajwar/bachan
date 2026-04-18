@@ -38,8 +38,8 @@ h1 {
 }
 
 #logo {
-    text-decoration: none; 
     color: var(--red);
+    text-decoration: underline var(--yellow) 1px;
     padding: 10px;
     border-radius: 5px;
     font-weight: bold;
