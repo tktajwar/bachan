@@ -112,7 +112,7 @@ h1 {
 @media (min-width: 600px) {
     #highlights .thread {
 	max-width: 300px;
-	flex: 2 1 200px;
+	flex: 2 1 220px;
     }
 }
 
