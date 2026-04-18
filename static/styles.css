@@ -65,7 +65,7 @@ h1 {
 #root-container {
     display: flex;
     flex-wrap: wrap;
-    max-width: 1475px;
+    max-width: 1300px;
 }
 
 #boards, #highlights, #announcements, #welcome {
@@ -82,8 +82,8 @@ h1 {
 }
 
 #boards {
-    min-width: 125px;
-    flex: 1 1 225px;;
+    min-width: 30px;
+    flex: 1 1 450px;;
 }
 
 #highlights {
@@ -105,20 +105,29 @@ h1 {
 
 #highlights .thread {
     min-width: 50px;
-    max-width: 225px;
-    flex: 2 1 175px;
-}
-
-@media (min-width: 600px) {
-    #highlights .thread {
-	max-width: 300px;
-	flex: 2 1 220px;
-    }
+    max-width: 240px;
+    flex: 2 1 180px;
 }
 
 #highlights .thread-body {
     height: 225px;
     overflow-y: hidden;
+}
+
+@media (min-width: 950px) {
+    #highlights .thread {
+	max-width: 250px;
+	flex: 2 1 240px;
+    }
+
+    #boards {
+	flex: 0 0 150px;;
+	max-width: 150px;
+    }
+
+    #highlights .thread-body {
+	height: 240px;
+    }
 }
 
 #boards > h2,
@@ -140,8 +149,9 @@ h1 {
 }
 
 .container > .column {
-    margin: 0 10px;
-    width: 250px;
+    min-width: 50px;
+    margin: 0 3px;
+    flex: 0 1 130px;
 }
 
 .container > .column > ul {
