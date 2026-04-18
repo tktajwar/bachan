@@ -65,7 +65,7 @@ h1 {
 #root-container {
     display: flex;
     flex-wrap: wrap;
-    max-width: 1400px;
+    max-width: 1475px;
 }
 
 #boards, #highlights, #announcements, #welcome {
@@ -82,13 +82,13 @@ h1 {
 }
 
 #boards {
-    width: 225px;
-    flex: 1 1 auto;
+    min-width: 125px;
+    flex: 1 1 150px;;
 }
 
 #highlights {
-    width: 200px;
-    flex: 10 1 auto;
+    min-width: 150px;
+    flex: 10 1 300px;
 }
 
 #boards, #highlights {
@@ -104,13 +104,13 @@ h1 {
 }
 
 #highlights .thread {
-    min-width: 200px;
-    max-width: 235px;
-    flex: 2 1 auto;
+    min-width: 50px;
+    max-width: 225px;
+    flex: 2 1 165px;
 }
 
 #highlights .thread-body {
-    height: 200px;
+    height: 225px;
     overflow-y: hidden;
 }
 
