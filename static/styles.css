@@ -130,6 +130,13 @@ h1 {
     }
 }
 
+@media (max-width: 450px) {
+    #highlights .thread {
+	max-width: 250px;
+	flex: 2 1 150px;
+    }
+}
+
 #boards > h2,
 #highlights > h2,
 #announcements > h2,
