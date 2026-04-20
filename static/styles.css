@@ -19,6 +19,9 @@
     --reply-bg:white;
     --quote:var(--green);
     --ref:var(--blue);
+    --spoiler:var(--black);
+    --redText:var(--red);
+    --boardRef:var(--blue);
 }
 
 body {
@@ -53,6 +56,21 @@ h1 {
 
 .ref {
     color: var(--ref);
+}
+
+.spoiler:not(:hover) {
+    color: transparent;
+    background-color: var(--spoiler);
+}
+
+.redText {
+    color: var(--redText);
+    font-weight: bold;
+}
+
+.boardRef {
+    color: var(--boardRef);
+    text-decoration: none;
 }
 
 .img-comment {

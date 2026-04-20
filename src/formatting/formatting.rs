@@ -6,23 +6,49 @@ use sanitize_html::{
 
 fn embold(input: &str) -> String {
     let re = Regex::new(
-	r"(\s|^)\*(\S+?(?: +\S+?)*)\*(\s|$)"
+	r#"(^|\s|,|\.|")'''(\S+?(?: +\S+?)*?)'''(\s|,|\.|"|$)"#
     ).unwrap();
     re.replace_all(input, "$1<b>$2</b>$3").to_string()
 }
 
 fn italicize(input: &str) -> String {
     let re = Regex::new(
-	r"(\s|^)/(\S+?(?: +\S+?)*)/(\s|$)"
+	r#"(^|\s|,|\.|")''(\S+?(?: +\S+?)*?)''(\s|,|\.|"|$)"#
     ).unwrap();
     re.replace_all(input, "$1<i>$2</i>$3").to_string()
 }
 
 fn underline(input: &str) -> String {
     let re = Regex::new(
-	r"(\s|^)_(\S+?(?: +\S+?)*)_(\s|$)"
+	r#"(^|\s|,|\.|")__(\S+?(?: +\S+?)*?)__(\s|,|\.|"|$)"#
     ).unwrap();
     re.replace_all(input, "$1<u>$2</u>$3").to_string()
+}
+
+fn strikethrough(input: &str) -> String {
+    let re = Regex::new(
+	r#"(^|\s|,|\.|")~~(\S+?(?: +\S+?)*?)~~(\s|,|\.|"|$)"#
+    ).unwrap();
+    re.replace_all(input, "$1<s>$2</s>$3").to_string()
+}
+
+fn spoiler(input: &str) -> String {
+    let re = Regex::new(
+	r#"(^|\s|,|\.|")\[spoiler\](\S+?(?: +\S+?)*?)\[/spoiler\](\s|,|\.|"|$)"#
+    ).unwrap();
+    let input = &re.replace_all(input, "$1<span class=\"spoiler\">$2</span>$3");
+
+    let re = Regex::new(
+	r#"(^|\s|,|\.|")\*\*(\S+?(?: +\S+?)*?)\*\*(\s|,|\.|"|$)"#
+    ).unwrap();
+    re.replace_all(input, "$1<span class=\"spoiler\">$2</span>$3").to_string()
+}
+
+fn redtext(input: &str) -> String {
+    let re = Regex::new(
+	r#"(^|\s|,|\.|")==(\S+?(?: +\S+?)*?)==(\s|,|\.|"|$)"#
+    ).unwrap();
+    re.replace_all(input, "$1<span class=\"redText\">$2</span>$3").to_string()
 }
 
 fn enquote(input: &str) -> String {
@@ -40,6 +66,24 @@ fn enref(input: &str) -> String {
     let input = &re.replace_all(
 	input,
 	r#"<a class="ref" href="/k/$3">$0</a>"#
+    );
+
+    let re = Regex::new(
+	r"\[\[((?:প|প্রকাশনা|[Pp]ost|)[.: \-] *([0-9a-fA-F]{1,8}))\]\]"
+    ).unwrap();
+    re.replace_all(
+	input,
+	r#"<a class="ref" href="/k/$2">$1</a>"#
+    ).to_string()
+}
+
+fn ref_board(input: &str) -> String {
+    let re = Regex::new(
+	r#"((?:>|&gt;){3}/([a-z]{1,12})/)(\s|,|\.|"|$)"#
+    ).unwrap();
+    let input = &re.replace_all(
+	input,
+	r#"<a class="boardRef" href="/$2/">$1</a>$3"#
     );
 
     let re = Regex::new(
@@ -128,13 +172,15 @@ fn sub(input: &str) -> String {
 pub fn format(input: &str) -> String {
     let input = sanitize(input);
 
-    let formatted_input = enref(&enquote(&underline(&italicize(&embold(
-	&input
-    )))));
-
-    let formatted_input = enlink(&embed(
-	&formatted_input
+    let formatted_input = enref(&enquote(
+	&redtext(&spoiler(&strikethrough(&underline(&italicize(&embold(
+	    &input
+	))))))
     ));
+
+    let formatted_input = ref_board(&enlink(&embed(
+	&formatted_input
+    )));
 
     let formatted_input = sub(&sup(
 	&formatted_input
