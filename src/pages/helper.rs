@@ -562,7 +562,7 @@ pub async fn top_announcements (
 pub async fn top_threads (
     limit: i32,
     State(pool): State<PgPool>,
-) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
+) -> Result<(Vec<ThreadSerializable>, i64), Box<dyn Error>> {
     let q = "\
     SELECT \
     id, \
@@ -587,11 +587,57 @@ pub async fn top_threads (
 	.fetch_all(&pool)
 	.await?;
 
+    let last_mtime = if threads.len() > 0 {
+	threads.first().unwrap().mtime.and_utc().timestamp() + 1
+    } else {
+	0
+    };
+
     let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
         .map(Thread::into_serializable)
         .collect();
 
-    Ok(serializable_threads)
+    Ok((serializable_threads, last_mtime))
+}
+
+pub async fn highlights_updates (
+    after: i64,
+    State(pool): State<PgPool>,
+) -> Result<(Vec<ThreadSerializable>, i64), Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    id, \
+    uid, \
+    subject, \
+    comment, \
+    board, \
+    ctime, \
+    mtime, \
+    redacted, \
+    reply_count, \
+    country \
+    FROM thread \
+    WHERE redacted = false \
+    AND mtime > $1 \
+    ORDER BY mtime desc \
+    ";
+
+    let threads = sqlx::query_as::<_, Thread>(q)
+	.bind(DateTime::from_timestamp(after, 0))
+	.fetch_all(&pool)
+	.await?;
+
+    let last_mtime = if threads.len() > 0 {
+	threads.first().unwrap().mtime.and_utc().timestamp() + 1
+    } else {
+	after
+    };
+
+    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
+        .map(Thread::into_serializable)
+        .collect();
+
+    Ok((serializable_threads, last_mtime))
 }
 
 pub async fn list_of_boards (

@@ -65,3 +65,8 @@ pub struct SubmissionForm {
 pub struct KUpdates {
     pub after_id: i32,
 }
+
+#[derive(Deserialize)]
+pub struct HighlightsUpdates {
+    pub after_mtime: i64,
+}

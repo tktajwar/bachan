@@ -121,7 +121,7 @@
 	<h2>জনপ্রিয় আলোচনা</h2>
 	<!-- List of highlighted threads -->
 
-	<div class="thread-container">
+	<div class="thread-container" id="highlights-container">
 	  {% for thread in threads %}
 	  {% include "thread.html" %}
 	  {% else %}
@@ -149,5 +149,6 @@
     <script src="/static/format_local_time.js"></script>
     <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
 	    crossorigin="anonymous"></script>
+    {% include "update-highlights-script.html" %}
    </body>
 </html>

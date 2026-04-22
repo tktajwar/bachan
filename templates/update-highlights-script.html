@@ -1,0 +1,110 @@
+<script>
+  let lastMtime = {{last_mtime}};
+  let unseenCount = 0;
+  let originalTitle = document.title;
+
+  async function fetchUpdates() {
+      const res = await fetch(`/updates?after_mtime=${lastMtime}`);
+      if(!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data[0]) && data[0].length) {
+	  insertThreads(data[0]);
+	  unseenCount += data[0].length;
+	  updateTitle();
+      }
+      lastMtime = data[1];
+      setTimeout(fetchUpdates, 5000);
+  }
+
+  function insertThreads(threads){
+      const container = document.getElementById('highlights-container');
+      if (!container) return;
+      const frag = document.createDocumentFragment();
+      threads.forEach(p => {
+	  const older = document.getElementById(`${p.id}`);
+	  if (older) older.remove();
+	  const div = document.createElement('div');
+	  div.className = 'thread';
+	  div.dataset.postId = String(p.id);
+	  div.id = `${p.id}`;
+	  div.innerHTML = `
+<p class="thread-tagline">
+  <span class="thread-board">
+    <a href="/${p.board}}/">/${p.board}/</a>
+  </span>
+  <span class="thread-utid">
+    বানন_${p.utid}} [${p.country}]
+  </span>
+  <span class="thread-time">
+    ${inLocalTime(p.ctime)}
+  </span>
+  <span class="thread-id">
+    প্রকাশনা ${p.id}
+  </span>
+</p>
+<div class="thread-body">
+  <a href="/k/${p.id}">
+    <h3 class="thread-headline">${p.subject}</h3>
+  </a>
+  <div class="thread-comment">${p.comment}</div>
+</div>
+<ul class="thread-buttons">
+  <li class="thread-reply">
+    <a href="/k/${p.id}}?enref=${p.id}"
+       onclick="
+		if (typeof window['add_ref']=='function') {
+		window['add_ref']('${p.id}');
+		return false;
+		} else {
+		return true;
+		}
+		"
+       title="(cite) পোস্টটি উদ্ধৃত করুন">
+      <i class="fa-solid fa-angles-right"></i>${p.id}
+    </a>
+  </li>
+  <li class="thread-replies">
+    <a href="/k/${p.id}#replies" title="(replies) 0 টি মন্তব্য">
+      <i class="fa-regular fa-comment"></i> ${p.reply_count}
+    </a>
+  </li>
+  <li class="thread-report">
+    <!-- TODO -->
+    <a href="#" title="(report) রিপোর্ট করুন">
+      <i class="fa-regular fa-flag"></i>
+    </a>
+  </li>
+  <li class="thread-mod">
+    <a href="/mod/${p.id}" title="(moderate) পরিচালনা করুন">
+      <i class="fa-solid fa-ellipsis"></i>
+    </a>
+  </li>
+</ul>
+`;
+	  frag.appendChild(div);
+      });
+      container.prepend(frag);
+  }
+
+  setTimeout(fetchUpdates, 5000);
+
+  function inLocalTime(s) {
+    const options = { 
+	year: 'numeric', 
+	month: 'long', 
+	day: 'numeric', 
+	hour: '2-digit', 
+	minute: '2-digit', 
+	hour12: false,
+    };
+
+      const utcDate = new Date(s.trim());
+      return utcDate.toLocaleString('bn-BD',options);
+  }
+
+  function updateTitle() {
+      if (unseenCount > 0) {
+	  document.title = `(${unseenCount}) ${originalTitle}`;
+      }
+  }
+</script>

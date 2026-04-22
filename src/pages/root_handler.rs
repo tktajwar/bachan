@@ -1,4 +1,5 @@
 use axum::{
+    Json,
     Form,
     extract::{
 	ConnectInfo,
@@ -8,7 +9,7 @@ use axum::{
 	Html,
 	IntoResponse,
 	Redirect,
-    }
+    },
 };
 use std::net::SocketAddr;
 use sqlx::PgPool;
@@ -20,14 +21,16 @@ use crate::{
 use crate::board_handlers::board_submission;
 use crate::moderation::is_user_suspended;
 use crate::forms::{
-    ThreadForm,
+    HighlightsUpdates,
     PopupThreadForm,
+    ThreadForm,
 };
 use crate::template::TERA;
 use crate::helper::{
+    ThreadSerializable,
     boards_in_category,
     hashed,
-    // number_of_pending_posts_in_last_hour,
+    highlights_updates,
     top_announcements,
     top_threads,
 };
@@ -77,13 +80,14 @@ pub async fn root_page(
     );
     ctx.insert("misc", &misc);
 
-    let threads = top_threads (
+    let (threads, last_mtime) = top_threads (
 	24,
 	pool_state.clone(),
     ).await.unwrap_or(
-	vec![]
+	(vec![], 0)
     );
     ctx.insert("threads", &threads);
+    ctx.insert("last_mtime", &last_mtime);
 
     let announcements = top_announcements (
 	pool_state,
@@ -176,4 +180,18 @@ pub async fn thread_submission (
 	    )
 	},
     }
+}
+
+pub async fn root_updates (
+    state_pool: State<PgPool>,
+    updates: axum::extract::Query<HighlightsUpdates>,
+) -> Json<(Vec<ThreadSerializable>, i64)> {
+    let (threads, last_mtime) = highlights_updates (
+	updates.after_mtime,
+	state_pool,
+    ).await.unwrap_or(
+	(vec![], 0)
+    );
+
+    Json((threads, last_mtime))
 }
