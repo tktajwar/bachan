@@ -76,42 +76,42 @@
 	<h2>Boards</h2>
 	<div class="container">
 	  <div class="column">
-	    <h3>Hobbies</h3>
+	    <h3>শখ</h3>
 	    <ul>
 	      {% for board in hobbies %}
-	      <li><a href="{{board.url}}/">{{board.label}}</a></li>
+	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
 	      {% endfor %}
 	    </ul>
 	  </div>
 	  <div class="column">
-	    <h3>Interests</h3>
+	    <h3>আগ্রহ</h3>
 	    <ul>
 	      {% for board in interests %}
-	      <li><a href="{{board.url}}/">{{board.label}}</a></li>
+	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
 	      {% endfor %}
 	    </ul>
 	  </div>
 	  <div class="column">
-	    <h3>Lifestyle</h3>
+	    <h3>জীবনধারা</h3>
 	    <ul>
 	      {% for board in lifestyle %}
-	      <li><a href="{{board.url}}/">{{board.label}}</a></li>
+	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
 	      {% endfor %}
 	    </ul>
 	  </div>
 	  <div class="column">
-	    <h3>Local</h3>
+	    <h3>স্থানীয়</h3>
 	    <ul>
 	      {% for board in local %}
-	      <li><a href="{{board.url}}/">{{board.label}}</a></li>
+	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
 	      {% endfor %}
 	    </ul>
 	  </div>
 	  <div class="column">
-	    <h3>Misc</h3>
+	    <h3>অন্যান্য</h3>
 	    <ul>
 	      {% for board in misc %}
-	      <li><a href="{{board.url}}/">{{board.label}}</a></li>
+	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
 	      {% endfor %}
 	    </ul>
 	  </div>
