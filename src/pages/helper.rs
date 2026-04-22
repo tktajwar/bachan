@@ -301,7 +301,7 @@ pub fn utid (
 
     if let Some(code) = trip {
 	code.hash(&mut hasher);
-	let hashed = hasher.finish();
+	let hashed = hasher.finish() as u32;
 
 	return URL_SAFE.encode(hashed.to_be_bytes())
     }
