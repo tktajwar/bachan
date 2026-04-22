@@ -334,7 +334,7 @@ pub async fn create_thread (
 pub async fn thread_replies(
     tid: i32,
     pool: PgPool,
-) -> Result<Vec<ReplySerializable>, Box<dyn Error>> {
+) -> Result<(Vec<ReplySerializable>, i32), Box<dyn Error>> {
     let q = "\
     SELECT \
     id, \
@@ -354,11 +354,56 @@ pub async fn thread_replies(
 	.fetch_all(&pool)
 	.await?;
 
+    let last_id = if replies.len() > 0 {
+	replies.last().unwrap().id
+    } else {
+	0
+    };
+
     let serializable_replies: Vec<ReplySerializable> = replies.into_iter()
         .map(Reply::into_serializable)
         .collect();
 
-    Ok(serializable_replies)
+    Ok((serializable_replies, last_id))
+}
+
+pub async fn thread_replies_after (
+    tid: i32,
+    after: i32,
+    pool: PgPool,
+) -> Result<(Vec<ReplySerializable>, i32), Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    id, \
+    uid, \
+    tid, \
+    comment, \
+    ctime, \
+    redacted, \
+    country \
+    FROM reply \
+    WHERE tid = $1 \
+    AND id > $2 \
+    ORDER BY id ASC \
+    ";
+
+    let replies = sqlx::query_as::<_, Reply>(q)
+	.bind(tid)
+	.bind(after)
+	.fetch_all(&pool)
+	.await?;
+
+    let last_id = if replies.len() > 0 {
+	replies.last().unwrap().id
+    } else {
+	after
+    };
+
+    let serializable_replies: Vec<ReplySerializable> = replies.into_iter()
+        .map(Reply::into_serializable)
+        .collect();
+
+    Ok((serializable_replies, last_id))
 }
 
 pub async fn create_reply (

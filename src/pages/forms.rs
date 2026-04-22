@@ -60,3 +60,8 @@ pub struct PaginationWithMTime {
 pub struct SubmissionForm {
     pub action: String,
 }
+
+#[derive(Deserialize)]
+pub struct KUpdates {
+    pub after_id: i32,
+}

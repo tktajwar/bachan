@@ -1,4 +1,5 @@
 use axum::{
+    Json,
     extract::{
 	Path,
 	State,
@@ -9,6 +10,7 @@ use axum::{
 	IntoResponse,
 	Redirect,
     },
+    http::StatusCode,
 };
 use real::RealIp;
 use sqlx::PgPool;
@@ -18,6 +20,7 @@ use crate::{
     USER_SUSPENDED_REPLY,
 };
 use crate::forms::{
+    KUpdates,
     PaginationWithID,
     ReplyForm,
 };
@@ -25,10 +28,12 @@ use crate::template::{
     TERA,
 };
 use crate::helper::{
+    ReplySerializable,
     create_reply,
     hashed,
-    // number_of_pending_posts_in_last_hour,
     paginated_threads,
+    thread_replies,
+    thread_replies_after,
     thread_with_id,
     thread_with_reply_id,
 };
@@ -37,7 +42,7 @@ use crate::moderation::is_user_suspended;
 pub async fn k_page (
     state_pool: State<PgPool>,
     pagination: axum::extract::Query<PaginationWithID>,
-) -> Result<Html<String>, axum::http::StatusCode> {
+) -> Result<Html<String>, StatusCode> {
     let mut ctx = tera::Context::new();
 
     let before = if let Some(id_hex) = &pagination.before_id {
@@ -98,7 +103,7 @@ pub async fn k_thread_page(
 	}
     };
 
-    let Ok(replies) = crate::helper::thread_replies(
+    let Ok((replies, last_id)) = thread_replies(
 	id,
 	pool,
     ).await else {
@@ -107,6 +112,7 @@ pub async fn k_thread_page(
 
     let mut ctx = tera::Context::new();
     ctx.insert("thread", &thread);
+    ctx.insert("last_id", &last_id);
     ctx.insert("replies", &replies);
 
     let rendered = TERA.render("k_thread.html", &ctx);
@@ -202,4 +208,25 @@ pub async fn reply_submission(
 	    )
 	}
     }
+}
+
+pub async fn thread_updates (
+    State(pool): State<PgPool>,
+    Path(id_hex): Path<String>,
+    k_updates: axum::extract::Query<KUpdates>,
+) -> Result<Json<(Vec<ReplySerializable>, i32)>, StatusCode> {
+    let Ok(tid_u32) = u32::from_str_radix(&id_hex, 16) else {
+	return Err(axum::http::StatusCode::BAD_REQUEST)
+    };
+    let tid = tid_u32 as i32;
+
+    let (replies, last_id) = thread_replies_after (
+	tid,
+	k_updates.after_id,
+	pool,
+    ).await.unwrap_or(
+	(vec![], 0)
+    );
+
+    Ok(Json((replies, last_id)))
 }
