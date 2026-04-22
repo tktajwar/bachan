@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{thread.subject}}: {{thread.id}} | /{{thread.board}}/ | বাংলাচান</title>
+    <meta name="description"
+	  content="{{ thread.comment | truncate(length=160) }}">
+    <meta name="og:description"
+	  content="{{ thread.comment | truncate(length=160) }}">
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body>
