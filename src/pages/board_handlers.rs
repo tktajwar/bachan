@@ -59,6 +59,15 @@ async fn board_page (
     );
     ctx.insert("boards", &boards);
 
+    if let Err(e) = paginated_board_threads (
+	pagination.before_mtime,
+	pagination.limit,
+	url,
+	state_pool.clone(),
+    ).await {
+	eprintln!("{}", e);
+    };
+
     let (threads, has_more, limit, last_mtime) = paginated_board_threads (
 	pagination.before_mtime,
 	pagination.limit,

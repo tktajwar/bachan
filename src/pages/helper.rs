@@ -1,4 +1,5 @@
 use axum::extract::State;
+use base64::{engine::general_purpose::URL_SAFE, Engine as _};
 use maxminddb::{Reader, PathElement};
 use serde::Serialize;
 use siphasher::sip::SipHasher13;
@@ -18,6 +19,8 @@ use crate::formatting;
 pub struct Thread {
     pub id: i32,
     pub uid: i64,
+    pub uname: Option<String>,
+    pub trip: Option<i64>,
     pub subject: String,
     pub comment: String,
     pub board: String,
@@ -42,6 +45,8 @@ pub struct ThreadLight {
 pub struct Reply {
     pub id: i32,
     pub uid: i64,
+    pub uname: Option<String>,
+    pub trip: Option<i64>,
     pub tid: i32,
     pub comment: String,
     pub ctime: chrono::NaiveDateTime,
@@ -74,6 +79,7 @@ pub struct PendingPost {
 pub struct ThreadSerializable {
     pub id: String,
     pub utid: String,
+    pub uname: String,
     pub subject: String,
     pub comment: String,
     pub board: String,
@@ -87,6 +93,7 @@ pub struct ThreadSerializable {
 #[derive(Serialize)]
 pub struct ReplySerializable {
     pub id: String,
+    pub uname: String,
     pub tid: String,
     pub utid: String,
     pub comment: String,
@@ -105,11 +112,17 @@ pub struct ThreadOrReplySerializable {
     pub redacted: bool,
 }
 
+pub struct SubmissionName {
+    pub name: Option<String>,
+    pub pass: Option<String>,
+}
+
 impl Thread {
     pub fn into_serializable(self) -> ThreadSerializable {
 	ThreadSerializable {
 	    id: format!("{:03x}", self.id as u32),
-	    utid: utid(self.uid, self.id),
+	    uname: self.uname.unwrap_or("বানন".to_string()),
+	    utid: utid(self.uid, self.id, self.trip),
 	    subject: if self.redacted {
 		"স#ম্পা#দি#ত".to_string()
 	    } else {
@@ -161,7 +174,7 @@ impl ThreadLight {
 	ThreadOrReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
 	    tid: None,
-	    utid: utid(self.uid, self.id),
+	    utid: utid(self.uid, self.id, None),
 	    subject: if self.redacted {
 		"স#ম্পা#দি#ত".to_string()
 	    } else {
@@ -183,7 +196,8 @@ impl Reply {
 	ReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
 	    tid: format!("{:03x}", self.tid as u32),
-	    utid: utid(self.uid, self.tid),
+	    uname: self.uname.unwrap_or("বানন".to_string()),
+	    utid: utid(self.uid, self.tid, self.trip),
 	    comment: if self.redacted {
 		"<del>###সম্পাদিত###</del>".to_string()
 	    } else {
@@ -226,7 +240,7 @@ impl ReplyLight {
 	ThreadOrReplySerializable {
 	    id: format!("{:03x}", self.id as u32),
 	    tid: Some(format!("{:03x}", self.tid as u32)),
-	    utid: utid(self.uid, self.tid),
+	    utid: utid(self.uid, self.tid, None),
 	    subject: format!("Reply to {:03x}", self.tid).to_string(),
 	    comment: if self.redacted {
 		"<del>###সম্পাদিত###</del>".to_string()
@@ -239,10 +253,34 @@ impl ReplyLight {
     }
 }
 
+impl From<String> for SubmissionName {
+    fn from(s: String) -> Self {
+	let mut split = s.split('#')
+	    .map(|s| if s.is_empty() {
+		None
+	    } else {
+		Some(s.to_string())
+	    });
+	Self {
+	    name: split.next().unwrap_or(None),
+	    pass: split.next().unwrap_or(None),
+	}
+    }
+}
+
 #[derive(sqlx::FromRow, Serialize)]
 pub struct Board {
     pub url: String,
     pub label: String,
+}
+
+pub fn trip(pass: String) -> i64 {
+    let mut hasher = SipHasher13::new_with_keys(
+	0x0123_4567_89ab_cdef,
+	0xfedc_ba98_7654_3210,
+    );
+    pass.to_lowercase().hash(&mut hasher);
+    hasher.finish() as i64
 }
 
 pub fn hashed(ip: IpAddr) -> i64 {
@@ -254,8 +292,19 @@ pub fn hashed(ip: IpAddr) -> i64 {
     hasher.finish() as i64
 }
 
-pub fn utid(uid: i64, tid: i32) -> String {
+pub fn utid (
+    uid: i64,
+    tid: i32,
+    trip: Option<i64>,
+) -> String {
     let mut hasher = DefaultHasher::new();
+
+    if let Some(code) = trip {
+	code.hash(&mut hasher);
+	let hashed = hasher.finish();
+
+	return URL_SAFE.encode(hashed.to_be_bytes())
+    }
 
     uid.hash(&mut hasher);
     tid.hash(&mut hasher);
@@ -339,6 +388,8 @@ pub async fn thread_replies(
     SELECT \
     id, \
     uid, \
+    uname, \
+    trip, \
     tid, \
     comment, \
     ctime, \
@@ -376,6 +427,8 @@ pub async fn thread_replies_after (
     SELECT \
     id, \
     uid, \
+    uname, \
+    trip, \
     tid, \
     comment, \
     ctime, \
@@ -532,6 +585,8 @@ pub async fn top_announcements (
     SELECT \
     id, \
     uid, \
+    uname, \
+    trip, \
     subject, \
     comment, \
     board, \
@@ -567,6 +622,8 @@ pub async fn top_threads (
     SELECT \
     id, \
     uid, \
+    uname, \
+    trip, \
     subject, \
     comment, \
     board, \
@@ -608,6 +665,8 @@ pub async fn highlights_updates (
     SELECT \
     id, \
     uid, \
+    uname, \
+    trip, \
     subject, \
     comment, \
     board, \
@@ -686,6 +745,7 @@ pub async fn confirm_post (
     id: Uuid,
     uid: i64,
     country: String,
+    uname: SubmissionName,
     state_pool: State<PgPool>,
 ) -> Result<Option<i32>, Box<dyn Error>> {
     let Some(pending_post) = pending_post_with_id(
@@ -702,6 +762,7 @@ pub async fn confirm_post (
 	    pending_post,
 	    uid,
 	    country,
+	    uname,
 	    state_pool.clone(),
 	).await?
     } else {
@@ -709,6 +770,7 @@ pub async fn confirm_post (
 	    pending_post,
 	    uid,
 	    country,
+	    uname,
 	    state_pool.clone(),
 	).await?
     };
@@ -725,16 +787,19 @@ async fn confirm_thread (
     pending_post: PendingPost,
     uid: i64,
     country: String,
+    uname: SubmissionName,
     State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let query = "\
-    INSERT INTO thread (uid, subject, comment, board, country) \
-    VALUES ($1, $2, $3, $4, $5) \
+    INSERT INTO thread (uid, uname, trip, subject, comment, board, country) \
+    VALUES ($1, $2, $3, $4, $5, $6, $7) \
     RETURNING id \
     ";
 
     let id: i32 = sqlx::query_scalar(query)
 	.bind(uid)
+	.bind(uname.name)
+	.bind(uname.pass.map(trip))
 	.bind(pending_post.subject)
 	.bind(pending_post.comment)
 	.bind(pending_post.board)
@@ -749,16 +814,19 @@ async fn confirm_reply (
     pending_post: PendingPost,
     uid: i64,
     country: String,
+    uname: SubmissionName,
     State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let query = "\
-    INSERT INTO reply (uid, tid, comment, country) \
-    VALUES ($1, $2, $3, $4) \
+    INSERT INTO reply (uid, uname, trip, tid, comment, country) \
+    VALUES ($1, $2, $3, $4, $5, $6) \
     RETURNING id \
     ";
 
     let id: i32 = sqlx::query_scalar(query)
 	.bind(uid)
+	.bind(uname.name)
+	.bind(uname.pass.map(trip))
 	.bind(pending_post.tid)
 	.bind(pending_post.comment)
 	.bind(country)
@@ -858,6 +926,8 @@ pub async fn paginated_threads (
 	    SELECT \
 	    id, \
 	    uid, \
+	    uname, \
+	    trip, \
 	    subject, \
 	    comment, \
 	    board, \
@@ -882,6 +952,8 @@ pub async fn paginated_threads (
 	    SELECT \
 	    id, \
 	    uid, \
+	    uname, \
+	    trip, \
 	    subject, \
 	    comment, \
 	    board, \
@@ -930,6 +1002,8 @@ pub async fn paginated_board_threads (
 	SELECT \
 	id, \
 	uid, \
+	uname, \
+	trip, \
 	subject, \
 	comment, \
 	board, \
@@ -957,6 +1031,8 @@ pub async fn paginated_board_threads (
 	SELECT \
 	id, \
 	uid, \
+	uname, \
+	trip, \
 	subject, \
 	comment, \
 	board, \
@@ -1024,6 +1100,8 @@ pub async fn thread_with_id (
     SELECT \
     id, \
     uid, \
+    uname, \
+    trip, \
     subject, \
     comment, \
     board, \

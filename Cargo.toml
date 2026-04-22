@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 argon2 = "0.5.3"
 axum = "0.8.8"
+base64 = "0.22.1"
 dotenv = "0.15.0"
 lazy_static = "1.5.0"
 maxminddb = "0.27.3"

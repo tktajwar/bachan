@@ -59,6 +59,7 @@ pub struct PaginationWithMTime {
 #[derive(Deserialize)]
 pub struct SubmissionForm {
     pub action: String,
+    pub name: Option<String>,
 }
 
 #[derive(Deserialize)]

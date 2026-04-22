@@ -21,12 +21,11 @@ use crate::{
 };
 use crate::forms::SubmissionForm;
 use crate::helper::{
+    SubmissionName,
     confirm_post,
     country_code,
     delete_pending_post,
     hashed,
-    // number_of_replies_in_last_hour,
-    // number_of_threads_in_last_hour,
     pending_post_with_id,
 };
 use crate::moderation::is_user_suspended;
@@ -123,8 +122,15 @@ pub async fn confirmation_submission (
 	},
     };
 
+    
     match submission.action.as_str() {
-	"submit" => Ok(confirm_submission(state_pool, id, uid, country).await),
+	"submit" => Ok(confirm_submission(
+	    state_pool,
+	    id,
+	    uid,
+	    country,
+	    submission.name,
+	).await),
 	"cancel" => Ok(cancel_submission(state_pool, id).await),
 	_ =>  Err(
 	    (
@@ -140,6 +146,7 @@ async fn confirm_submission (
     id: Uuid,
     uid: i64,
     country: String,
+    submission_name: Option<String>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
     // let number_of_threads_by_user = match number_of_threads_in_last_hour(
     // 	uid,
@@ -190,10 +197,20 @@ async fn confirm_submission (
     // 	)
     // };
 
+    let name = if let Some(sname) = submission_name {
+	SubmissionName::from(sname)
+    } else {
+	SubmissionName {
+	    name: None,
+	    pass: None,
+	}
+    };
+
     let posted_id = match confirm_post(
 	id,
 	uid,
 	country,
+	name,
 	state_pool,
     ).await {
 	Ok(Some(id)) => id,
