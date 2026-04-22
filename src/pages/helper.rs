@@ -303,6 +303,7 @@ pub fn utid (
     let mut hasher = DefaultHasher::new();
 
     if let Some(code) = trip {
+	code.hash(&mut hasher);
 	let hashed = hasher.finish() as u32;
 
 	return URL_SAFE_NO_PAD.encode(hashed.to_be_bytes())
