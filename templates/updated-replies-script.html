@@ -86,4 +86,11 @@
 	  document.title = `(${unseenCount}) ${originalTitle}`;
       }
   }
+
+  function clearUnseen() {
+      unseenCount = 0;
+      document.title = `${originalTitle}`;
+  }
+
+  window.addEventListener('focus', clearUnseen);
 </script>
