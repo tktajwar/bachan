@@ -1,5 +1,7 @@
 <script>
   let lastId = {{last_id}};
+  let unseenCount = 0;
+  let originalTitle = document.title;
 
   async function fetchUpdates() {
       const res = await fetch(`/k/{{thread.id}}/updates?after_id=${lastId}`);
@@ -7,6 +9,8 @@
       const data = await res.json();
       if (Array.isArray(data[0]) && data[0].length) {
 	  insertReplies(data[0]);
+	  unseenCount += data[0].length;
+	  updateTitle();
       }
       lastId = data[1];
       setTimeout(fetchUpdates, 10000);
@@ -75,5 +79,11 @@
 
       const utcDate = new Date(s.trim());
       return utcDate.toLocaleString('bn-BD',options);
+  }
+
+  function updateTitle() {
+      if (unseenCount > 0) {
+	  document.title = `(${unseenCount}) ${originalTitle}`;
+      }
   }
 </script>
