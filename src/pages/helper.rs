@@ -1,5 +1,8 @@
 use axum::extract::State;
-use base64::{engine::general_purpose::URL_SAFE, Engine as _};
+use base64::{
+    engine::general_purpose::URL_SAFE_NO_PAD,
+    Engine as _,
+};
 use maxminddb::{Reader, PathElement};
 use serde::Serialize;
 use siphasher::sip::SipHasher13;
@@ -300,10 +303,9 @@ pub fn utid (
     let mut hasher = DefaultHasher::new();
 
     if let Some(code) = trip {
-	code.hash(&mut hasher);
 	let hashed = hasher.finish() as u32;
 
-	return URL_SAFE.encode(hashed.to_be_bytes())
+	return URL_SAFE_NO_PAD.encode(hashed.to_be_bytes())
     }
 
     uid.hash(&mut hasher);
