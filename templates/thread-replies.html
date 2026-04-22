@@ -1,5 +1,5 @@
 <div id="thread-replies">
-  <h3 id="replies"> Replies </h3>
+  <h3 id="replies"> রিপ্লাইসমূহ </h3>
   {% for reply in replies %}
   <div class="reply" id="{{reply.id}}">
     {% include "reply-tagline.html" %}
@@ -8,7 +8,5 @@
     </div>
     {% include "reply-buttons.html" %}
   </div>
-  {% else %}
-  <p> This thread has no reply yet.</p>
   {% endfor %}
 </div>
