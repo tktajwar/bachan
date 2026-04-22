@@ -43,4 +43,19 @@
     </div>
 
   </body>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+	const input = document.getElementById('name');
+	const saved = localStorage.getItem('saved_name');
+	if (saved != null) input.value = saved;
+
+	input.addEventListener('input', () => {
+	    try {
+		localStorage.setItem('saved_name', input.value);
+	    } catch (e) {
+		console.log(e);
+	    }
+	});
+    });
+  </script>
 </html>
