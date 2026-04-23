@@ -52,7 +52,7 @@ fn redtext(input: &str) -> String {
 }
 
 fn enquote(input: &str) -> String {
-    let re = Regex::new(r"(?m)^(>|&gt;)[ a-zA-Z0-9].*$").unwrap();
+    let re = Regex::new(r"(?m)^(>|&gt;).*$").unwrap();
     re.replace_all(
 	input,
 	r#"<span class="quote">$0</span>"#
