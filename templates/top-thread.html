@@ -1,0 +1,10 @@
+<div class="thread" id="{{thread.id}}">
+  <h3 class="boardLabel"><center>{{thread.label}}</center></h3>
+  <div class="thread-body">
+    <a href="/k/{{thread.id}}">
+      <h4 class="thread-headline">{{thread.subject}}</h4>
+    </a>
+    <div class="thread-comment">{{thread.comment|safe}}</div>
+  </div>
+  {% include "thread-buttons.html" %}
+</div>

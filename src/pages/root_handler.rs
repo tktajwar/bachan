@@ -27,7 +27,7 @@ use crate::forms::{
 };
 use crate::template::TERA;
 use crate::helper::{
-    ThreadSerializable,
+    TopThread,
     boards_in_category,
     hashed,
     highlights_updates,
@@ -80,12 +80,16 @@ pub async fn root_page(
     );
     ctx.insert("misc", &misc);
 
-    let (threads, last_mtime) = top_threads (
+    let (threads, last_mtime) = match top_threads (
 	24,
 	pool_state.clone(),
-    ).await.unwrap_or(
-	(vec![], 0)
-    );
+    ).await {
+	Ok(result) => result,
+	Err(e) => {
+	    eprintln!("Error retrieving top threads: {}", e);
+	    (vec![], 0)
+	},
+    };
     ctx.insert("threads", &threads);
     ctx.insert("last_mtime", &last_mtime);
 
@@ -99,7 +103,8 @@ pub async fn root_page(
     let rendered = TERA.render("root.html", &ctx);
     let content = match rendered {
 	Ok(s) => s,
-	Err(_) => {
+	Err(e) => {
+	    eprintln!("Error rendering root page: {}", e);
 	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
 	},
     };
@@ -185,7 +190,7 @@ pub async fn thread_submission (
 pub async fn root_updates (
     state_pool: State<PgPool>,
     updates: axum::extract::Query<HighlightsUpdates>,
-) -> Json<(Vec<ThreadSerializable>, i64)> {
+) -> Json<(Vec<TopThread>, i64)> {
     let (threads, last_mtime) = highlights_updates (
 	updates.after_mtime,
 	state_pool,

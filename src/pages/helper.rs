@@ -120,6 +120,18 @@ pub struct ThreadOrReplySerializable {
     pub redacted: bool,
 }
 
+#[derive(sqlx::FromRow)]
+#[derive(Serialize)]
+pub struct TopThread {
+    pub id: String,
+    pub subject: String,
+    pub comment: String,
+    pub label: String,
+    pub redacted: bool,
+    pub reply_count: i32,
+    pub mtime: chrono::NaiveDateTime,
+}
+
 pub struct SubmissionName {
     pub name: Option<String>,
     pub pass: Option<String>,
@@ -632,29 +644,26 @@ pub async fn top_announcements (
 pub async fn top_threads (
     limit: i32,
     State(pool): State<PgPool>,
-) -> Result<(Vec<ThreadSerializable>, i64), Box<dyn Error>> {
+) -> Result<(Vec<TopThread>, i64), Box<dyn Error>> {
     let q = "\
     SELECT \
-    id, \
-    uid, \
-    uname, \
-    trip, \
-    subject, \
-    comment, \
-    board, \
-    ctime, \
-    mtime, \
-    redacted, \
-    reply_count, \
-    country \
-    FROM thread \
-    WHERE redacted = false \
-    AND mtime > NOW() - interval'7 day' \
-    ORDER BY mtime desc \
+    to_hex(t.id) as id, \
+    t.subject, \
+    t.comment, \
+    t.redacted, \
+    t.reply_count, \
+    t.mtime, \
+    b.label \
+    FROM thread t \
+    INNER JOIN board b \
+    ON t.board = b.url \
+    WHERE t.redacted = false \
+    AND t.mtime > NOW() - interval'7 day' \
+    ORDER BY t.mtime desc \
     LIMIT $1 \
     ";
 
-    let threads = sqlx::query_as::<_, Thread>(q)
+    let threads = sqlx::query_as::<_, TopThread>(q)
 	.bind(limit)
 	.fetch_all(&pool)
 	.await?;
@@ -665,38 +674,32 @@ pub async fn top_threads (
 	0
     };
 
-    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
-        .map(Thread::into_serializable)
-        .collect();
-
-    Ok((serializable_threads, last_mtime))
+    Ok((threads, last_mtime))
 }
 
 pub async fn highlights_updates (
     after: i64,
     State(pool): State<PgPool>,
-) -> Result<(Vec<ThreadSerializable>, i64), Box<dyn Error>> {
+) -> Result<(Vec<TopThread>, i64), Box<dyn Error>> {
     let q = "\
     SELECT \
-    id, \
-    uid, \
-    uname, \
-    trip, \
-    subject, \
-    comment, \
-    board, \
-    ctime, \
-    mtime, \
-    redacted, \
-    reply_count, \
-    country \
-    FROM thread \
-    WHERE redacted = false \
-    AND mtime > $1 \
-    ORDER BY mtime desc \
+    to_hex(t.id) as id, \
+    t.subject, \
+    t.comment, \
+    t.redacted, \
+    t.reply_count, \
+    t.mtime, \
+    b.label \
+    FROM thread t \
+    INNER JOIN board b \
+    ON t.board = b.url \
+    WHERE t.redacted = false \
+    AND t.mtime > NOW() - interval'7 day' \
+    AND t.mtime > $1 \
+    ORDER BY t.mtime desc \
     ";
 
-    let threads = sqlx::query_as::<_, Thread>(q)
+    let threads = sqlx::query_as::<_, TopThread>(q)
 	.bind(DateTime::from_timestamp(after, 0))
 	.fetch_all(&pool)
 	.await?;
@@ -707,11 +710,7 @@ pub async fn highlights_updates (
 	after
     };
 
-    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
-        .map(Thread::into_serializable)
-        .collect();
-
-    Ok((serializable_threads, last_mtime))
+    Ok((threads, last_mtime))
 }
 
 pub async fn list_of_boards (

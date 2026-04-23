@@ -34,23 +34,10 @@
 	  div.dataset.postId = String(p.id);
 	  div.id = `${p.id}`;
 	  div.innerHTML = `
-<p class="thread-tagline">
-  <span class="thread-board">
-    <a href="/${p.board}}/">/${p.board}/</a>
-  </span>
-  <span class="thread-utid">
-    ${p.uname}#${p.utid} [${p.country}]
-  </span>
-  <span class="thread-time">
-    ${inLocalTime(p.ctime)}
-  </span>
-  <span class="thread-id">
-    প্রকাশনা ${p.id}
-  </span>
-</p>
+<h3 class="boardLabel"><center>${p.label}</center></h3>
 <div class="thread-body">
   <a href="/k/${p.id}">
-    <h3 class="thread-headline">${p.subject}</h3>
+    <h4 class="thread-headline">${p.subject}</h4>
   </a>
   <div class="thread-comment">${p.comment}</div>
 </div>
