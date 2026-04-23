@@ -262,7 +262,7 @@ impl From<String> for SubmissionName {
 	let mut split = s.split('#');
 
 	Self {
-	    name: split.next().map(sanitize),
+	    name: split.next().map(sanitize).map(|s| s[..32].to_string()),
 	    pass: split.next().map(sanitize),
 	}
     }
