@@ -17,6 +17,7 @@ use sqlx::{
 use uuid::Uuid;
 
 use crate::formatting;
+use crate::formatting::sanitize;
 
 #[derive(sqlx::FromRow)]
 pub struct Thread {
@@ -258,15 +259,11 @@ impl ReplyLight {
 
 impl From<String> for SubmissionName {
     fn from(s: String) -> Self {
-	let mut split = s.split('#')
-	    .map(|s| if s.is_empty() {
-		None
-	    } else {
-		Some(s.to_string())
-	    });
+	let mut split = s.split('#');
+
 	Self {
-	    name: split.next().unwrap_or(None),
-	    pass: split.next().unwrap_or(None),
+	    name: split.next().map(sanitize),
+	    pass: split.next().map(sanitize),
 	}
     }
 }
@@ -363,6 +360,7 @@ pub async fn create_thread (
     board: String,
     State(pool): State<PgPool>,
 ) -> Result<Uuid, Box<dyn Error>> {
+    let subject_sanitized = sanitize(subject);
     let comment_formatted = formatting::format(comment);
 
     let query = "\
@@ -374,7 +372,7 @@ pub async fn create_thread (
 
     let id: Uuid = sqlx::query_scalar(query)
 	.bind(uid)
-	.bind(subject)
+	.bind(subject_sanitized)
 	.bind(comment_formatted)
 	.bind(board)
 	.fetch_one(&pool)

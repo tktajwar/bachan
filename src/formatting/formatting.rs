@@ -137,7 +137,7 @@ fn enlink(input: &str) -> String {
     }).to_string()
 }
 
-fn sanitize(input: &str) -> String {
+pub fn sanitize(input: &str) -> String {
     let input_trimmed = input.trim();
 
     let input_escaped = input_trimmed.replace("&", "&amp;")
