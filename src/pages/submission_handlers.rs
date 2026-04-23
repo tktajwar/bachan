@@ -224,7 +224,7 @@ async fn confirm_submission (
 	    )
 	}
 	Err(e) => {
-	    eprintln!("Error checking user suspension: {}", e);
+	    eprintln!("Error confirming post: {}", e);
 	    return Err(
 		(
 		    StatusCode::INTERNAL_SERVER_ERROR,
