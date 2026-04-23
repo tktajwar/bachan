@@ -1,0 +1,2 @@
+ALTER TABLE reference
+DROP COLUMN id;

@@ -17,7 +17,10 @@ use sqlx::{
 use uuid::Uuid;
 
 use crate::formatting;
-use crate::formatting::sanitize;
+use crate::formatting::{
+    references,
+    sanitize,
+};
 
 #[derive(sqlx::FromRow)]
 pub struct Thread {
@@ -75,6 +78,7 @@ pub struct PendingPost {
     pub is_thread: bool,
     pub subject: Option<String>,
     pub comment: String,
+    pub rawcomment: String,
     pub board: Option<String>,
     pub tid: Option<i32>,
 }
@@ -372,8 +376,8 @@ pub async fn create_thread (
     let comment_formatted = formatting::format(comment);
 
     let query = "\
-    INSERT INTO PendingPost (is_thread, uid, subject, comment, board) \
-    VALUES (TRUE, $1, $2, $3, $4) \
+    INSERT INTO PendingPost (is_thread, uid, subject, comment, rawcomment, board) \
+    VALUES (TRUE, $1, $2, $3, $4, $5) \
     RETURNING id \
     ";
 
@@ -382,6 +386,7 @@ pub async fn create_thread (
 	.bind(uid)
 	.bind(subject_sanitized)
 	.bind(comment_formatted)
+	.bind(comment)
 	.bind(board)
 	.fetch_one(&pool)
 	.await?;
@@ -477,8 +482,8 @@ pub async fn create_reply (
     let comment_formatted = formatting::format(comment);
 
     let query = "\
-    INSERT INTO PendingPost (is_thread, uid, tid, comment) \
-    VALUES (False, $1, $2, $3) \
+    INSERT INTO PendingPost (is_thread, uid, tid, comment, rawcomment) \
+    VALUES (False, $1, $2, $3, $4) \
     RETURNING id \
     ";
 
@@ -486,6 +491,7 @@ pub async fn create_reply (
 	.bind(uid)
 	.bind(tid)
 	.bind(comment_formatted)
+	.bind(comment)
 	.fetch_one(&pool)
 	.await?;
 
@@ -736,6 +742,7 @@ pub async fn pending_post_with_id (
     is_thread, \
     subject, \
     comment, \
+    rawcomment, \
     board, \
     tid \
     FROM PendingPost \
@@ -765,6 +772,7 @@ pub async fn confirm_post (
     };
 
     let pending_post_id = pending_post.id;
+    let reference_list = references(&pending_post.rawcomment);
 
     let posted_id = if pending_post.is_thread {
 	confirm_thread(
@@ -783,6 +791,12 @@ pub async fn confirm_post (
 	    state_pool.clone(),
 	).await?
     };
+
+    create_references (
+	posted_id,
+	reference_list,
+	state_pool.clone(),
+    ).await?;
 
     delete_pending_post(
 	pending_post_id,
@@ -858,6 +872,27 @@ pub async fn delete_pending_post (
 	.bind(id)
 	.execute(&pool)
 	.await?;
+
+    Ok(())
+}
+
+pub async fn create_references (
+    referencer: i32,
+    references: std::collections::HashSet<i32>,
+    State(pool): State<PgPool>,
+) -> Result<(), Box<dyn Error>> {
+    for referencee in references {
+	sqlx::query(
+	    "\
+	    INSERT INTO reference (referencer, referencee) \
+	    VALUES ($1, $2) \
+	    "
+	)
+	    .bind(referencer)
+	    .bind(referencee)
+	    .execute(&pool)
+	    .await?;
+    }
 
     Ok(())
 }

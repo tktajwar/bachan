@@ -1,0 +1,3 @@
+ALTER TABLE PendingPost
+ADD RawComment TEXT
+DEFAULT NULL;
