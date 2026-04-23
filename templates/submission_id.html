@@ -29,15 +29,22 @@
       <form id="submission-form" action="/submission/{{pending_post.id}}"
 	    method="POST">
 
-	<label for="name">নাম:</label>
-	<input type="text" id="name" name="name"
-	       placeholder=" বানন#পাসওয়ার্ড"><br />
+	<center>
+	  <label for="name">নাম:</label>
+	  <input type="text" id="name" name="name"
+		 placeholder=" বানন#পাসওয়ার্ড"><br />
 
-	<br />
+	  <br />
 
-	আপনি নিশ্চিত হলে প্রকাশনাটি জমা দিন।<br/>
-	<button type="submit" name="action" value="cancel">বাতিল করুন</button>
-	<button type="submit" name="action" value="submit">জমা দিন</button>
+	  আপনি নিশ্চিত হলে প্রকাশনাটি জমা দিন।<br/>
+
+	  <button type="submit" name="action" value="cancel">
+	    <i class="fa-solid fa-xmark"></i> বাতিল করুন
+	  </button>
+	  <button type="submit" name="action" value="submit">
+	    <i class="fa-solid fa-check"></i> জমা দিন
+	  </button>
+	</center>
 
       </form>
     </div>
@@ -53,7 +60,9 @@
 		    style="width: 385px; height: 200px;" required
 		    >{{pending_post.rawcomment}}</textarea><br/>
 
-	<button type="submit" name="action" value="edit">পুনরায় জমা দিন</button>
+	<button type="submit" name="action" value="edit">
+	  <i class="fa-solid fa-arrows-rotate"></i> পুনরায় জমা দিন
+	</button>
 
       </form>
     </div>
