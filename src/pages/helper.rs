@@ -876,6 +876,30 @@ pub async fn delete_pending_post (
     Ok(())
 }
 
+pub async fn edit_pending_post (
+    id: Uuid,
+    comment: &str,
+    State(pool): State<PgPool>,
+) -> Result<(), Box<dyn Error>> {
+    let comment_formatted = formatting::format(comment);
+
+    let q = "\
+    UPDATE PendingPost \
+    SET comment = $1, \
+    rawcomment = $2 \
+    WHERE id = $3 \
+    ";
+
+    sqlx::query(q)
+	.bind(comment_formatted)
+	.bind(comment)
+	.bind(id)
+	.execute(&pool)
+	.await?;
+
+    Ok(())
+}
+
 pub async fn create_references (
     referencer: i32,
     references: std::collections::HashSet<i32>,

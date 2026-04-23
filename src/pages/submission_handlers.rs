@@ -25,6 +25,7 @@ use crate::helper::{
     confirm_post,
     country_code,
     delete_pending_post,
+    edit_pending_post,
     hashed,
     pending_post_with_id,
 };
@@ -132,6 +133,15 @@ pub async fn confirmation_submission (
 	    submission.name,
 	).await),
 	"cancel" => Ok(cancel_submission(state_pool, id).await),
+	"edit" => {
+	    let Some(new_comment) = &submission.comment else {
+		return Err((
+		    StatusCode::BAD_REQUEST,
+		    "ERROR 400: Bad Request! Invalid 'Action' value.",
+		))
+	    };
+	    Ok(edit_submission(state_pool, id, new_comment).await)
+	},
 	_ =>  Err(
 	    (
 		StatusCode::BAD_REQUEST,
@@ -256,5 +266,29 @@ async fn cancel_submission (
 
     Ok(Redirect::to(
 	"/"
+    ))
+}
+
+
+async fn edit_submission (
+    state_pool: State<PgPool>,
+    id: Uuid,
+    new_comment: &str,
+) -> Result<Redirect, (StatusCode, &'static str)> {
+    match edit_pending_post(id, new_comment, state_pool).await {
+	Ok(()) => (),
+	Err(e) => {
+	    eprintln!("Error editing submission: {}", e);
+	    return Err(
+		(
+		    StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
+	}
+    };
+
+    Ok(Redirect::to(
+	&format!("/submission/{}", id)
     ))
 }

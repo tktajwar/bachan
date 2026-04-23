@@ -42,6 +42,22 @@
       </form>
     </div>
 
+    <br/>
+
+    <div class="submission" id="submissionEditing">
+      <h3><center>Edit Submission</center></h3>
+      <form id="submission-form" action="/submission/{{pending_post.id}}"
+	    method="POST">
+
+	<textarea name="comment" cols="48" rows="4" maxlength="4096"
+		    style="width: 385px; height: 200px;" required
+		    >{{pending_post.rawcomment}}</textarea><br/>
+
+	<button type="submit" name="action" value="edit">পুনরায় জমা দিন</button>
+
+      </form>
+    </div>
+
   </body>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
