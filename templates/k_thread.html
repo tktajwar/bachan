@@ -19,6 +19,7 @@
 	{% include "thread.html" %}
 	{% if not thread.redacted %}
 	{% include "thread-replies.html" %}
+	{% include "autorefresh-countdown.html" %}
 	{% include "thread-reply-form.html" %}
 	{% endif %}
       </div>

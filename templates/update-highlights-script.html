@@ -1,6 +1,9 @@
 <script>
+  const initialInterval = 10;
+  const maxInterval = 1200;
   let lastMtime = {{last_mtime}};
   let unseenCount = 0;
+  let interval = initialInterval;
   let originalTitle = document.title;
 
   async function fetchUpdates() {
@@ -11,9 +14,12 @@
 	  insertThreads(data[0]);
 	  unseenCount += data[0].length;
 	  updateTitle();
+	  interval = initialInterval;
+      } else {
+	  interval = Math.min(interval * 2, maxInterval);
       }
       lastMtime = data[1];
-      setTimeout(fetchUpdates, 60000);
+      setTimeout(fetchUpdates, interval*1000);
   }
 
   function insertThreads(threads){
@@ -86,7 +92,7 @@
       container.prepend(frag);
   }
 
-  setTimeout(fetchUpdates, 5000);
+  setTimeout(fetchUpdates, interval*1000);
 
   function inLocalTime(s) {
     const options = { 

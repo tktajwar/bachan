@@ -1,6 +1,9 @@
 <script>
+  const initialInterval = 5;
+  const maxInterval = 600;
   let lastId = {{last_id}};
   let unseenCount = 0;
+  let interval = initialInterval;
   let originalTitle = document.title;
 
   async function fetchUpdates() {
@@ -11,9 +14,16 @@
 	  insertReplies(data[0]);
 	  unseenCount += data[0].length;
 	  updateTitle();
+	  interval = initialInterval;
+	  lastId = data[1];
+      } else {
+	  interval = Math.min(interval * 2, maxInterval);
       }
-      lastId = data[1];
-      setTimeout(fetchUpdates, 5000);
+  }
+
+  async function poll() {
+      fetchUpdates();
+      setTimeout(poll, interval*1000);
   }
 
   function insertReplies(replies){
@@ -65,7 +75,7 @@
       container.appendChild(frag);
   }
 
-  fetchUpdates();
+  poll();
 
   function inLocalTime(s) {
     const options = { 
@@ -93,4 +103,8 @@
   }
 
   window.addEventListener('focus', clearUnseen);
+
+  let countDownTimer = document.getElementById('countDown');
+  if (countDownTimer) countDownTimer.remove();
+
 </script>
