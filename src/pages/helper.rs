@@ -127,7 +127,6 @@ pub struct TopThread {
     pub subject: String,
     pub comment: String,
     pub label: String,
-    pub redacted: bool,
     pub reply_count: i32,
     pub mtime: chrono::NaiveDateTime,
 }
@@ -650,7 +649,6 @@ pub async fn top_threads (
     to_hex(t.id) as id, \
     t.subject, \
     t.comment, \
-    t.redacted, \
     t.reply_count, \
     t.mtime, \
     b.label \
@@ -686,7 +684,6 @@ pub async fn highlights_updates (
     to_hex(t.id) as id, \
     t.subject, \
     t.comment, \
-    t.redacted, \
     t.reply_count, \
     t.mtime, \
     b.label \
