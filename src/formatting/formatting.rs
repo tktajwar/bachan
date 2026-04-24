@@ -62,7 +62,7 @@ fn enquote(input: &str) -> String {
 
 fn enref(input: &str) -> String {
     let re = Regex::new(
-	r"(>|&gt;)(>|&gt;) *([0-9a-fA-F]{3,8})"
+	r"(>|&gt;)(>|&gt;) *([0-9a-fA-F]{1,8})"
     ).unwrap();
     let input = &re.replace_all(
 	input,
@@ -192,7 +192,7 @@ pub fn format(input: &str) -> String {
 
 pub fn references(input: &str) -> HashSet<i32> {
     let re = Regex::new (
-	r"(>|&gt;)(>|&gt;) *([0-9a-fA-F]{3,8})"
+	r"(>|&gt;)(>|&gt;) *([0-9a-fA-F]{1,8})"
     ).unwrap();
 
     let mut references = HashSet::new();
