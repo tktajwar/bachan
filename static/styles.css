@@ -15,6 +15,7 @@
     --brandd:#3D0604;
     --sup1l:#DBF1E8;
     --sup1d:#033B24;
+    --sup1md:#0C7148;
     --sup2l:#F2ECDF;
     --sup2d:#3D2D03;
 
@@ -67,7 +68,7 @@
     --board-label:var(--sup3);
 
     --tid:var(--brand);
-    --utid:var(--sup3d);
+    --utid:var(--sup1md);
 
     --submit-btn:var(--button);
 }
