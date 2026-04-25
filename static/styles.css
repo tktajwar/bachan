@@ -226,8 +226,7 @@ h1 {
 
 #postForm {
     margin: 10px;
-    border-spacing: 1px;
-    width: 468px;
+    max-width: 468px;
     margin: auto;
 }
 
