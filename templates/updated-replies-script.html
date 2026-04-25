@@ -38,7 +38,7 @@
 	  div.innerHTML = `
 <p class="reply-tagline">
   <span class="reply-utid">
-    ${p.uname}#${p.utid} [${p.country}]
+    ${p.uname}#${p.utid} <span class="cc">${flagEmoji(p.country)}</span>
   </span>
   <span class="reply-time">
     ${inLocalTime(p.ctime)}
