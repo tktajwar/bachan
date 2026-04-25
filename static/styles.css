@@ -22,9 +22,9 @@
     --bg:var(--white);
     --bgbg:var(--gray);
     --border:var(--sup1l);
-    --logo:var(--brand);
+    --logo:var(--sup2);
     --logo-line:var(--logo);
-    --logo-bg:var(--sup2);
+    --logo-bg:var(--brand);
     --headline:var(--brand);
     --yellow:var(--sup2);
 
