@@ -9,14 +9,12 @@
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body>
-    <header>
-      {% include "navigation-headline.html" %}
+    {% include "navbar.html" %}
+    {% include "sidebar.html" %}
+    <main>
       <h1 id="k-title">
 	<center>কথোপকথন <span class="yellow">on</span> বাংলাচান</center>
       </h1>
-      <hr />
-    </header>
-    <main>
       <div class="thread-container">
 	{% for thread in threads %}
 	{% include "thread.html" %}
@@ -37,9 +35,11 @@
 	  শেষ পৃষ্ঠা
 	  {% endif %}
       </center></div>
+      {% include "popup-post-form.html" %}
     </main>
     <script src="/static/format_local_time.js"></script>
     <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
 	    crossorigin="anonymous"></script>
+    {% include "sidebar-script.html" %}
   </body>
 </html>

@@ -7,52 +7,58 @@
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body>
-    <header>
+    {% include "navbar.html" %}
+    {% include "sidebar.html" %}
+    <main>
       <h1 id="mod-title">
 	<center>Moderate {{thread_or_reply.id}}</center>
       </h1>
-    </header>
 
-    <div class="thread-container">
-      <div class="thread-body">
-	<a href="/k/{{thread_or_reply.id}}">
-	  <h3 class="thread-headline">{{thread_or_reply.subject}}</h3>
-	</a>
-	<div class="thread-comment">{{thread_or_reply.comment|safe}}</div>
+      <div class="thread-container">
+	<div class="thread">
+	  <div class="thread-body">
+	    <a href="/k/{{thread_or_reply.id}}">
+	      <h3 class="thread-headline">{{thread_or_reply.subject}}</h3>
+	    </a>
+	    <div class="thread-comment">{{thread_or_reply.comment|safe}}</div>
+	  </div>
+	</div>
       </div>
-    </div>
 
-    <div class="mod">
-      <h2><center>Moderate post</center></h2>
-      <form id="mod-form" action="/mod/{{thread_or_reply.id}}"
-	    method="POST">
+      <div class="mod">
+	<h2><center>Moderate post</center></h2>
+	<form id="mod-form" action="/mod/{{thread_or_reply.id}}"
+	      method="POST">
 
-	<label for="username">Username:</label>
-	<input type="text" id="username" name="username"
-	required><br />
+	  <label for="username">Username:</label>
+	  <input type="text" id="username" name="username"
+		 required><br />
 
-	<label for="passphrase">Passphrase:</label>
-	<input type="password" id="passphrase" name="passphrase"
-	       required><br />
+	  <label for="passphrase">Passphrase:</label>
+	  <input type="password" id="passphrase" name="passphrase"
+		 required><br />
 
-	<label>Action:</label><br/>
-	<input type="checkbox" name="redact"
-	       value="redact" />
-	<label for="redact">Redact Post</label><br />
-	<input type="checkbox" name="suspend"
-	       value="suspend" />
-	<label for="suspend">Suspend User</label><br />
+	  <label>Action:</label><br/>
+	  <input type="checkbox" name="redact"
+		 value="redact" />
+	  <label for="redact">Redact Post</label><br />
+	  <input type="checkbox" name="suspend"
+		 value="suspend" />
+	  <label for="suspend">Suspend User</label><br />
 
-	<label for="reason">Reason:</label>
-	<textarea id="reason" name="reason" minlength="20"
-	maxlength="256" required ></textarea> <br />
+	  <label for="reason">Reason:</label>
+	  <textarea id="reason" name="reason" minlength="20"
+		    maxlength="256" required ></textarea> <br />
 
-	<button type="submit">Submit</button>
+	  <button type="submit">Submit</button>
 
-      </form>
-    </div>
+	</form>
+      </div>
 
-    <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
-	    crossorigin="anonymous"></script>
+      <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
+	      crossorigin="anonymous"></script>
+      {% include "sidebar-script.html" %}
+      {% include "popup-post-form.html" %}
+    </main>
   </body>
 </html>

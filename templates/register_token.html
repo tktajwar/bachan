@@ -9,44 +9,42 @@
 	    crossorigin="anonymous"></script>
   </head>
   <body>
-    <header>
+    <main>
       <h1 id="mod-title">
 	<center>Register as Moderator</center>
       </h1>
-    </header>
+      <div class="mod">
+	<h2>Register as a moderator</h2>
+	<form id="register-form" action="/register/{{id}}" method="POST">
 
-    <div class="mod">
-      <h2>Register as a moderator</h2>
-      <form id="register-form" action="/register/{{id}}" method="POST">
+	  <label for="toke_passphrase">Token Passphrase:</label>
+	  <input type="password" id="token_passphrase" name="token_passphrase"
+		 required style="min-width:300px;"><br />
 
-	<label for="toke_passphrase">Token Passphrase:</label>
-	<input type="password" id="token_passphrase" name="token_passphrase"
-	       required style="min-width:300px;"><br />
+	  <br />
 
-	<br />
+	  <label for="username">Username:</label>
+	  <input type="text" id="username" name="username" minlength="3"
+		 maxlength="16" pattern="^[a-z0-9]{3,16}$" required
+		 title=
+		 "3 to 16 characters consisting of only a-z and 0-9"
+		 /><br />
 
-	<label for="username">Username:</label>
-	<input type="text" id="username" name="username" minlength="3"
-	       maxlength="16" pattern="^[a-z0-9]{3,16}$" required
-	       title=
-	       "3 to 16 characters consisting of only a-z and 0-9"
-	       /><br />
+	  <label for="passphrase">Passphrase:</label>
+	  <input type="password" id="passphrase" name="passphrase"
+		 minlength="12" required style="min-width:350px;"><br />
+	  <p style="font-family:system-ui,Arial,sans-serif;max-width:400px;">
+	    For passphrase you can try
+	    using <a href="https://diceware.dmuth.org/">diceware
+	      password generator</a> to create a strong yet memorizable
+	    passphrase. Be sure to write it down somewhere safe and
+	    contract the adminstrators if you ever lose it.
+	  </p>
 
-	<label for="passphrase">Passphrase:</label>
-	<input type="password" id="passphrase" name="passphrase"
-	       minlength="12" required style="min-width:350px;"><br />
-	<p style="font-family:system-ui,Arial,sans-serif;max-width:400px;">
-	  For passphrase you can try
-	  using <a href="https://diceware.dmuth.org/">diceware
-	  password generator</a> to create a strong yet memorizable
-	  passphrase. Be sure to write it down somewhere safe and
-	  contract the adminstrators if you ever lose it.
-	</p>
+	  <button type="submit">Submit</button>
 
-	<button type="submit">Submit</button>
-
-      </form>
-    </div>
-
+	</form>
+      </div>
+    </main>
   </body>
 </html>

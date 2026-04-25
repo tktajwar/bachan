@@ -25,10 +25,9 @@ use crate::forms::{
 };
 use crate::helper::{
     create_thread,
+    ctx_up_sidebar,
     get_board_ctx,
     hashed,
-    list_of_boards,
-    // number_of_pending_posts_in_last_hour,
     paginated_board_threads,
 };
 use crate::moderation::{
@@ -38,7 +37,7 @@ use crate::moderation::{
 use crate::template::*;
 
 async fn board_page (
-    state_pool: State<PgPool>,
+    pool_state: State<PgPool>,
     pagination: axum::extract::Query<PaginationWithMTime>,
     url: &str,
 ) -> Result<Html<String>, axum::http::StatusCode> {
@@ -46,24 +45,19 @@ async fn board_page (
 
     let Ok(board) = get_board_ctx (
 	url,
-	state_pool.clone(),
+	pool_state.clone(),
     ).await else {
 	return Err(axum::http::StatusCode::NOT_FOUND)
     };
     ctx.insert("board", &board);
 
-    let boards = list_of_boards (
-	state_pool.clone(),
-    ).await.unwrap_or(
-	vec![]
-    );
-    ctx.insert("boards", &boards);
+    ctx_up_sidebar(pool_state.clone(), &mut ctx).await;
 
     if let Err(e) = paginated_board_threads (
 	pagination.before_mtime,
 	pagination.limit,
 	url,
-	state_pool.clone(),
+	pool_state.clone(),
     ).await {
 	eprintln!("{}", e);
     };
@@ -72,7 +66,7 @@ async fn board_page (
 	pagination.before_mtime,
 	pagination.limit,
 	url,
-	state_pool,
+	pool_state,
     ).await.unwrap_or(
 	(vec![], false, 0, 0)
     );
@@ -88,7 +82,7 @@ async fn board_page (
     let content = match rendered {
 	Ok(s) => s,
 	Err(e) => {
-	    eprintln!("{e}");
+	    eprintln!("Failed to render board page: {}", e);
 	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
 	},
     };

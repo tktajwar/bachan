@@ -2,48 +2,110 @@
 
 :root {
     --white:#F8F8FF;
-    --black:black;
-    --gray:lightgray;
-    --red:#C0261D;
-    --yellow:#E6AF2E;
-    --green:#A4D65E;
-    --lgreen:#D0E7D4;
-    --dgreen:#4A7A2E;
-    --wgreen:#F2F8F3;
-    --blue:teal;
+    --black:#272727;
+    --gray:#8BA18E;
+    --lgray:#B8CFBD;
+
+    --brand:#C0261D;
+    --sup1:#14A76C;
+    --sup2:#D6A020;
+    --sup3:#26ACB5;
+
+    --brandl:#F6E7E6;
+    --brandd:#3D0604;
+    --sup1l:#DBF1E8;
+    --sup1d:#033B24;
+    --sup2l:#F2ECDF;
+    --sup2d:#3D2D03;
 
     --fg:var(--black);
-    --bg:var(--lgreen);
-    --border:var(--black);
-    --thread-bg:white;
-    --reply-bg:white;
-    --quote:var(--green);
-    --ref:var(--blue);
+    --bg:var(--white);
+    --bgbg:var(--gray);
+    --border:var(--sup1l);
+    --logo:var(--brand);
+    --logo-line:var(--logo);
+    --logo-bg:var(--sup2);
+    --headline:var(--brand);
+    --yellow:var(--sup2);
+
+    --thread-fg:var(--sup1d);
+    --thread-bg:var(--sup1l);
+
+    --reply-fg:var(--thread-fg);
+    --reply-bg:var(--thread-bg);
+
+    --button:#B1D3A5;
+    --button-shadow:#659226;
+
+    --notice-head:var(--sup2);
+    --notice-fg:var(--sup2d);
+    --notice-bg:var(--sup2l);
+
+    --sidebar:var(--sup1d);
+    --sidebar-fg:var(--sup1d);
+    --sidebar-bg:var(--sup1l);
+
+    --sidebtn-fg:var(--sup1d);
+
+    --navbar-fg:var(--sup1l);
+    --navbar-bg:var(--sup1d);
+
+    --highlights:var(--lgray);
+    --highlights-border:var(--black);
+    --highlights-head:var(--brand);
+    --highlights-headline:var(--sup2l);
+
+    --post-form-fg:var(--sup1d);
+    --post-form-bg:var(--sup1l);
+    --post-form-border:var(--gray);
+
+    --quote:var(--sup1);
+    --ref:var(--brand);
     --spoiler:var(--black);
-    --redText:var(--red);
-    --boardRef:var(--blue);
+    --redText:var(--brand);
+    --boardRef:var(--sup3);
+    --board-label:var(--sup3);
+
+    --tid:var(--brand);
+    --utid:var(--sup3d);
+
+    --submit-btn:var(--button);
 }
 
 body {
-    background-color: var(--bg);
+    background-color: var(--bgbg);
     color: var(--fg);
     font-family: Helvetica, 'Noto Sans Bengali', Arial, sans-serif;
     font-size: 14px;
     line-height: 1.6;
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    grid-template-areas:
+	"head head"
+	"side main";
+    margin: 0;
+}
+
+main {
+    grid-area: main;
+    max-height: 100vh;
+    overflow-y: auto;
 }
 
 h1 {
-    background-color: var(--wgreen);
-    box-shadow: inset 0 0 20px var(--green);
     max-width: 650px;
-    margin: auto;
+    margin: 8px auto;
     border-radius: 5px;
 }
 
 #logo {
-    color: var(--red);
-    text-decoration: underline var(--yellow) 1px;
-    padding: 10px;
+    color: var(--logo);
+    background-color: var(--logo-bg);
+    text-decoration: none;
+    text-decoration: underline overline var(--logo-line) 2px;
+    text-decoration-style: wavy;
+    padding: 8px;
+    margin: 5px;
     border-radius: 5px;
     font-weight: bold;
     letter-spacing: 2px;
@@ -80,38 +142,15 @@ h1 {
     margin: auto;
 }
 
-#root-container {
-    display: flex;
-    flex-wrap: wrap;
-    max-width: 1300px;
-}
-
-#boards, #highlights, #announcements, #welcome {
-    background-color: var(--wgreen);
-    border: 1px solid var(--border);
-}
-
-#announcements, #welcome, #root-container {
-    margin: 5px auto;
-}
-
-#welcome, #announcements {
-    max-width: 450px;
-}
-
-#boards {
-    min-width: 30px;
-    flex: 1 1 450px;;
+#highlights {
+    background-color: var(--highlights);
+    border: 1px solid var(--highlights-border);
 }
 
 #highlights {
     min-width: 150px;
-    max-width: 1050px;
-    flex: 10 1 600px;
-}
-
-#boards, #highlights {
-    margin: 3px 3px;
+    max-width: 1100px;
+    margin: auto;
 }
 
 #highlights .thread-container {
@@ -125,6 +164,7 @@ h1 {
     min-width: 50px;
     max-width: 240px;
     flex: 2 1 190px;
+    border: 1px solid var(--border);
 }
 
 #highlights .thread-body {
@@ -132,15 +172,30 @@ h1 {
     overflow-y: hidden;
 }
 
-@media (min-width: 950px) {
-    #highlights .thread {
-	max-width: 250px;
-	flex: 2 1 240px;
+@media (max-width: 1280px) {
+    #sidebar {
+	display: none;
+	postion: fixed;
+	width: 100%;
     }
 
-    #boards {
-	flex: 0 0 150px;;
-	max-width: 150px;
+    #navbar {
+	display: block !important;
+    }
+
+    body: {
+	grid-template-columns: 1fr;
+    }
+
+    .show {
+	display: block !important;
+    }
+}
+
+@media (min-width: 950px) {
+    #highlights .thread {
+	max-width: 260px;
+	flex: 2 1 240px;
     }
 
     #highlights .thread-body {
@@ -155,48 +210,11 @@ h1 {
     }
 }
 
-#boards > h2,
-#highlights > h2,
-#announcements > h2,
-#welcome > h2{
+#highlights > h2 {
     text-align: center;
-    background-color: var(--green);
+    color: var(--highlights-headline);
+    background-color: var(--highlights-head);
     margin: 0;
-}
-
-.container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin: auto;
-    max-width: 1600px;
-}
-
-.container > .column {
-    min-width: 50px;
-    margin: 0 3px;
-    flex: 0 1 130px;
-}
-
-.container > .column > ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0 0 3px 0;
-}
-
-.container > .column > ul > li {
-    padding-bottom: 0;
-}
-
-.container > .column > h3 {
-    text-decoration: underline;
-    padding: 0;
-    margin: 3px 3px 0 0;
-}
-
-#new-thread-button {
-    text-decoration: none;
 }
 
 #postFormContainer {
@@ -216,7 +234,7 @@ h1 {
 #postForm > tbody > tr > td:first-child {
     border: 1px solid var(--border);
     border-radius: 2px;
-    background-color: var(--green);
+    background-color: var(--post-form-bg);
 }
 
 #board-title {
@@ -236,6 +254,7 @@ h1 {
 .reply {
     border: 1px solid var(--border);
     border-radius: 2px;
+    color: var(--thread-fg);
     background-color: var(--thread-bg);
     padding: 2px;
     margin: 4px 3px;
@@ -289,13 +308,13 @@ h1 {
 
 .thread-utid,
 .reply-utid {
-    color: var(--red);
+    color: var(--utid);
     font-weight: bold;
 }
 
 .thread-id,
 .reply-id {
-    color: var(--blue);
+    color: var(--tid);
 }
 
 .thread-board > a {
@@ -303,7 +322,7 @@ h1 {
 }
 
 #k-title {
-    color: var(--red);
+    color: var(--headline);
     padding: 0;
 }
 
@@ -333,12 +352,15 @@ h1 {
     color: var(--yellow);
 }
 
-.navbar {
-    margin-bottom: 10px;
+#navbar {
+    grid-area: head;
     text-align: center;
+    color: var(--navbar-fg);
+    background-color: var(--navbar-bg);
+    display: none;
 }
 
-.navbar ul {
+#navbar ul {
     list-style-type: none;
     padding: 0px;
     display: flex;
@@ -346,52 +368,52 @@ h1 {
     align-items: center;
     justify-content: center;
     text-align: center;
+    display: flex;
     flex-wrap: wrap;
+    max-width: 800px;
 }
 
-.navbar li {
-    /* flex: 1; */
+#navbar li {
+    flex: 1 0 auto
 }
 
-.navbar a {
+#navbar a {
     text-decoration: none;
     padding: 5px;
-    color: var(--dgreen);
+    color: inherit;
 }
 
 #notice {
     max-width: 650px;
-    margin: auto;
+    margin: 5px auto;
     padding: 0;
-    border: 2px solid black;
+    border: 2px solid var(--notice-fg);
     font-size: 0.95em;
 }
 
 #notice h3 {
     margin: 0;
     padding: 0;
-    color: var(--black);
-    background-color: var(--yellow);
+    color: var(--notice-fg);
+    background-color: var(--notice-head);
     border-bottom: 2px solid black;
 }
 
 #notice-msg {
     margin: 0;
     padding: 0;
-    background-color: var(--wgreen);
+    color: var(--notice-fg);
+    background-color: var(--notice-bg);
 }
 
 #notice-msg p {
     margin: 0;
 }
 
-#notice-msg a {
-    color: var(--dgreen);
-}
-
 .mod,
 .submission {
-    background-color: var(--wgreen);
+    color: var(--thread-fg);
+    background-color: var(--thread-bg);
     max-width: 700px;
     margin: auto;
     border: 1px solid var(--border);
@@ -406,8 +428,8 @@ h1 {
 #postPopup {
     display: none;
     position: fixed;
-    background-color: var(--wgreen);
-    border: 3px solid var(--lgreen);
+    background-color: var(--post-form-bg);
+    border: 3px solid var(--post-form-border);
     border-radius: 5px;
     width: 95vw;
     height: 95vh;
@@ -426,28 +448,98 @@ h1 {
     min-width: 150px;
 }
 
-.popup-btn {
+#postSubject {
+    width:300px;
+    min-height:30px;
+    font-weight:bold;
+}
+
+#postComment {
+    width: 385px;
+    min-width: 100px;
+    height: 200px;
+}
+
+@media (max-width: 460px) {
+    #postSubject {
+	width: 175px;
+    }
+
+    #postComment {
+	width: 260px;
+    }
+}
+
+#sidebar {
+    grid-area: side;
+    width: 175px;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 2px solid var(--sidebar-fg);
+}
+
+#sidebar h2 {
+    background-color: var(--fg);
+    color: var(--bg);
+    margin: 0;
+    border-top: 1px solid var(--sidebar-fg);
+}
+
+#sidebar h3 {
+    color: var(--sidebar-bg);
+    background-color: var(--sidebar-fg);
+    margin: 0;
+}
+
+#sidebar a {
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    display: block;
+}
+
+#sidebar .boardCategory {
+    background-color: var(--sidebar-bg);
+}
+
+#sidebar .thread {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar ul {
+    list-style-type: none;
+    padding: 0 5px;
+    margin: 0;
+    flex-wrap: wrap;
+}
+
+.popup-btn,
+#sidebar li {
     postion: relative;
-    display: inline-block;
+    display: block;
+    width: 100%;
     cursor: pointer;
     font-size: inherit;
     font-family: inherit;
-    padding: 0.15em 0.25em;
-    margin: 0.15em;
     border: 0;
-    border-radius: 0.75em;
     font-weight: 500;
-    background-color: var(--lgreen);
-    border: 2px solid var(--dgreen);
-    color: var(--dgreen);
+    color: var(--sidebtn-fg);
 }
 
-.popup-btn:hover {
+.popup-btn:hover,
+#sidebar li:hover {
     animation: shake .3s linear infinite;
 }
 
-.popup-btn:active {
+.popup-btn:active,
+#sidebar li:active {
     animation: jump .15s ease-in-out;
+}
+
+#submit {
+    background-color: var(--submit-btn);
 }
 
 @keyframes shake {
@@ -466,11 +558,6 @@ h1 {
     65% { transform: translateY(-3px) rotate(9deg) }
     75% { transform: translateY(-3px) rotate(-9deg) }
     100% { transform: translateY(0) rotate(0) }
-}
-
-:root {
-    --button:#B1D3A5;
-    --button-shadow:#659226;
 }
 
 .btn,
@@ -509,7 +596,8 @@ button:active {
 }
 
 .boardLabel {
-    background-color: var(--bg);
+    background-color: var(--board-label);
+    color: var(--fg);
     padding: 0;
     margin: 0;
 }

@@ -30,6 +30,7 @@ use crate::template::{
 use crate::helper::{
     ReplySerializable,
     create_reply,
+    ctx_up_sidebar,
     hashed,
     paginated_threads,
     thread_replies,
@@ -53,6 +54,8 @@ pub async fn k_page (
     } else {
 	None
     };
+
+    ctx_up_sidebar(state_pool.clone(), &mut ctx).await;
 
     let (threads, has_more, limit) = paginated_threads(
 	before,
@@ -81,7 +84,7 @@ pub async fn k_page (
 }
 
 pub async fn k_thread_page(
-    State(pool): State<PgPool>,
+    state_pool: State<PgPool>,
     Path(id_hex): Path<String>,
 ) -> Result<Result<Html<String>, Redirect>, axum::http::StatusCode> {
     let Ok(id_u32) = u32::from_str_radix(&id_hex, 16) else {
@@ -91,9 +94,9 @@ pub async fn k_thread_page(
 
     let Ok(thread) = thread_with_id(
 	id,
-	pool.clone(),
+	state_pool.clone(),
     ).await else {
-	return if let Ok(tid) = thread_with_reply_id(id, pool).await {
+	return if let Ok(tid) = thread_with_reply_id(id, state_pool).await {
 	    let tid_hex = format!("{:03x}", tid);
 	    Ok(Err(Redirect::permanent(
 		&format!("/k/{}#{}", tid_hex, id_hex
@@ -103,14 +106,16 @@ pub async fn k_thread_page(
 	}
     };
 
+    let mut ctx = tera::Context::new();
+    ctx_up_sidebar(state_pool.clone(), &mut ctx).await;
+
     let Ok((replies, last_id)) = thread_replies(
 	id,
-	pool,
+	state_pool,
     ).await else {
 	return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
     };
 
-    let mut ctx = tera::Context::new();
     ctx.insert("thread", &thread);
     ctx.insert("last_id", &last_id);
     ctx.insert("replies", &replies);

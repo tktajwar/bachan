@@ -9,9 +9,7 @@
 	  বিষয়
 	</td>
 	<td>
-	  <input name="subject" type="text" style="width:300px;
-						   min-height:30px;
-						   font-weight:bold;"
+	  <input name="subject" type="text" style="" id="postSubject"
 		 required />
 	  <input class="btn" name="submit" type="submit" value="জমা দিন"
 		 title="Submit"/>
@@ -30,11 +28,12 @@
 	</td>
 	<td>
 	  <textarea name="comment" cols="48" rows="4"
-		    maxlength="4096" style="width: 385px;
-					    height: 200px;" required ></textarea>
+		    maxlength="4096" id="postComment" required ></textarea>
 	</td>
       </tr>
     </tbody>
 </form></table>
 <div><a href="/static/formatting-guide.html">ফরম্যাটিং গাইড</a></div>
 </div>
+
+<script defer src="/static/popup.js"></script>

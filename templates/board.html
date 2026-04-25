@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body>
-    <header>
-      {% include "navigation-headline.html" %}
-      {% include "list-of-boards.html" %}
+    {% include "navbar.html" %}
+    {% include "sidebar.html" %}
+    <main>
       <h1 id="board-title">
 	<center>/{{board.url}}/ - {{board.label}}</center>
       </h1>
@@ -24,9 +24,8 @@
 	</center>
       </div>
       {% include "post-form-container.html" %}
-    </header>
-    <hr />
-    <main>
+      {% include "popup-post-form.html" %}
+      <hr />
       <div class="thread-container">
 	{% for thread in threads %}
 	{% include "thread.html" %}
@@ -52,5 +51,6 @@
     <script src="/static/format_local_time.js"></script>
     <script src="https://kit.fontawesome.com/9187eb4d30.js"
 	    crossorigin="anonymous"></script>
+    {% include "sidebar-script.html" %}
   </body>
 </html>

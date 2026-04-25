@@ -39,7 +39,10 @@ pub async fn verify_mod(
 
     let (stored_hash,) = match row {
         Some((hash,)) => (hash,),
-        None => return Ok(false),
+        None => {
+	    eprintln!("Missing moderator: {}", username);
+	    return Ok(false)
+	},
     };
 
     let argon2 = Argon2::default();

@@ -24,6 +24,7 @@ use crate::helper::{
     SubmissionName,
     confirm_post,
     country_code,
+    ctx_up_sidebar,
     delete_pending_post,
     edit_pending_post,
     hashed,
@@ -36,6 +37,9 @@ pub async fn submission_id_page (
     state_pool: State<PgPool>,
     Path(id): Path<Uuid>,
 ) -> impl IntoResponse {
+    let mut ctx = tera::Context::new();
+    ctx_up_sidebar(state_pool.clone(), &mut ctx).await;
+
     let pending_post = match pending_post_with_id (
 	id,
 	state_pool,
@@ -61,8 +65,6 @@ pub async fn submission_id_page (
 	    )
 	}
     };
-
-    let mut ctx = tera::Context::new();
     ctx.insert("pending_post", &pending_post);
 
     let rendered = TERA.render("submission_id.html", &ctx);

@@ -21,6 +21,7 @@ use crate::template::{
     TERA,
 };
 use crate::helper::{
+    ctx_up_sidebar,
     redact_thread_or_reply,
     thread_or_reply_with_id,
 };
@@ -34,14 +35,15 @@ pub async fn mod_id_page(
     };
     let id = id_u32 as i32;
 
+    let mut ctx = tera::Context::new();
+    ctx_up_sidebar(state_pool.clone(), &mut ctx).await;
+
     let Ok(thread_or_reply) = thread_or_reply_with_id(
 	id,
 	state_pool,
     ).await else {
 	return Err(axum::http::StatusCode::NOT_FOUND)
     };
-
-    let mut ctx = tera::Context::new();
     ctx.insert("thread_or_reply", &thread_or_reply);
 
     let rendered = TERA.render("mod_id.html", &ctx);

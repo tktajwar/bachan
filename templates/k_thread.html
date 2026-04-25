@@ -11,9 +11,8 @@
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body>
-    <header>
-      {% include "navigation-headline-for-thread.html" %}
-    </header>
+    {% include "navbar.html" %}
+    {% include "sidebar.html" %}
     <main>
       <div class="thread-container">
 	{% include "thread.html" %}
@@ -23,11 +22,13 @@
 	{% include "thread-reply-form.html" %}
 	{% endif %}
       </div>
+      {% include "popup-post-form.html" %}
     </main>
     <script src="/static/format_local_time.js"></script>
     <script src="/static/ref_post.js"></script>
     <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
 	    crossorigin="anonymous"></script>
     {% include "updated-replies-script.html" %}
+    {% include "sidebar-script.html" %}
   </body>
 </html>

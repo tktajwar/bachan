@@ -131,6 +131,14 @@ pub struct TopThread {
     pub mtime: chrono::NaiveDateTime,
 }
 
+#[derive(sqlx::FromRow)]
+#[derive(Serialize)]
+pub struct Announcement {
+    pub id: String,
+    pub subject: String,
+    pub comment: String,
+}
+
 pub struct SubmissionName {
     pub name: Option<String>,
     pub pass: Option<String>,
@@ -407,7 +415,7 @@ pub async fn create_thread (
 
 pub async fn thread_replies(
     tid: i32,
-    pool: PgPool,
+    State(pool): State<PgPool>,
 ) -> Result<(Vec<ReplySerializable>, i32), Box<dyn Error>> {
     let q = "\
     SELECT \
@@ -606,38 +614,25 @@ pub async fn get_board_ctx(
 
 pub async fn top_announcements (
     State(pool): State<PgPool>,
-) -> Result<Vec<ThreadSerializable>, Box<dyn Error>> {
+) -> Result<Vec<Announcement>, Box<dyn Error>> {
     let q = "\
     SELECT \
-    id, \
-    uid, \
-    uname, \
-    trip, \
+    to_hex(id) as id, \
     subject, \
-    comment, \
-    board, \
-    ctime, \
-    mtime, \
-    redacted, \
-    reply_count, \
-    country \
+    comment \
     FROM thread \
     WHERE redacted = false \
     AND board = 'g' \
-    AND mtime > NOW() - interval'7 day'
+    AND mtime > NOW() - interval'5 day'
     ORDER BY id desc \
     LIMIT 3 \
     ";
 
-    let threads = sqlx::query_as::<_, Thread>(q)
+    let threads = sqlx::query_as::<_, Announcement>(q)
 	.fetch_all(&pool)
 	.await?;
 
-    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
-        .map(Thread::into_serializable)
-        .collect();
-
-    Ok(serializable_threads)
+    Ok(threads)
 }
 
 pub async fn top_threads (
@@ -708,24 +703,6 @@ pub async fn highlights_updates (
     };
 
     Ok((threads, last_mtime))
-}
-
-pub async fn list_of_boards (
-    State(pool): State<PgPool>,
-) -> Result<Vec<Board>, Box<dyn Error>> {
-    let q = "\
-    SELECT \
-    url, \
-    label \
-    FROM board \
-    ORDER BY url ASC \
-    ";
-
-    let boards: Vec<Board> = sqlx::query_as::<_, Board>(q)
-	.fetch_all(&pool)
-	.await?;
-
-    Ok(boards)
 }
 
 pub async fn pending_post_with_id (
@@ -1158,7 +1135,7 @@ pub fn country_code (
 
 pub async fn thread_with_id (
     id: i32,
-    pool: PgPool,
+    State(pool): State<PgPool>,
 ) -> Result<ThreadSerializable, Box<dyn Error>> {
     let q = "\
     SELECT \
@@ -1190,7 +1167,7 @@ pub async fn thread_with_id (
 
 pub async fn thread_with_reply_id(
     reply_id: i32,
-    pool: PgPool,
+    State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let q = "\
     SELECT \
@@ -1205,4 +1182,56 @@ pub async fn thread_with_reply_id(
 	.await?;
 
     Ok(thread_id.0)
+}
+
+pub async fn ctx_up_sidebar (
+    pool_state: State<PgPool>,
+    ctx: &mut tera::Context,
+)  {
+    let hobbies = boards_in_category(
+	"Hobbies",
+	pool_state.clone(),
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("hobbies", &hobbies);
+
+    let interests = boards_in_category(
+	"Interests",
+	pool_state.clone(),
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("interests", &interests);
+
+    let lifestyle = boards_in_category(
+	"Lifestyle",
+	pool_state.clone(),
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("lifestyle", &lifestyle);
+
+    let local = boards_in_category(
+	"Local",
+	pool_state.clone(),
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("local", &local);
+
+    let misc = boards_in_category(
+	"Misc",
+	pool_state.clone(),
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("misc", &misc);
+
+    let announcements = top_announcements (
+	pool_state.clone(),
+    ).await.unwrap_or(
+	vec![]
+    );
+    ctx.insert("announcements", &announcements);
 }

@@ -40,89 +40,12 @@
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body>
-    <header>
+    {% include "navbar.html" %}
+    {% include "sidebar.html" %}
+    <main>
       <h1><center><a href="/" id="logo">বাংলাচান</a></center></h1>
       {% include "notice.html" %}
-      <div id="welcome">
-	<h2>বাংলাচান ফোরামে আপনাকে স্বাগতম!</h2>
-	<nav class="navbar">
-	  <ul>
-	    <li>
-	      <a id="popupThreadButton" title="add something new"
-		 class="popup-btn">
-		<i class="fa-solid fa-pen"></i> নতুন কিছু বলুন
-	      </a>
-	    </li>
-	    <li>
-	      <a href="/static/formatting-guide.html"
-		 title="formatting guide" class="popup-btn">
-		<i class="fa-solid fa-text-slash"></i> ফরম্যাটিং গাইড
-	      </a>
-	    </li>
-	    <li>
-	      <a href="https://discord.gg/BAWjqfUvKe"
-		 title="join discord channel" class="popup-btn">
-		<i class="fa-brands fa-discord"></i> ডিসকোর্ড
-	      </a>
-	    </li>
-	    <li>
-	      <a href="https://buymeacha.com/banglachan"
-		 title="buy me a cha" class="popup-btn">
-		<i class="fa-solid fa-mug-hot"></i> সাপোর্ট
-	      </a>
-	    </li>
-	  </ul>
-	</nav>
-      </div>
       {% include "popup-post-form.html" %}
-    </header>
-    <main>
-      <div id="root-container">
-      <div id="boards">
-	<h2>ফোরাম তালিকা</h2>
-	<div class="container">
-	  <div class="column">
-	    <h3>শখ</h3>
-	    <ul>
-	      {% for board in hobbies %}
-	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
-	      {% endfor %}
-	    </ul>
-	  </div>
-	  <div class="column">
-	    <h3>আগ্রহ</h3>
-	    <ul>
-	      {% for board in interests %}
-	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
-	      {% endfor %}
-	    </ul>
-	  </div>
-	  <div class="column">
-	    <h3>জীবনধারা</h3>
-	    <ul>
-	      {% for board in lifestyle %}
-	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
-	      {% endfor %}
-	    </ul>
-	  </div>
-	  <div class="column">
-	    <h3>স্থানীয়</h3>
-	    <ul>
-	      {% for board in local %}
-	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
-	      {% endfor %}
-	    </ul>
-	  </div>
-	  <div class="column">
-	    <h3>অন্যান্য</h3>
-	    <ul>
-	      {% for board in misc %}
-	      <li><a href="{{board.url}}/" title="/{{board.url}}/">{{board.label}}</a></li>
-	      {% endfor %}
-	    </ul>
-	  </div>
-	</div>
-      </div>
       <div id="highlights">
 	<h2>জনপ্রিয় আলোচনা</h2>
 	<!-- List of highlighted threads -->
@@ -134,27 +57,12 @@
 	  <p> এখনো কোনো কথোপকথন হয়নি। </p>
 	  {% endfor %}
 	</div>
-
-      </div>
-      </div>
-      <div id="announcements">
-	<h2> ঘোষণাসমূহ </h2>
-	<!-- List of announcements -->
-
-	<div class="thread-container">
-	  {% for thread in announcements %}
-	  {% include "thread.html" %}
-	  {% else %}
-	  <p> এখনো কোনো ঘোষণা করা হয়নি। </p>
-	  {% endfor %}
-	</div>
-
       </div>
     </main>
-    <script src="/static/popup.js"></script>
     <script src="/static/format_local_time.js"></script>
     <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
 	    crossorigin="anonymous"></script>
     {% include "update-highlights-script.html" %}
+    {% include "sidebar-script.html" %}
    </body>
 </html>

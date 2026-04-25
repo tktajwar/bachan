@@ -7,33 +7,32 @@
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body>
-    <header>
+    <main>
       <h1 id="mod-title">
 	<center>Create Moderator Token</center>
       </h1>
-    </header>
+      <div class="mod">
+	<h2>Create Token</h2>
+	<form id="token-form" action="/token" method="POST">
 
-    <div class="mod">
-      <h2>Create Token</h2>
-      <form id="token-form" action="/token" method="POST">
+	  <label for="server_pin">Server Pin:</label>
+	  <input type="password" id="server_pin" name="server_pin"
+		 required><br />
+	  <label for="server_passphrase">Server Passphrase:</label>
+	  <input type="password" id="server_passphrase" name="server_passphrase"
+		 required><br />
+	  <br />
+	  <label for="toke_passphrase">Token Passphrase:</label>
+	  <input type="password" id="token_passphrase" name="token_passphrase"
+		 required><br />
 
-	<label for="server_pin">Server Pin:</label>
-	<input type="password" id="server_pin" name="server_pin"
-	       required><br />
-	<label for="server_passphrase">Server Passphrase:</label>
-	<input type="password" id="server_passphrase" name="server_passphrase"
-	       required><br />
-	<br />
-	<label for="toke_passphrase">Token Passphrase:</label>
-	<input type="password" id="token_passphrase" name="token_passphrase"
-	       required><br />
+	  <button type="submit">Submit</button>
 
-	<button type="submit">Submit</button>
+	</form>
+      </div>
 
-      </form>
-    </div>
-
-    <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
-	    crossorigin="anonymous"></script>
+      <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
+	      crossorigin="anonymous"></script>
+    </main>
   </body>
 </html>

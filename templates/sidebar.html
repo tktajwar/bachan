@@ -1,0 +1,116 @@
+<aside id="sidebar">
+  <h2>ফোরাম তালিকা</h2>
+  <div class="forumNav">
+    <div class="boardCategory">
+      <h3>জেনারেল</h3>
+      <ul>
+	<li>
+	  <a href="/"
+	     title="homepage" >
+	    <i class="fa-solid fa-house"></i> মূলপাতা
+	  </a>
+	</li>
+      	<li>
+	  <a id="popupThreadButton" title="add something new">
+	    <i class="fa-solid fa-pen"></i> নতুন কিছু বলুন
+	  </a>
+	</li>
+	<li>
+	  <a href="/static/formatting-guide.html"
+	     title="formatting guide" >
+	    <i class="fa-solid fa-text-slash"></i> ফরম্যাটিং গাইড
+	  </a>
+	</li>
+	<li>
+	  <a href="https://buymeacha.com/banglachan"
+	     title="buy me a cha" >
+	    <i class="fa-solid fa-mug-hot"></i> সাপোর্ট ডেভেলপমেন্ট
+	  </a>
+	</li>
+      </ul>
+    </div>
+    <div class="boardCategory">
+      <h3>শখ</h3>
+      <ul>
+	{% for board in hobbies %}
+	<li><a href="/{{board.url}}/" title="/{{board.url}}/">
+	    /{{board.url}}/ {{board.label}}
+	</a></li>
+	{% endfor %}
+      </ul>
+    </div>
+    <div class="boardCategory">
+      <h3>আগ্রহ</h3>
+      <ul>
+	{% for board in interests %}
+	<li><a href="/{{board.url}}/" title="/{{board.url}}/">
+	    /{{board.url}}/ {{board.label}}
+	</a></li>
+	{% endfor %}
+      </ul>
+    </div>
+    <div class="boardCategory">
+      <h3>জীবনধারা</h3>
+      <ul>
+	{% for board in lifestyle %}
+	<li><a href="/{{board.url}}/" title="/{{board.url}}/">
+	    /{{board.url}}/ {{board.label}}
+	</a></li>
+	{% endfor %}
+      </ul>
+    </div>
+    <div class="boardCategory">
+      <h3>স্থানীয়</h3>
+      <ul>
+	{% for board in local %}
+	<li><a href="/{{board.url}}/" title="/{{board.url}}/">
+	    /{{board.url}}/ {{board.label}}
+	</a></li>
+	{% endfor %}
+      </ul>
+    </div>
+    <div class="boardCategory">
+      <h3>অন্যান্য</h3>
+      <ul>
+	{% for board in misc %}
+	<li><a href="/{{board.url}}/" title="/{{board.url}}/">
+	    /{{board.url}}/ {{board.label}}
+	</a></li>
+	{% endfor %}
+      </ul>
+    </div>
+    <div class="boardCategory">
+      <h3>লিংক সমূহ</h3>
+      <ul>
+	<li>
+	  <a href="https://github.com/tktajwar/bachan" title="GitHub">
+	    <i class="fa-brands fa-github"></i> গিটহাব
+	  </a>
+	</li>
+	<li>
+	  <a href="https://codeberg.org/tktajwar/bachan" title="Codeberg">
+	    <i class="fa-solid fa-code"></i> কোডবার্গ
+	  </a>
+	</li>
+	<li>
+	  <a href="https://discord.gg/BAWjqfUvKe" title="Discord">
+	    <i class="fa-brands fa-discord"></i> ডিসকোর্ড
+	  </a>
+	</li>
+      </ul>
+    </div>
+  </div>
+  <div id="announcements">
+    <h2> ঘোষণাসমূহ </h2>
+    <!-- List of announcements -->
+
+    <div class="thread-container">
+      {% for thread in announcements %}
+      {% include "announcement-thread.html" %}
+      {% else %}
+      <p> এখনো কোনো ঘোষণা করা হয়নি। </p>
+      {% endfor %}
+    </div>
+
+  </div>
+</aside>
