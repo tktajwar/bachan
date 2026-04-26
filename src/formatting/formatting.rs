@@ -82,17 +82,10 @@ fn ref_board(input: &str) -> String {
     let re = Regex::new(
 	r#"((?:>|&gt;){3}/([a-z]{1,12})/)(\s|,|\.|"|$)"#
     ).unwrap();
-    let input = &re.replace_all(
-	input,
-	r#"<a class="boardRef" href="/$2/">$1</a>$3"#
-    );
 
-    let re = Regex::new(
-	r"\[\[((?:প|প্রকাশনা|[Pp]ost|)[.: \-] *([0-9a-fA-F]{1,8}))\]\]"
-    ).unwrap();
     re.replace_all(
 	input,
-	r#"<a class="ref" href="/k/$2">$1</a>"#
+	r#"<a class="boardRef" href="/$2/">$1</a>$3"#
     ).to_string()
 }
 
@@ -173,15 +166,15 @@ fn sub(input: &str) -> String {
 pub fn format(input: &str) -> String {
     let input = sanitize(input);
 
+    let formatted_input = ref_board(&enlink(&embed(
+	&input
+    )));
+
     let formatted_input = enref(&enquote(
 	&redtext(&spoiler(&strikethrough(&underline(&italicize(&embold(
-	    &input
+	    &formatted_input
 	))))))
     ));
-
-    let formatted_input = ref_board(&enlink(&embed(
-	&formatted_input
-    )));
 
     let formatted_input = sub(&sup(
 	&formatted_input
