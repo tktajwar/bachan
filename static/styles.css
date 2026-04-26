@@ -420,7 +420,7 @@ h1 {
     max-width: 700px;
     margin: auto;
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: 2px;
 }
 
 .mod form,
