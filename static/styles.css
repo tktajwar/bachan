@@ -53,8 +53,8 @@
 
     --highlights:var(--lgray);
     --highlights-border:var(--black);
-    --highlights-head:var(--brand);
-    --highlights-headline:var(--sup2l);
+    --highlights-head:var(--sup1);
+    --highlights-headline:var(--sup1d);
 
     --post-form-fg:var(--sup1d);
     --post-form-bg:var(--sup1l);
