@@ -126,6 +126,7 @@ pub struct TopThread {
     pub id: String,
     pub subject: String,
     pub comment: String,
+    pub board: String,
     pub label: String,
     pub reply_count: i32,
     pub mtime: chrono::NaiveDateTime,
@@ -646,6 +647,7 @@ pub async fn top_threads (
     t.comment, \
     t.reply_count, \
     t.mtime, \
+    t.board, \
     b.label \
     FROM thread t \
     INNER JOIN board b \
@@ -681,6 +683,7 @@ pub async fn highlights_updates (
     t.comment, \
     t.reply_count, \
     t.mtime, \
+    t.board, \
     b.label \
     FROM thread t \
     INNER JOIN board b \

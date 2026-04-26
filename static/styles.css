@@ -18,6 +18,8 @@
     --sup1md:#0C7148;
     --sup2l:#F2ECDF;
     --sup2d:#3D2D03;
+    --sup3l:#D7E8E9;
+    --sup3d:#044044;
 
     --fg:var(--black);
     --bg:var(--white);
@@ -66,6 +68,7 @@
     --redText:var(--brand);
     --boardRef:var(--sup3);
     --board-label:var(--sup3);
+    --board-label-fg:var(--sup3l);
 
     --tid:var(--brand);
     --utid:var(--sup1md);
@@ -598,7 +601,11 @@ button:active {
 
 .boardLabel {
     background-color: var(--board-label);
-    color: var(--fg);
+    color: var(--board-label-fg);
     padding: 0;
     margin: 0;
+}
+
+.boardLabel a {
+    color: inherit;
 }
