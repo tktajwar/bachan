@@ -173,7 +173,7 @@ h1 {
     overflow-y: hidden;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 840px) {
     #sidebar {
 	display: none;
 	postion: fixed;
@@ -476,6 +476,7 @@ h1 {
     height: 100vh;
     overflow-y: auto;
     border-right: 2px solid var(--sidebar-fg);
+    margin-right: 5px;
 }
 
 #sidebar h2 {
