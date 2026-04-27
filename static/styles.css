@@ -34,6 +34,9 @@
     --thread-fg:var(--sup1d);
     --thread-bg:var(--sup1l);
 
+    --redaction-reason:var(--brandl);
+    --redaction-reason-fg:var(--brandd);
+
     --reply-fg:var(--thread-fg);
     --reply-bg:var(--thread-bg);
 
@@ -608,4 +611,9 @@ button:active {
 
 .boardLabel a {
     color: inherit;
+}
+
+.redaction-reason {
+    color: var(--redaction-reason-fg);
+    background-color: var(--redaction-reason);
 }

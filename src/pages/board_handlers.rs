@@ -53,15 +53,6 @@ async fn board_page (
 
     ctx_up_sidebar(pool_state.clone(), &mut ctx).await;
 
-    if let Err(e) = paginated_board_threads (
-	pagination.before_mtime,
-	pagination.limit,
-	url,
-	pool_state.clone(),
-    ).await {
-	eprintln!("{}", e);
-    };
-
     let (threads, has_more, limit, last_mtime) = paginated_board_threads (
 	pagination.before_mtime,
 	pagination.limit,

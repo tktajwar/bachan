@@ -1,0 +1,10 @@
+<div class="thread" id="{{thread.id}}">
+  <a href="/k/{{thread.thread_id}}">
+    <h3 class="thread-headline">&gt&gt{{thread.thread_id}}: {{thread.subject}}</h3>
+  </a>
+  <div class="thread-comment">{{thread.comment|safe}}</div>
+  <div class="redaction-reason">
+    <p>অপসারিত করেছেন: {{thread.mod_name}}</p>
+    <p>কারণ: {{thread.reason}}</p>
+  </div>
+</div>

@@ -41,6 +41,14 @@ async fn main() {
 	.route("/mod/{tid_hex}", get(mod_id_page).post(mod_id_submission))
 	.route("/{boardname}/", get(board_x_page).post(board_x_submission))
 	.route("/{boardname}", get(board_x_page).post(board_x_submission))
+	.route("/redacted/threads/", get(redacted_threads_page))
+	.route("/redacted/threads", get(|| async {
+	    Redirect::to("/redacted/threads/")
+	}))
+	.route("/redacted/replies/", get(redacted_replies_page))
+	.route("/redacted/replies", get(|| async {
+	    Redirect::to("/redacted/replies/")
+	}))
 	.route("/token", get(token_page).post(token_submission))
 	.route(
 	    "/register/{token_id}",

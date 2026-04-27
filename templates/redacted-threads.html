@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অপসারিত কথোপকথন | বাংলাচান</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    {% include "navbar.html" %}
+    {% include "sidebar.html" %}
+    <main>
+      <div class="thread-container">
+	{% for thread in threads %}
+	{% include "redacted-thread.html" %}
+	{% else %}
+	<p> No thread has been redacted yet। </p>
+	{% endfor %}
+      </div>
+    </main>
+    <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
+	    crossorigin="anonymous"></script>
+    {% include "sidebar-script.html" %}
+  </body>
+</html>

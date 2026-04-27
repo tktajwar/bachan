@@ -140,6 +140,27 @@ pub struct Announcement {
     pub comment: String,
 }
 
+#[derive(sqlx::FromRow)]
+#[derive(Serialize)]
+pub struct RedactedThread {
+    pub id: i32,
+    pub thread_id: String,
+    pub subject: String,
+    pub comment: String,
+    pub mod_name: String,
+    pub reason: String,
+}
+
+#[derive(sqlx::FromRow)]
+#[derive(Serialize)]
+pub struct RedactedReply {
+    pub id: i32,
+    pub reply_id: String,
+    pub comment: String,
+    pub mod_name: String,
+    pub reason: String,
+}
+
 pub struct SubmissionName {
     pub name: Option<String>,
     pub pass: Option<String>,
@@ -1237,4 +1258,57 @@ pub async fn ctx_up_sidebar (
 	vec![]
     );
     ctx.insert("announcements", &announcements);
+}
+
+pub async fn redacted_threads (
+    State(pool): State<PgPool>,
+) -> Result<Vec<RedactedThread>, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    r.id, \
+    to_hex(t.id) as thread_id, \
+    t.subject, \
+    t.comment, \
+    m.username as mod_name, \
+    r.reason \
+    FROM redacted r \
+    INNER JOIN thread t \
+    ON r.thread_or_reply_id = t.id \
+    INNER JOIN mod m \
+    ON r.mod_id = m.id \
+    WHERE t.redacted = true \
+    ORDER BY r.id DESC \
+    ";
+
+    let redacted_threads = sqlx::query_as::<_, RedactedThread>(q)
+	.fetch_all(&pool)
+	.await?;
+
+    Ok(redacted_threads)
+}
+
+pub async fn redacted_replies (
+    State(pool): State<PgPool>,
+) -> Result<Vec<RedactedReply>, Box<dyn Error>> {
+    let q = "\
+    SELECT \
+    r.id, \
+    to_hex(t.id) as reply_id, \
+    t.comment, \
+    m.username as mod_name, \
+    r.reason \
+    FROM redacted r \
+    INNER JOIN reply t \
+    ON r.thread_or_reply_id = t.id \
+    INNER JOIN mod m \
+    ON r.mod_id = m.id \
+    WHERE t.redacted = true \
+    ORDER BY r.id DESC \
+    ";
+
+    let redacted_replies = sqlx::query_as::<_, RedactedReply>(q)
+	.fetch_all(&pool)
+	.await?;
+
+    Ok(redacted_replies)
 }
