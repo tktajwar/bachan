@@ -34,7 +34,9 @@
 	  div.dataset.postId = String(p.id);
 	  div.id = `${p.id}`;
 	  div.innerHTML = `
-<h3 class="boardLabel"><center>${p.label}</center></h3>
+<h3 class="boardLabel"><a href="/${p.board}/" title="/${p.board}/">
+<center>${p.label}</center>
+</a></h3>
 <div class="thread-body">
   <a href="/k/${p.id}">
     <h4 class="thread-headline">${p.subject}</h4>
@@ -79,7 +81,7 @@
       container.prepend(frag);
   }
 
-  setTimeout(fetchUpdates, interval*1000);
+  fetchUpdates();
 
   function inLocalTime(s) {
     const options = { 
