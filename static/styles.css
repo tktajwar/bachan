@@ -37,6 +37,7 @@
     --reply-bg:var(--thread-bg);
 
     --highlighted-bg:var(--sup1);
+    --highlighted-border:var(--brand);
 
     --redaction-reason:var(--brandl);
     --redaction-reason-fg:var(--brandd);
@@ -630,4 +631,5 @@ button:active {
 
 .highlighted {
     background-color: var(--highlighted-bg) !important;
+    border: 2px solid var(--highlighted-border);
 }

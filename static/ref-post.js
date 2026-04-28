@@ -25,16 +25,30 @@ function removeHighlights() {
     });
 }
 
+function localizeRef(el) {
+    let id = el.getAttribute('href').split('/').pop()
+    if (id.startsWith('#')) id = id.slice(1);
+    id = id.padStart(3, '0');
+    if (document.getElementById(id)) el
+	.setAttribute('href', `#${id}`);
+}
+
 document.addEventListener('pointerover', (e) => {
     clientX = e.clientX;
     clientY = e.clientY;
     const a = e.target.closest && e.target.closest('.ref');
     if (!a) return;
-    const id = a.getAttribute('href').split('/').pop();
+    let id = a.getAttribute('href').split('/').pop();
+    if (id.startsWith('#')) id = id.slice(1);
+    id = id.padStart(3, '0');
     previewPost(id, a);
     addHighlightFor(id);
 });
 
 document.addEventListener('pointerout', e => {
     removeHighlights();
+});
+
+document.querySelectorAll('.ref').forEach(el => {
+    localizeRef(el);
 });
