@@ -40,7 +40,7 @@ pub async fn root_page(
     let mut ctx = tera::Context::new();
 
     let (threads, last_mtime) = match top_threads (
-	36,
+	24,
 	pool_state.clone(),
     ).await {
 	Ok(result) => result,
