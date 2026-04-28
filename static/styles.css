@@ -33,12 +33,13 @@
 
     --thread-fg:var(--sup1d);
     --thread-bg:var(--sup1l);
+    --reply-fg:var(--thread-fg);
+    --reply-bg:var(--thread-bg);
+
+    --highlighted-bg:var(--sup1);
 
     --redaction-reason:var(--brandl);
     --redaction-reason-fg:var(--brandd);
-
-    --reply-fg:var(--thread-fg);
-    --reply-bg:var(--thread-bg);
 
     --button:#B1D3A5;
     --button-shadow:#659226;
@@ -264,10 +265,6 @@ h1 {
     background-color: var(--thread-bg);
     padding: 2px;
     margin: 4px 3px;
-}
-
-.reply-body {
-    background-color: var(--reply-bg);
 }
 
 .thread-body > a {
@@ -616,4 +613,21 @@ button:active {
 .redaction-reason {
     color: var(--redaction-reason-fg);
     background-color: var(--redaction-reason);
+}
+
+.refPreview {
+    display: none;
+    position: fixed;
+}
+
+.showPreview {
+    display: block !important;
+}
+
+.highlightedPreview {
+    background-color: red !important;
+}
+
+.highlighted {
+    background-color: var(--highlighted-bg) !important;
 }

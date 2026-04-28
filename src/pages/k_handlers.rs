@@ -246,15 +246,11 @@ pub async fn summary_page (
     };
     let id = id_u32 as i32;
 
-    let summary = match post_summary (
+    let Ok(summary) = post_summary (
 	id,
 	pool_state,
-    ).await {
-	Ok(s) => s,
-	Err(e) => {
-	    eprintln!("Error retrieving post summary: {}", e);
-	    return Err(StatusCode::INTERNAL_SERVER_ERROR)
-	},
+    ).await else {
+	return Err(StatusCode::NOT_FOUND)
     };
 
     Ok(summary.comment)
