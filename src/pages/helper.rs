@@ -161,6 +161,12 @@ pub struct RedactedReply {
     pub reason: String,
 }
 
+#[derive(sqlx::FromRow)]
+#[derive(Serialize)]
+pub struct PostSummary {
+    pub comment: String,
+}
+
 pub struct SubmissionName {
     pub name: Option<String>,
     pub pass: Option<String>,
@@ -1311,4 +1317,23 @@ pub async fn redacted_replies (
 	.await?;
 
     Ok(redacted_replies)
+}
+
+pub async fn post_summary (
+    id: i32,
+    State(pool): State<PgPool>,
+) -> Result<PostSummary, Box<dyn Error>> {
+    let q = "\
+    SELECT COALESCE( \
+    (SELECT comment FROM Thread WHERE id = $1 AND redacted = FALSE), \
+    (SELECT comment FROM Reply WHERE id = $1 AND redacted = FALSE) \
+    ) AS comment \
+    ";
+
+    let summary: PostSummary = sqlx::query_as::<_, PostSummary>(q)
+	.bind(id)
+	.fetch_one(&pool)
+	.await?;
+
+    Ok(summary)
 }

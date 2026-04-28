@@ -33,6 +33,7 @@ use crate::helper::{
     ctx_up_sidebar,
     hashed,
     paginated_threads,
+    post_summary,
     thread_replies,
     thread_replies_after,
     thread_with_id,
@@ -234,4 +235,27 @@ pub async fn thread_updates (
     );
 
     Ok(Json((replies, last_id)))
+}
+
+pub async fn summary_page (
+    pool_state: State<PgPool>,
+    Path(id_hex): Path<String>,
+) -> Result<String, StatusCode> {
+    let Ok(id_u32) = u32::from_str_radix(&id_hex, 16) else {
+	return Err(StatusCode::BAD_REQUEST)
+    };
+    let id = id_u32 as i32;
+
+    let summary = match post_summary (
+	id,
+	pool_state,
+    ).await {
+	Ok(s) => s,
+	Err(e) => {
+	    eprintln!("Error retrieving post summary: {}", e);
+	    return Err(StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    };
+
+    Ok(summary.comment)
 }
