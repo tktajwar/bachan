@@ -170,7 +170,7 @@ pub fn format(input: &str) -> String {
 	&input
     )));
 
-    let formatted_input = enref(&enquote(
+    let formatted_input = enquote(&enref(
 	&redtext(&spoiler(&strikethrough(&underline(&italicize(&embold(
 	    &formatted_input
 	))))))
