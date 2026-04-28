@@ -277,7 +277,8 @@ h1 {
 .thread-headline,
 .thread-comment,
 .reply-tagline,
-.reply-comment {
+.reply-comment,
+#submission-preview {
     margin: 3px;
 }
 
@@ -286,11 +287,17 @@ h1 {
 }
 
 .thread-comment,
-.reply-comment {
+.reply-comment,
+#submission-preview {
     max-width: 90%;
     margin: auto;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+}
+
+#submission-preview {
+    color: var(--thread-fg);
+    background-color: var(--thread-bg);
 }
 
 .thread-tagline,
