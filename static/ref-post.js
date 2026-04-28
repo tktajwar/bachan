@@ -29,8 +29,12 @@ function localizeRef(el) {
     let id = el.getAttribute('href').split('/').pop()
     if (id.startsWith('#')) id = id.slice(1);
     id = id.padStart(3, '0');
-    if (document.getElementById(id)) el
-	.setAttribute('href', `#${id}`);
+    const referenced = document.getElementById(id);
+    if (referenced) {
+	el.setAttribute('href', `#${id}`);
+	if (referenced.classList.contains('thread'))
+	    el.insertAdjacentHTML('afterend', '<span>(OP)</span>');
+    }
 }
 
 document.addEventListener('pointerover', (e) => {
