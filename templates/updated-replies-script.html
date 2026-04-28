@@ -70,7 +70,11 @@
   </li>
 </ul>
 `;
-	  frag.appendChild(div);
+
+div.querySelectorAll('.ref').forEach(el => {
+  localizeRef(el);
+});
+      frag.appendChild(div);
       });
       container.appendChild(frag);
   }
