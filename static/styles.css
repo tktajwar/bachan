@@ -79,6 +79,8 @@
     --utid:var(--sup1md);
 
     --submit-btn:var(--button);
+
+    --navbar-height:24px;
 }
 
 body {
@@ -190,6 +192,10 @@ h1 {
 
     #navbar {
 	display: block !important;
+    }
+
+    main {
+	margin-top: var(--navbar-height);
     }
 
     body: {
@@ -369,6 +375,11 @@ h1 {
     color: var(--navbar-fg);
     background-color: var(--navbar-bg);
     display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--navbar-height);
 }
 
 #navbar ul {
