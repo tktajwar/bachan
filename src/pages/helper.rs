@@ -680,7 +680,7 @@ pub async fn top_threads (
     INNER JOIN board b \
     ON t.board = b.url \
     WHERE t.redacted = false \
-    AND t.mtime > NOW() - interval'7 day' \
+    AND t.mtime > NOW() - interval'5 week' \
     ORDER BY t.mtime desc \
     LIMIT $1 \
     ";
