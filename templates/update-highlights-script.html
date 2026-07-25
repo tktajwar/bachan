@@ -44,24 +44,11 @@
   <div class="thread-comment">${p.comment}</div>
 </div>
 <ul class="thread-buttons">
-  <li class="thread-reply">
-    <a href="/k/${p.id}}?enref=${p.id}"
-       onclick="
-		if (typeof window['add_ref']=='function') {
-		window['add_ref']('${p.id}');
-		return false;
-		} else {
-		return true;
-		}
-		"
-       title="(cite) পোস্টটি উদ্ধৃত করুন">
-      <i class="fa-solid fa-angles-right"></i>${p.id}
-    </a>
-  </li>
   <li class="thread-replies">
     <a href="/k/${p.id}#replies" title="(replies) 0 টি মন্তব্য">
       <i class="fa-regular fa-comment"></i> ${p.reply_count}
     </a>
+    <span class="thread-mtime" title="${p.mtime}"><span>
   </li>
   <li class="thread-report">
     <!-- TODO -->
