@@ -59,6 +59,8 @@ async fn main() {
 	    get(submission_id_page).post(confirmation_submission),
 	)
 	.route("/api/summary/{id_hex}", get(summary_page))
+	.route("/formatting", get(formatting_page))
+	.route("/formatting/", get(formatting_page))
 	.route("/favicon.ico", get(|| async {
 	    Redirect::permanent("static/favicon.ico")
 	}))

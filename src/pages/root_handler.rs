@@ -154,3 +154,22 @@ pub async fn root_updates (
 
     Json((threads, last_mtime))
 }
+
+pub async fn formatting_page (
+    pool_state: State<PgPool>,
+) -> Result<Html<String>, axum::http::StatusCode> {
+    let mut ctx = tera::Context::new();
+
+    ctx_up_sidebar(pool_state, &mut ctx).await;
+
+    let rendered = TERA.render("formatting_guide.html", &ctx);
+    let content = match rendered {
+	Ok(s) => s,
+	Err(e) => {
+	    eprintln!("{e}");
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    };
+
+    Ok(Html(content))
+}
