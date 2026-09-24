@@ -10,7 +10,6 @@ RUN rm -rf src target/release/deps/bachan* target/release/bachan*
 COPY src src
 COPY migrations migrations
 RUN cargo build --release
-COPY . .
 
 # Stage 2
 
@@ -18,7 +17,7 @@ FROM alpine:3.19
 WORKDIR /app
 RUN apk --no-cache add ca-certificates
 COPY --from=build /app/target/release/bachan .
-COPY --from=build /app/templates templates
-COPY --from=build /app/static static
+COPY templates templates
+COPY static static
 EXPOSE 3000
 ENTRYPOINT ["./bachan"]
