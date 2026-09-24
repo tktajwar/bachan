@@ -48,13 +48,14 @@
   </head>
   <body>
     {% include "navbar.html" %}
-    {% include "sidebar.html" %}
 
     <main>
       {% block main %}
 
       {% endblock main %}
     </main>
+
+    {% include "sidebar.html" %}
 
     {% block scripts %}
 
