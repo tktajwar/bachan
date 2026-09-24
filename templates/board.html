@@ -1,57 +1,53 @@
-<!DOCTYPE html>
-<html lang="bn">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>/{{board.url}}/ - {{board.label}} | বাংলাচান</title>
-    <link rel="stylesheet" href="/static/styles.css">
-  </head>
-  <body>
-    {% include "navbar.html" %}
-    {% include "sidebar.html" %}
-    <main>
-      <h1 id="board-title">
-	<center>/{{board.url}}/ - {{board.label}}</center>
-      </h1>
-      <hr />
-      <div id="newThreadButton">
-	<center>
-	  [
-	  <a href="#" id="new-thread-button" title="Start a New Thread">
-	    একটি নতুন কথোপকথন চালু করুন
-	  </a>
-	  ]
-	</center>
-      </div>
-      {% include "post-form-container.html" %}
-      {% include "popup-post-form.html" %}
-      <hr />
-      <div class="thread-container">
-	{% for thread in threads %}
-	{% include "thread.html" %}
-	{% else %}
-	<p> এই বোর্ডে এখনো কোনো কথোপকথন হয়নি। </p>
-	{% endfor %}
-      </div>
-      <div id="load-more"><center>
-	  {% if has_more %}
-	  <div class="btn">
-	    <a href="/{{board.url}}/?limit={{limit}}&before_mtime={{last_mtime}}"
-	       style="text-decoration:none;
-		      color:black;">
-	      পরবর্তী পৃষ্ঠা
-	    </a>
-	  </div>
-	  {% else %}
-	  শেষ পৃষ্ঠা
-	  {% endif %}
-      </center></div>
-    </main>
-    <script defer src="/static/new_thread.js"></script>
-    <script defer src="/static/emoji-up-flags.js"></script>
-    <script defer src="/static/format_local_time.js"></script>
-    <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
-	    crossorigin="anonymous"></script>
-    {% include "sidebar-script.html" %}
-  </body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}
+/{{board.url}}/ - {{board.label}} | বাংলাচান
+{% endblock title %}
+
+
+{% block main %}
+
+<h1 id="board-title">
+  <center>/{{board.url}}/ - {{board.label}}</center>
+</h1>
+<hr />
+<div id="newThreadButton">
+  <center>
+    [
+    <a href="#" id="new-thread-button" title="Start a New Thread">
+      একটি নতুন কথোপকথন চালু করুন
+    </a>
+    ]
+  </center>
+</div>
+{% include "post-form-container.html" %}
+{% include "popup-post-form.html" %}
+<hr />
+<div class="thread-container">
+  {% for thread in threads %}
+  {% include "thread.html" %}
+  {% else %}
+  <p> এই বোর্ডে এখনো কোনো কথোপকথন হয়নি। </p>
+  {% endfor %}
+</div>
+<div id="load-more"><center>
+    {% if has_more %}
+    <div class="btn">
+      <a href="/{{board.url}}/?limit={{limit}}&before_mtime={{last_mtime}}"
+	 style="text-decoration:none;
+		color:black;">
+	পরবর্তী পৃষ্ঠা
+      </a>
+    </div>
+    {% else %}
+    শেষ পৃষ্ঠা
+    {% endif %}
+</center></div>
+
+{% endblock main %}
+
+{% block scripts %}
+<script defer src="/static/new_thread.js"></script>
+<script defer src="/static/emoji-up-flags.js"></script>
+<script defer src="/static/format_local_time.js"></script>
+{% endblock scripts %}

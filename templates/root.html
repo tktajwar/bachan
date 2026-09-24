@@ -1,68 +1,35 @@
-<!DOCTYPE html>
-<html lang="bn">
-  <head>
-    <meta charset="UTF-8">
-    <title>BanglaChan: Anonymous Bengali Internet Forum | বাংলাচান</title>
-    <meta name="viewport" content="width=device-width,
-				   initial-scale=1.0">
-    <meta name="description" content="A Bengali Internet Forum. বাংলাচান
-				      is an online anonymous forum for
-				      Bengali speaking community.
-				      Users have the freedom to
-				      express themselves without
-				      revealing their identity.">
-    <meta name="og:description" content="A Bengali Internet Forum. বাংলাচান
-				      is an online anonymous forum for
-				      Bengali speaking community.
-				      Users have the freedom to
-				      express themselves without
-				      revealing their identity.">
-    <meta property="og:title" content="বাংলাচান - A Bengali Internet Forum">
-    <meta property="og:image" content="/static/bachan-homepage.png" />
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="675">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:type" content="website">
+{% extends "base.html" %}
 
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="বাংলাচান - A Bengali
-    Internet Forum" />
-    <meta property="twitter:image"
-    content="/static/bachan-homepage.png" />
+{% block extrahead %}
 
-    <meta name="keywords"
-	  content="bd,bangla,bengali,bangladesh,image
-		   board,forum,anonymous,anime,video games" />
-    <meta name="google-site-verification"
-		   content="dHqnhCj8cv-l0dq_ZHzBirxgON7976JAtoCSXCgPfQA"
-		   />
+<meta property="og:image" content="/static/bachan-homepage.png" />
 
-    <link rel="stylesheet" href="/static/styles.css">
-  </head>
-  <body>
-    {% include "navbar.html" %}
-    {% include "sidebar.html" %}
-    <main>
-      <!-- <h1><center><a href="/" id="logo">বাংলাচান</a></center></h1> -->
-      {% include "notice.html" %}
-      {% include "popup-post-form.html" %}
-      <div id="highlights">
-	<h2>জনপ্রিয় আলোচনা</h2>
-	<!-- List of highlighted threads -->
+{% endblock extrahead %}
 
-	<div class="thread-container" id="highlights-container">
-	  {% for thread in threads %}
-	  {% include "top-thread.html" %}
-	  {% else %}
-	  <p> এখনো কোনো কথোপকথন হয়নি। </p>
-	  {% endfor %}
-	</div>
-      </div>
-    </main>
-    <script src="/static/format_local_time.js"></script>
-    <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
-	    crossorigin="anonymous"></script>
-    {% include "update-highlights-script.html" %}
-    {% include "sidebar-script.html" %}
-   </body>
-</html>
+
+{% block main %}
+
+{% include "notice.html" %}
+{% include "popup-post-form.html" %}
+<div id="highlights">
+  <h2>জনপ্রিয় আলোচনা</h2>
+  <!-- List of highlighted threads -->
+
+  <div class="thread-container" id="highlights-container">
+    {% for thread in threads %}
+    {% include "top-thread.html" %}
+    {% else %}
+    <p> এখনো কোনো কথোপকথন হয়নি। </p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock main %} 
+
+
+{% block scripts %}
+
+<script src="/static/format_local_time.js"></script>
+{% include "update-highlights-script.html" %}
+
+{% endblock scripts %}

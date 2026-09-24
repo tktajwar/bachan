@@ -1,92 +1,89 @@
-<!DOCTYPE html>
-<html lang="bn">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>প্রকাশনা জমা দিন | বাংলাচান</title>
-    <link rel="stylesheet" href="/static/styles.css">
-    <script src="https://kit.fontawesome.com/9187eb4d30.js"
-	    crossorigin="anonymous"></script>
-  </head>
-  <body>
-    {% include "navbar.html" %}
-    {% include "sidebar.html" %}
-    <main>
-      <header>
-	<h1 id="submission-title">
-	  <center>প্রকাশনা জমা দিন</center>
-	</h1>
-      </header>
+{% extends "base.html" %}
 
-      <div class="thread-container">
-	<div class="thread">
-	  <div class="thread-body">
-	    <u>
-	      <h3 class="thread-headline">{{pending_post.subject}}</h3>
-	    </u>
-	    <div id="submission-preview">{{pending_post.comment|safe}}</div>
-	  </div>
-	</div>
-      </div>
+{% block title %}
+প্রকাশনা জমা দিন | বাংলাচান
+{% endblock title %}
 
-      <div class="submission">
-	<form id="submission-form" action="/submission/{{pending_post.id}}"
-	      method="POST">
 
-	  <center>
-	    <label for="name">নাম:</label>
-	    <input type="text" id="name" name="name"
-		   placeholder=" বানন#পাসওয়ার্ড"><br />
+{% block main %}
 
-	    <br />
+<header>
+  <h1 id="submission-title">
+    <center>প্রকাশনা জমা দিন</center>
+  </h1>
+</header>
 
-	    আপনি নিশ্চিত হলে প্রকাশনাটি জমা দিন।<br/>
+<div class="thread-container">
+  <div class="thread">
+    <div class="thread-body">
+      <u>
+	<h3 class="thread-headline">{{pending_post.subject}}</h3>
+      </u>
+      <div id="submission-preview">{{pending_post.comment|safe}}</div>
+    </div>
+  </div>
+</div>
 
-	    <button type="submit" name="action" value="cancel">
-	      <i class="fa-solid fa-xmark"></i> বাতিল করুন
-	    </button>
-	    <button type="submit" name="action" value="submit" id="submit">
-	      <i class="fa-solid fa-check"></i> জমা দিন
-	    </button>
-	  </center>
+<div class="submission">
+  <form id="submission-form" action="/submission/{{pending_post.id}}"
+	method="POST">
 
-	</form>
-      </div>
+    <center>
+      <label for="name">নাম:</label>
+      <input type="text" id="name" name="name"
+	     placeholder=" বানন#পাসওয়ার্ড"><br />
 
-      <br/>
+      <br />
 
-      <div class="submission" id="submissionEditing">
-	<h3><center>Edit Submission</center></h3>
-	<form id="submission-form" action="/submission/{{pending_post.id}}"
-	      method="POST">
+      আপনি নিশ্চিত হলে প্রকাশনাটি জমা দিন।<br/>
 
-	  <textarea name="comment" cols="48" rows="4" maxlength="4096"
-		    style="width: 385px; height: 200px;" required
-		    >{{pending_post.rawcomment}}</textarea><br/>
+      <button type="submit" name="action" value="cancel">
+	<i class="fa-solid fa-xmark"></i> বাতিল করুন
+      </button>
+      <button type="submit" name="action" value="submit" id="submit">
+	<i class="fa-solid fa-check"></i> জমা দিন
+      </button>
+    </center>
 
-	  <button type="submit" name="action" value="edit">
-	    <i class="fa-solid fa-arrows-rotate"></i> পুনরায় জমা দিন
-	  </button>
+  </form>
+</div>
 
-	</form>
-      </div>
-    </main>
+<br/>
 
-  </body>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-	const input = document.getElementById('name');
-	const saved = localStorage.getItem('saved_name');
-	if (saved != null) input.value = saved;
+<div class="submission" id="submissionEditing">
+  <h3><center>Edit Submission</center></h3>
+  <form id="submission-form" action="/submission/{{pending_post.id}}"
+	method="POST">
 
-	input.addEventListener('input', () => {
-	    try {
-		localStorage.setItem('saved_name', input.value);
-	    } catch (e) {
-		console.log(e);
-	    }
-	});
-    });
-  </script>
-  {% include "sidebar-script.html" %}
-</html>
+    <textarea name="comment" cols="48" rows="4" maxlength="4096"
+	      style="width: 385px; height: 200px;" required
+	      >{{pending_post.rawcomment}}</textarea><br/>
+
+    <button type="submit" name="action" value="edit">
+      <i class="fa-solid fa-arrows-rotate"></i> পুনরায় জমা দিন
+    </button>
+
+  </form>
+</div>
+
+{% endblock main %}
+
+{% block scripts %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('name');
+      const saved = localStorage.getItem('saved_name');
+      if (saved != null) input.value = saved;
+
+      input.addEventListener('input', () => {
+	  try {
+	      localStorage.setItem('saved_name', input.value);
+	  } catch (e) {
+	      console.log(e);
+	  }
+      });
+  });
+</script>
+
+{% endblock scripts %}

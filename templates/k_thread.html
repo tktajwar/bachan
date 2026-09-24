@@ -1,36 +1,29 @@
-<!DOCTYPE html>
-<html lang="bn">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{thread.subject}}: {{thread.id}} | /{{thread.board}}/ | বাংলাচান</title>
-    <meta name="description"
-	  content="{{ thread.comment | truncate(length=160) }}">
-    <meta name="og:description"
-	  content="{{ thread.comment | truncate(length=160) }}">
-    <link rel="stylesheet" href="/static/styles.css">
-  </head>
-  <body>
-    {% include "navbar.html" %}
-    {% include "sidebar.html" %}
-    <main>
-      <div class="thread-container">
-	{% include "thread.html" %}
-	{% if not thread.redacted %}
-	{% include "thread-replies.html" %}
-	{% include "autorefresh-countdown.html" %}
-	{% include "thread-reply-form.html" %}
-	{% endif %}
-      </div>
-      {% include "popup-post-form.html" %}
-    </main>
-    <script defer src="/static/format_local_time.js"></script>
-    <script defer src="/static/ref_post.js"></script>
-    <script defer src="/static/emoji-up-flags.js"></script>
-    <script defer src="/static/ref-post.js"></script>
-    <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
-	    crossorigin="anonymous"></script>
-    {% include "updated-replies-script.html" %}
-    {% include "sidebar-script.html" %}
-  </body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}
+{{thread.subject}}: {{thread.id}} | /{{thread.board}}/ | বাংলাচান
+{% endblock title %}
+
+{% block main %}
+
+<div class="thread-container">
+  {% include "thread.html" %}
+  {% if not thread.redacted %}
+  {% include "thread-replies.html" %}
+  {% include "autorefresh-countdown.html" %}
+  {% include "thread-reply-form.html" %}
+  {% endif %}
+</div>
+
+{% endblock main %}
+
+{% block scripts %}
+
+{% include "popup-post-form.html" %}
+<script defer src="/static/format_local_time.js"></script>
+<script defer src="/static/ref_post.js"></script>
+<script defer src="/static/emoji-up-flags.js"></script>
+<script defer src="/static/ref-post.js"></script>
+{% include "updated-replies-script.html" %}
+
+{% endblock scripts %}

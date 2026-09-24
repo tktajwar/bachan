@@ -1,46 +1,43 @@
-<!DOCTYPE html>
-<html lang="bn">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,
-				   initial-scale=1.0">
-    <meta name="description" content="A Bengali Internet Forum">
-    <title>কথোপকথন | বাংলাচান</title>
-    <link rel="stylesheet" href="/static/styles.css">
-  </head>
-  <body>
-    {% include "navbar.html" %}
-    {% include "sidebar.html" %}
-    <main>
-      <h1 id="k-title">
-	<center>কথোপকথন <span class="yellow">on</span> বাংলাচান</center>
-      </h1>
-      <div class="thread-container">
-	{% for thread in threads %}
-	{% include "thread.html" %}
-	{% else %}
-	<p> এখনো কোনো কথোপকথন হয়নি। </p>
-	{% endfor %}
-      </div>
-      <div id="load-more"><center>
-	  {% if has_more %}
-	  <div class="btn">
-	    <a href="/k/?limit={{limit}}&before_id={{last_thread_id}}"
-	       style="text-decoration:none;
-		      color:black;">
-	      পরবর্তী পৃষ্ঠা
-	    </a>
-	  </div>
-	  {% else %}
-	  শেষ পৃষ্ঠা
-	  {% endif %}
-      </center></div>
-      {% include "popup-post-form.html" %}
-    </main>
-    <script defer src="/static/format_local_time.js"></script>
-    <script defer src="/static/emoji-up-flags.js"></script>
-    <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
-	    crossorigin="anonymous"></script>
-    {% include "sidebar-script.html" %}
-  </body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}
+
+কথোপকথন | বাংলাচান
+
+{% endblock title %}
+
+{% block main %}
+
+<h1 id="k-title">
+  <center>কথোপকথন <span class="yellow">on</span> বাংলাচান</center>
+</h1>
+<div class="thread-container">
+  {% for thread in threads %}
+  {% include "thread.html" %}
+  {% else %}
+  <p> এখনো কোনো কথোপকথন হয়নি। </p>
+  {% endfor %}
+</div>
+<div id="load-more"><center>
+    {% if has_more %}
+    <div class="btn">
+      <a href="/k/?limit={{limit}}&before_id={{last_thread_id}}"
+	 style="text-decoration:none;
+		color:black;">
+	পরবর্তী পৃষ্ঠা
+      </a>
+    </div>
+    {% else %}
+    শেষ পৃষ্ঠা
+    {% endif %}
+</center></div>
+{% include "popup-post-form.html" %}
+
+{% endblock main %}
+
+{% block scripts %}
+
+<script defer src="/static/format_local_time.js"></script>
+<script defer src="/static/emoji-up-flags.js"></script>
+
+{% endblock scripts %}
