@@ -534,6 +534,10 @@ h1 {
     background-color: var(--sidebar-bg);
 }
 
+#sidebar #announcements {
+    background-color: var(--sidebar-bg);
+}
+
 #sidebar .thread {
     width: 100%;
     padding: 0;
