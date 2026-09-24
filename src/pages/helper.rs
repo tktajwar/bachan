@@ -134,14 +134,6 @@ pub struct TopThread {
 
 #[derive(sqlx::FromRow)]
 #[derive(Serialize)]
-pub struct Announcement {
-    pub id: String,
-    pub subject: String,
-    pub comment: String,
-}
-
-#[derive(sqlx::FromRow)]
-#[derive(Serialize)]
 pub struct RedactedThread {
     pub id: i32,
     pub thread_id: String,
@@ -638,29 +630,6 @@ pub async fn get_board_ctx(
 	.await?;
 
     Ok(board)
-}
-
-pub async fn top_announcements (
-    State(pool): State<PgPool>,
-) -> Result<Vec<Announcement>, Box<dyn Error>> {
-    let q = "\
-    SELECT \
-    to_hex(id) as id, \
-    subject, \
-    comment \
-    FROM thread \
-    WHERE redacted = false \
-    AND board = 'g' \
-    AND mtime > NOW() - interval'5 day'
-    ORDER BY id desc \
-    LIMIT 3 \
-    ";
-
-    let threads = sqlx::query_as::<_, Announcement>(q)
-	.fetch_all(&pool)
-	.await?;
-
-    Ok(threads)
 }
 
 pub async fn top_threads (
@@ -1257,13 +1226,6 @@ pub async fn ctx_up_sidebar (
 	vec![]
     );
     ctx.insert("misc", &misc);
-
-    let announcements = top_announcements (
-	pool_state.clone(),
-    ).await.unwrap_or(
-	vec![]
-    );
-    ctx.insert("announcements", &announcements);
 }
 
 pub async fn redacted_threads (
