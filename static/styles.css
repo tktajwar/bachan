@@ -14,6 +14,7 @@
     --brandl:#F6E7E6;
     --brandd:#3D0604;
     --sup1l:#DBF1E8;
+    --sup1ml:#D5EFE5;
     --sup1d:#033B24;
     --sup1md:#0C7148;
     --sup2l:#F2ECDF;
@@ -34,7 +35,7 @@
     --thread-fg:var(--sup1d);
     --thread-bg:var(--sup1l);
     --reply-fg:var(--thread-fg);
-    --reply-bg:var(--thread-bg);
+    --reply-bg:var(--sup1ml);
 
     --highlighted-bg:var(--sup1);
     --highlighted-border:var(--brand);
@@ -162,6 +163,7 @@ h1 {
     min-width: 150px;
     max-width: 1100px;
     margin: auto;
+    border-radius: 5px;
 }
 
 #highlights .thread-container {
@@ -270,9 +272,16 @@ h1 {
     border: 1px solid var(--border);
     border-radius: 2px;
     color: var(--thread-fg);
-    background-color: var(--thread-bg);
     padding: 2px;
     margin: 4px 3px;
+}
+
+.thread {
+    background-color: var(--thread-bg);
+}
+
+.reply {
+    background-color: var(--reply-bg);
 }
 
 .thread-body > a {
