@@ -1,9 +1,15 @@
-document.getElementById("popupThreadButton").onclick = function(event) {
+function openPopupThreadMenu(event) {
     event.preventDefault();
     document.getElementById("postPopup").style.display = "block";
-};
+}
 
-document.getElementById("closePopupThreadButton").onclick = function(event) {
+function closePopupThreadMenu(event) {
     event.preventDefault();
     document.getElementById("postPopup").style.display = "none";
-};
+}
+
+document.getElementById("popupThreadButton")
+    .addEventListener('mousedown', openPopupThreadMenu);
+
+document.getElementById("closePopupThreadButton")
+    .addEventListener('mousedown', closePopupThreadMenu);
