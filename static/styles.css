@@ -169,14 +169,11 @@ hr {
 
 #highlights {
     background-color: var(--highlights);
-    border: 1px solid var(--highlights-border);
-}
-
-#highlights {
     min-width: 150px;
     max-width: 1100px;
     margin: auto;
     border-radius: 5px;
+    box-shadow: 0 0 3px var(--highlights-border);
 }
 
 #highlights .thread-container {
@@ -430,6 +427,9 @@ hr {
     max-width: 1100px;
     margin: 13px auto;
     padding: 9px 0;
+    background-color: var(--notice-bg);
+    border-radius: 5px;
+    box-shadow: 0 0 2px var(--notice-border);
 }
 
 #notice h3 {
