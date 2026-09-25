@@ -110,6 +110,7 @@ main {
     grid-area: main;
     max-height: 100vh;
     overflow-y: auto;
+    padding: 0 4pt;
 }
 
 h1 {
