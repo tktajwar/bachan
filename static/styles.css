@@ -24,7 +24,7 @@
     --sup3d:#044044;
 
     --fg:var(--black);
-    --bg:var(--white);
+    --bg:var(--lgray);
     --bgbg:var(--gray);
     --border:var(--sup1l);
     --logo:var(--brand);
@@ -51,7 +51,7 @@
 
     --notice-head:var(--sup1);
     --notice-fg:var(--sup1d);
-    --notice-bg:var(--brand);
+    --notice-bg:var(--bg);
     --notice-border:var(--sup1md);
 
     --sidebar-h-fg:var(--sup3d);
@@ -67,7 +67,7 @@
     --navbar-bg:var(--bgbg);
     --navbar-border:var(--sup3d);
 
-    --highlights:var(--lgray);
+    --highlights:var(--bg);
     --highlights-border:var(--black);
     --highlights-head:var(--sup1);
     --highlights-headline:var(--sup1d);
