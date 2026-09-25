@@ -18,5 +18,6 @@ WORKDIR /app
 RUN apk --no-cache add ca-certificates
 COPY --from=build /app/target/release/bachan .
 COPY templates templates
+COPY static static
 EXPOSE 3000
 ENTRYPOINT ["./bachan"]
