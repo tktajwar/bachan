@@ -573,7 +573,7 @@ main, #sidebar {
 
 .popup-btn:hover,
 #sidebar li:hover {
-    animation: shake .3s linear infinite;
+    animation: shake .4s linear infinite;
 }
 
 .popup-btn:active,
@@ -587,19 +587,19 @@ main, #sidebar {
 
 @keyframes shake {
     0% { transform: translateX(0) }
-    25% { transform: translateX(3px) }
+    25% { transform: translateX(2px) }
     50% { transform: translateX(0) }
-    75% { transform: translateX(-3px) }
+    75% { transform: translateX(-2px) }
     100% { transform: translateX(0) }
 }
 
 @keyframes jump {
     0% { transform: translateX(0) }
-    25% { transform: translateY(-3px) }
-    35% { transform: translateY(-3px) rotate(9deg) }
-    55% { transform: translateY(-3px) rotate(-9deg) }
-    65% { transform: translateY(-3px) rotate(9deg) }
-    75% { transform: translateY(-3px) rotate(-9deg) }
+    25% { transform: translateY(-2px) }
+    25% { transform: translateY(-2px) rotate(3deg) }
+    55% { transform: translateY(-2px) rotate(-3deg) }
+    35% { transform: translateY(-2px) rotate(3deg) }
+    75% { transform: translateY(-2px) rotate(-3deg) }
     100% { transform: translateY(0) rotate(0) }
 }
 
