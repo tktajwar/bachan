@@ -99,18 +99,19 @@ body {
     font-size: 14px;
     line-height: 1.6;
     display: grid;
+    grid-template-rows: var(--navbar-height) 1fr;
     grid-template-columns: 1fr min-content;
     grid-template-areas:
 	"head head"
 	"main side";
     margin: 0;
+    padding: 0;
+    height: 100vh;
 }
 
 main {
     grid-area: main;
-    max-height: 100vh;
     overflow-y: auto;
-    padding: 0 4pt;
 }
 
 h1 {
@@ -376,11 +377,14 @@ hr {
     left: 0;
     right: 0;
     height: var(--navbar-height);
+    overflow: hidden;
     font-weight: 500;
 }
 
 main, #sidebar {
-    margin-top: var(--navbar-height) !important;
+    overflow-y: auto;
+    padding: 4pt;
+
 }
 
 #navbar li:last-child {
@@ -403,7 +407,6 @@ main, #sidebar {
 @media (max-width: 840px) {
     #sidebar {
 	display: none;
-	postion: fixed;
     }
 
     #navbar li {
@@ -522,11 +525,9 @@ main, #sidebar {
 #sidebar {
     grid-area: side;
     width: clamp(200px, 17vw, 280px);
-    height: 100vh;
     overflow-y: auto;
     border-left: 1px dashed var(--sidebar-fg);
     margin-left: 5px;
-    padding: 0 10px;
 }
 
 #sidebar h3 {
