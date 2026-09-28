@@ -89,7 +89,7 @@
 
     --submit-btn:var(--button);
 
-    --navbar-height:30px;
+    --navbar-height:48px; 	/* Media-dependent */
 }
 
 body {
@@ -130,10 +130,8 @@ hr {
     margin-right: auto;
     font-weight: 600;
     letter-spacing: 2px;
-    text-shadow: 2px;
-    font-size: 1.3em;
+    text-shadow: 1px 2px var(--logo-line);
     font-family: 'Atma', monospace, Bold;
-
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -397,14 +395,17 @@ main, #sidebar {
     display: flex;
     margin: auto;
     align-items: center;
-    justify-content: right;
     text-align: center;
-    display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
+    height: 100%;
 }
 
 @media (max-width: 840px) {
+    :root {
+	--navbar-height: 32px;
+    }
+
     #sidebar {
 	display: none;
     }
@@ -425,8 +426,11 @@ main, #sidebar {
 
 #navbar a {
     text-decoration: none;
-    padding: 5px;
     color: inherit;
+    display: inline-block;
+    height: 100%;
+    font-size: 1.2rem;
+    line-height: 1.2;
 }
 
 #notice {
@@ -517,8 +521,8 @@ main, #sidebar {
 }
 
 @media (max-width: 360px) {
-    ul #logo {
-	display: none;
+    #navbar #logo {
+	display: none !important;
     }
 }
 
