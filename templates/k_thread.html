@@ -7,7 +7,7 @@
 {% block main %}
 
 <div class="thread-container">
-  {% include "thread.html" %}
+  {% include "thread-w-tagline.html" %}
   {% if not thread.redacted %}
   {% include "thread-replies.html" %}
   {% include "autorefresh-countdown.html" %}
