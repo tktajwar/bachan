@@ -459,6 +459,7 @@ main, #sidebar {
     background-color: var(--notice-bg);
     border-radius: 5px;
     box-shadow: 0 0 2px var(--notice-border);
+    text-align: justify;
 }
 
 #notice h3 {
