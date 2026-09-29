@@ -2,6 +2,7 @@
 <html lang="bn">
   <head>
     <meta charset="UTF-8">
+
     <title>
       {% block title %}
 
@@ -9,6 +10,7 @@
 
       {% endblock title %}
     </title>
+
     <meta name="viewport" content="width=device-width,
 				   initial-scale=1.0">
     <meta name="description" content="A Bengali Internet Forum. বাংলাচান
@@ -46,7 +48,13 @@
     {% endblock extrahead %}
 
   </head>
+  {% if board.url %}
+  <body class="board-{{board.url}}">
+  {% elif thread.board %}
+  <body class="board-{{thread.board}}">
+  {% else %}
   <body>
+  {% endif %}
     {% include "navbar.html" %}
 
     <main>
