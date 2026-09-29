@@ -647,10 +647,12 @@ button:active {
     color: var(--board-label-fg);
     padding: 0;
     margin: 0;
+    text-decoration: none;
 }
 
 .boardLabel a {
     color: inherit;
+    text-decoration: inherit;
 }
 
 .redaction-reason {
