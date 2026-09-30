@@ -391,10 +391,6 @@ main, #sidebar {
     margin-top: 2pt;
 }
 
-#navbar li:last-child {
-    display: none;
-}
-
 #navbar ul {
     max-width: 1780px;
     list-style-type: none;
@@ -421,8 +417,77 @@ main, #sidebar {
     text-shadow: 1px 2px 2px var(--navbar-border);
 }
 
+#sidebar {
+    grid-area: side;
+    width: clamp(200px, 17vw, 280px);
+    overflow-y: auto;
+    border-left: 1px dashed var(--sidebar-fg);
+    margin-left: 5px;
+}
+
+#sidebar h3 {
+    color: var(--sidebar-h-fg);
+    background-color: var(--sidebar-h-bg);
+    margin: 5px;
+    border-top: 1px solid var(--sidebar-fg);
+    text-align: center;
+}
+
+#sidebar a {
+    color: inherit;
+    width: 100%;
+    display: block;
+    margin: 1px 10px;
+}
+
+#sidebar .thread {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar ul {
+    list-style-type: none;
+    padding: 0 5px;
+    margin: 0;
+    flex-wrap: wrap;
+}
+
+.popup-btn,
+#sidebar li {
+    postion: relative;
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    border: 0;
+    font-weight: 500;
+    color: var(--sidebtn-fg);
+}
+
+.popup-btn:hover,
+#sidebar li:hover {
+    animation: shake .4s linear infinite;
+}
+
+.popup-btn:active,
+#sidebar li:active {
+    animation: jump .15s ease-in-out;
+}
+
+#submit {
+    background-color: var(--submit-btn);
+}
+
 #navbar a:hover {
     background-color: var(--navbar-hover-bg);
+}
+
+.md-only-block,
+#navbar .md-only-block,
+#sidebar .md-only-block {
+    display: none;
 }
 
 @media (max-width: 840px) {
@@ -442,7 +507,7 @@ main, #sidebar {
 	font-size: 1.2rem !important;
     }
 
-    #navbar li:last-child,
+    .md-only-block,
     #navbar #logo {
 	display: block !important;
     }
@@ -544,69 +609,6 @@ main, #sidebar {
     #navbar #logo {
 	display: none !important;
     }
-}
-
-#sidebar {
-    grid-area: side;
-    width: clamp(200px, 17vw, 280px);
-    overflow-y: auto;
-    border-left: 1px dashed var(--sidebar-fg);
-    margin-left: 5px;
-}
-
-#sidebar h3 {
-    color: var(--sidebar-h-fg);
-    background-color: var(--sidebar-h-bg);
-    margin: 5px;
-    border-top: 1px solid var(--sidebar-fg);
-    text-align: center;
-}
-
-#sidebar a {
-    color: inherit;
-    width: 100%;
-    display: block;
-    margin: 1px 10px;
-}
-
-#sidebar .thread {
-    width: 100%;
-    padding: 0;
-    margin: 0;
-}
-
-#sidebar ul {
-    list-style-type: none;
-    padding: 0 5px;
-    margin: 0;
-    flex-wrap: wrap;
-}
-
-.popup-btn,
-#sidebar li {
-    postion: relative;
-    display: block;
-    width: 100%;
-    cursor: pointer;
-    font-size: inherit;
-    font-family: inherit;
-    border: 0;
-    font-weight: 500;
-    color: var(--sidebtn-fg);
-}
-
-.popup-btn:hover,
-#sidebar li:hover {
-    animation: shake .4s linear infinite;
-}
-
-.popup-btn:active,
-#sidebar li:active {
-    animation: jump .15s ease-in-out;
-}
-
-#submit {
-    background-color: var(--submit-btn);
 }
 
 @keyframes shake {
