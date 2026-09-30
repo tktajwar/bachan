@@ -148,9 +148,21 @@ hr {
     color: var(--ref);
 }
 
+.spoiler {
+    cursor: help;
+    transition: background-color 0.3s cubic-bezier(0.25, 0.45, 0.45, 0.95);
+}
+
 .spoiler:not(:hover) {
     color: transparent;
     background-color: var(--spoiler);
+    transition: background-color 0.2s cubic-bezier(0.25, 0.45, 0.45, 0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .spoiler {
+        transition: none;
+    }
 }
 
 .redText {
