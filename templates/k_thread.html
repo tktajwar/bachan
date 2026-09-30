@@ -12,6 +12,12 @@
 
 {% block main %}
 
+<h1 id="board-title" class="k-board" label="/{{thread.board}}/">
+  <a href="/{{thread.board}}/">
+    <center>/{{thread.board}}/</center>
+  </a>
+</h1>
+
 <div class="thread-container">
   {% include "thread-w-tagline.html" %}
   {% if not thread.redacted %}

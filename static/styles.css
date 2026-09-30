@@ -247,6 +247,10 @@ hr {
     color: var(--board-title);
 }
 
+#board-title a {
+    color: inherit;
+}
+
 .thread-container {
     max-width: 700px;
     margin: auto;
