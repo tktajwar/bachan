@@ -449,6 +449,7 @@ main, #sidebar {
 }
 
 #sidebar ul {
+    display: flex;
     list-style-type: none;
     padding: 0 5px;
     margin: 0;
@@ -457,7 +458,7 @@ main, #sidebar {
 
 .popup-btn,
 #sidebar li {
-    postion: relative;
+    position: relative;
     display: block;
     width: 100%;
     cursor: pointer;
