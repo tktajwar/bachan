@@ -32,7 +32,6 @@
     --logo-line:var(--black);
     --logo-bg:var(--sup2);
     --headline:var(--brand);
-    --yellow:var(--sup2);
 
     --thread-fg:var(--sup1d);
     --thread-bg:var(--sup1l);
@@ -366,10 +365,6 @@ hr {
     margin: 0;
 }
 
-.yellow {
-    color: var(--yellow);
-}
-
 #navbar {
     grid-area: head;
     text-align: center;
@@ -543,7 +538,7 @@ main, #sidebar {
 
 #notice-msg {
     width: 95%;
-    max-width: 850px;
+    max-width: 860px;
     margin: auto;
     color: var(--notice-fg);
 }
