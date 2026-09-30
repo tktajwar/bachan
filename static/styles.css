@@ -268,10 +268,12 @@ hr {
 
 .thread {
     background-color: var(--thread-bg);
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
 .reply {
     background-color: var(--reply-bg);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
 }
 
 .thread-body > a {
