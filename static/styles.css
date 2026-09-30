@@ -469,9 +469,13 @@ main, #sidebar {
     color: var(--sidebtn-fg);
 }
 
-.popup-btn:hover,
-#sidebar li:hover {
+.popup-btn:hover {
     animation: shake .4s linear infinite;
+}
+
+#sidebar li:hover {
+    transform: scale(1.05);
+    transition: all 0.1s cubic-bezier(0.25, 0.45, 0.45, 0.95);
 }
 
 .popup-btn:active,
