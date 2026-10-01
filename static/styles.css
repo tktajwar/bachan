@@ -739,6 +739,8 @@ button:active {
 }
 
 .highlighted {
-    background-color: var(--highlighted-bg) !important;
-    border: 2px solid var(--highlighted-border);
+    transform: scale(1.01);
+    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+    transition: transform 0.1s cubic-bezier(0.25, 0.45, 0.45, 0.95);
+    transition: box-shadow 0.1s cubic-bezier(0.25, 0.75, 0.75, 0.95);
 }
