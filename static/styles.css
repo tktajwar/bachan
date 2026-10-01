@@ -506,7 +506,7 @@ main, #sidebar {
 
 #sidebar li:hover {
     transform: scale(1.05);
-    transition: all 0.1s cubic-bezier(0.25, 0.45, 0.45, 0.95);
+    transition: transform 0.1s cubic-bezier(0.25, 0.45, 0.45, 0.95);
 }
 
 .popup-btn:active,
