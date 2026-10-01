@@ -1,0 +1,18 @@
+{% if thread.replies %}
+<div class="board-thread-replies" id="{{thread.id}}">
+  {% if thread.reply_count > 3 %}
+  <a href="/k/{{thread.id}}" title="load all replies">
+    >>>সকল মন্তব্য দেখুন<<<
+  </a>
+  {% endif %}
+  {% for reply in thread.replies %}
+  <div class="reply" id="{{reply.id}}">
+    {% include "reply-tagline.html" %}
+    <div class="reply-body">
+      <div class="reply-comment">{{reply.comment|safe}}</div>
+    </div>
+    {% include "reply-buttons.html" %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

@@ -6,6 +6,7 @@ use base64::{
 use maxminddb::{Reader, PathElement};
 use serde::Serialize;
 use siphasher::sip::SipHasher13;
+use std::collections::HashMap;
 use std::error::Error;
 use std::hash::{DefaultHasher, Hash, Hasher};
 use std::net::IpAddr;
@@ -23,6 +24,7 @@ use crate::formatting::{
 };
 
 #[derive(sqlx::FromRow)]
+#[derive(Clone)]
 pub struct Thread {
     pub id: i32,
     pub uid: i64,
@@ -99,6 +101,7 @@ pub struct ThreadSerializable {
 }
 
 #[derive(Serialize)]
+#[derive(Clone)]
 pub struct ReplySerializable {
     pub id: String,
     pub uname: String,
@@ -107,6 +110,22 @@ pub struct ReplySerializable {
     pub comment: String,
     pub ctime: String,
     pub country: String,
+}
+
+#[derive(Serialize)]
+pub struct ThreadAndReplySerializable {
+    pub id: String,
+    pub utid: String,
+    pub uname: String,
+    pub subject: String,
+    pub comment: String,
+    pub board: String,
+    pub ctime: String,
+    pub mtime: String,
+    pub reply_count: i32,
+    pub redacted: bool,
+    pub country: String,
+    pub replies: Vec<ReplySerializable>,
 }
 
 #[derive(Serialize)]
@@ -1031,7 +1050,7 @@ pub async fn paginated_board_threads (
     limit_opt: Option<i32>,
     board: &str,
     State(pool): State<PgPool>,
-) -> Result<(Vec<ThreadSerializable>, bool, i32, i64), Box<dyn Error>> {
+) -> Result<(Vec<ThreadAndReplySerializable>, bool, i32, i64), Box<dyn Error>> {
     let limit = match limit_opt {
 	Some(limit) => limit,
 	None => 20,
@@ -1106,11 +1125,80 @@ pub async fn paginated_board_threads (
 	0
     };
 
-    let serializable_threads: Vec<ThreadSerializable> = threads.into_iter()
+    let tids: Vec<i32> = threads.iter().map(|t| t.id).collect();
+
+    let q = "\
+    SELECT \
+    id, \
+    uid, \
+    uname, \
+    trip, \
+    tid, \
+    comment, \
+    ctime, \
+    redacted, \
+    country \
+    FROM ( \
+        SELECT \
+	id, \
+	uid, \
+	uname, \
+	trip, \
+	tid, \
+	comment, \
+	ctime, \
+	redacted, \
+	country, \
+	ROW_NUMBER() OVER (PARTITION BY tid ORDER BY id DESC) as rn \
+	FROM reply \
+	WHERE tid = ANY($1) \
+    ) sub \
+    WHERE rn <= 3 \
+    ORDER BY id ASC \
+    ";
+
+    let replies = sqlx::query_as::<_, Reply>(q)
+	.bind(tids)
+	.fetch_all(&pool)
+	.await?;
+
+    let serializable_threads: Vec<ThreadSerializable> = threads
+	.clone()
+	.into_iter()
         .map(Thread::into_serializable)
         .collect();
 
-    Ok((serializable_threads, has_more, limit, last_mtime))
+    let serializable_replies: Vec<ReplySerializable> = replies.into_iter()
+        .map(Reply::into_serializable)
+        .collect();
+
+    let r_by_t: HashMap<String, Vec<ReplySerializable>> = serializable_replies
+	.into_iter()
+	.fold(HashMap::new(), |mut map, reply| {
+	    let tid = reply.tid.clone();
+	    map.entry(tid).or_insert_with(Vec::new).push(reply);
+	    map
+	});
+
+    let threads_w_replies = serializable_threads
+	.into_iter()
+	.map(|thread| ThreadAndReplySerializable {
+	    id: thread.id.clone(),
+	    utid: thread.utid,
+	    uname: thread.uname,
+	    subject: thread.subject,
+	    comment: thread.comment,
+	    board: thread.board,
+	    ctime: thread.ctime,
+	    mtime: thread.mtime,
+	    reply_count: thread.reply_count,
+	    redacted: thread.redacted,
+	    country: thread.country,
+	    replies: r_by_t.get(&thread.id).cloned().unwrap_or_default(),
+	})
+	.collect();
+
+    Ok((threads_w_replies, has_more, limit, last_mtime))
 }
 
 pub fn country_code (

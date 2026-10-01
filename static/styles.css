@@ -263,13 +263,32 @@ hr {
     color: inherit;
 }
 
-.thread-container {
-    max-width: 700px;
+.board-thread-container {
+    max-width: 1410px;
     margin: auto;
 }
 
-.thread {
-    margin: auto 7px;
+.board-thread-replies {
+    max-width: 700px;
+    padding-top: 10px;
+}
+
+.thread-and-reply {
+    display: flex;
+    flex-wrap: wrap;
+    margin: auto;
+    justify-content: center;
+}
+
+.thread-and-reply .thread,
+.thread-and-reply .board-thread-replies {
+    flex: 1 0 450px;
+    height: fit-content;
+}
+
+.thread-container {
+    max-width: 700px;
+    margin: auto;
 }
 
 .thread,
@@ -279,6 +298,7 @@ hr {
     color: var(--thread-fg);
     padding: 2px;
     margin: 4px 3px;
+    max-width: 700px;
 }
 
 .thread {
@@ -523,6 +543,11 @@ main, #sidebar {
 
     #navbar a {
 	font-size: 1.2rem !important;
+    }
+
+    .thread-and-reply {
+	grid-template-columns: 1fr;
+	max-width: 710px;
     }
 
     .md-only-block,

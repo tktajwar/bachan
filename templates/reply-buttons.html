@@ -1,6 +1,7 @@
 <ul class="thread-buttons">
   <li class="thread-reply">
-    <a href="#" onclick="add_ref('{{reply.id}}'); return false;"
+    <a href="/k/{{thread.id}}?enref={{reply.id}}"
+       onclick="return enref('{{reply.id}}')"
        title="(cite) পোস্টটি উদ্ধৃত করুন">
       <i class="fa-solid fa-angles-right"></i>{{reply.id}}
     </a>
