@@ -183,6 +183,22 @@ pub struct SubmissionName {
     pub pass: Option<String>,
 }
 
+#[derive(Debug)]
+pub struct HexID(pub u64);
+
+impl<'de> Deserialize<'de> for HexID {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let id = String::deserialize(deserializer)?;
+
+        u64::from_str_radix(&id, 16)
+            .map(HexID)
+            .map_err(|_| serde::de::Error::custom("invalid hexadecimal ID"))
+    }
+}
+
 impl Thread {
     pub fn into_serializable(self) -> ThreadSerializable {
 	ThreadSerializable {
