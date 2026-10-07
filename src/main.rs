@@ -45,7 +45,6 @@ async fn main() {
 	    "/register/{token_id}",
 	    get(register_id_page).post(registeration_submission),
 	)
-	.route("/api/summary/{id_hex}", get(summary_page))
 	.route("/formatting", get(formatting_page))
 	.route("/formatting/", get(formatting_page))
 	.route("/favicon.ico", get(|| async {
