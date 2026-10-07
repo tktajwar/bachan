@@ -23,6 +23,3 @@ pub use submission_handlers::*;
 
 pub mod fallback_handler;
 pub use fallback_handler::*;
-
-pub mod redacted_handlers;
-pub use redacted_handlers::*;

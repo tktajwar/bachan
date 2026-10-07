@@ -3,7 +3,6 @@ use sanitize_html::{
     rules::predefined::DEFAULT,
     sanitize_str,
 };
-use std::collections::HashSet;
 
 fn embold(input: &str) -> String {
     let re = Regex::new(
@@ -181,40 +180,4 @@ pub fn format(input: &str) -> String {
     ));
 
     formatted_input
-}
-
-pub fn references(input: &str) -> HashSet<i32> {
-    let mut references = HashSet::new();
-
-    let re = Regex::new (
-	r"(>|&gt;)(>|&gt;) *([0-9a-fA-F]{1,8})"
-    ).unwrap();
-
-    for caps in re.captures_iter(input) {
-	if let Some(id) = caps.get(3) {
-	    if let Ok(n) = i32::from_str_radix(
-		id.as_str(),
-		16,
-	    ) {
-		references.insert(n);
-	    }
-	}
-    }
-
-    let re = Regex::new (
-	r"\[\[ *((?:প|প্রকাশনা|[Pp]ost|)[.: \-] *([0-9a-fA-F]{1,8})) *\]\]"
-    ).unwrap();
-
-    for caps in re.captures_iter(input) {
-	if let Some(id) = caps.get(2) {
-	    if let Ok(n) = i32::from_str_radix(
-		id.as_str(),
-		16,
-	    ) {
-		references.insert(n);
-	    }
-	}
-    }
-
-    references
 }
