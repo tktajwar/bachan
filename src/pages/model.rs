@@ -16,7 +16,6 @@ use sqlx::{
     types::chrono,
     types::chrono::DateTime,
 };
-use uuid::Uuid;
 
 use crate::formatting;
 use crate::formatting::{
@@ -458,28 +457,37 @@ pub async fn thread_or_reply_with_id(
 }
 
 pub async fn create_thread (
-    uid: i64,
+    ip: IpAddr,
     subject: &str,
     comment: &str,
-    board: String,
+    name: Option<String>,
+    board: &str,
     State(pool): State<PgPool>,
-) -> Result<Uuid, Box<dyn Error>> {
-    let subject_sanitized = sanitize(subject);
-    let comment_formatted = formatting::format(comment);
-
-    let query = "\
-    INSERT INTO PendingPost (is_thread, uid, subject, comment, rawcomment, board) \
-    VALUES (TRUE, $1, $2, $3, $4, $5) \
+) -> Result<i64, Box<dyn Error>> {
+    let q = "\
+    INSERT INTO Post ( \
+      board, subject, comment, user_id, user_trip, user_country, user_name, \
+      change_time, bump_time, reply_count \
+    ) \
+    VALUES ( \
+      $1, $2, $3, $4, $5, $6, $7, \
+      NOW(), NOW(), 0 \
+    ) \
     RETURNING id \
     ";
 
+    let user_id = hashed(ip);
+    let user_country = country_code(ip)?;
+    let (user_name, user_trip) = decode_user_name(&name);
 
-    let id: Uuid = sqlx::query_scalar(query)
-	.bind(uid)
-	.bind(subject_sanitized)
-	.bind(comment_formatted)
-	.bind(comment)
+    let id: i64 = sqlx::query_scalar(q)
 	.bind(board)
+	.bind(subject)
+	.bind(comment)
+	.bind(user_id)
+	.bind(user_trip)
+	.bind(user_country)
+	.bind(user_name)
 	.fetch_one(&pool)
 	.await?;
 

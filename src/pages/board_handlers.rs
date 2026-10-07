@@ -10,24 +10,23 @@ use axum::{
 	Redirect,
     },
 };
+use axum::http::StatusCode;
 use real::RealIp;
 use sqlx::PgPool;
-use std::error::Error;
-use uuid::Uuid;
 
 use crate::{
     INTERNAL_SERVER_ERROR_REPLY,
-    USER_SUSPENDED_REPLY,
 };
+
 use crate::forms::{
     PaginationWithMTime,
     ThreadForm,
 };
+
 use crate::model::{
     create_thread,
     ctx_up_sidebar,
     get_board_ctx,
-    hashed,
     paginated_board_threads,
 };
 use crate::moderation::{
@@ -40,7 +39,7 @@ async fn board_page (
     pool_state: State<PgPool>,
     pagination: axum::extract::Query<PaginationWithMTime>,
     url: &str,
-) -> Result<Html<String>, axum::http::StatusCode> {
+) -> Result<Html<String>, StatusCode> {
     let mut ctx = tera::Context::new();
 
     let Ok(board) = get_board_ctx (
@@ -80,23 +79,6 @@ async fn board_page (
     Ok(Html(content))
 }
 
-pub async fn board_submission(
-    state_pool: State<PgPool>,
-    uid: i64,
-    thread_form: ThreadForm,
-    boardname: &str,
-) -> Result<Uuid, Box<dyn Error>> {
-    let id = create_thread (
-	uid,
-	&thread_form.subject,
-	&thread_form.comment,
-	boardname.to_string(),
-	state_pool,
-    ).await?;
-
-    Ok(id)
-}
-
 pub async fn board_x_page (
     state_pool: State<PgPool>,
     Path(url): Path<String>,
@@ -111,90 +93,26 @@ pub async fn board_x_page (
 
 pub async fn board_x_submission (
     state_pool: State<PgPool>,
-    Path(boardname): Path<String>,
+    Path(board): Path<String>,
     RealIp(ip): RealIp,
     Form(thread_form): Form<ThreadForm>,
 ) -> impl IntoResponse {
-    let uid = hashed(ip);
-
-    match is_user_suspended(uid, state_pool.clone()).await {
-	Ok(true) => return Err(
-	    (
-		axum::http::StatusCode::FORBIDDEN,
-		USER_SUSPENDED_REPLY,
-	    ),
-	),
-	Ok(false) => (),
-	Err(e) => {
-	    eprintln!("Error checking user suspension: {}", e);
-	    return Err(
-		(
-		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-		    INTERNAL_SERVER_ERROR_REPLY,
-		)
-	    )
-	},
-    }
-
-    if boardname == "g" {
-	let Ok(g_ok) = is_g_open().await else {
-	    return Err(
-		(
-		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-		    INTERNAL_SERVER_ERROR_REPLY,
-		)
-	    )
-	};
-
-	if !g_ok {
-	    return Err (
-		(
-		    axum::http::StatusCode::UNAUTHORIZED,
-		    "আপনি এই বোর্ডে পোস্ট করতে পারবেন না।",
-		)
-	    )
-	}
-    }
-
-    // let number_of_posts_by_user = match number_of_pending_posts_in_last_hour(
-    // 	uid,
-    // 	state_pool.clone(),
-    // ).await {
-    // 	Ok(number) => number,
-    // 	Err(e) => {
-    // 	    eprintln!("Error checking user pending posts number: {}", e);
-    // 	    return Err(
-    // 		(
-    // 		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-    // 		    INTERNAL_SERVER_ERROR_REPLY,
-    // 		)
-    // 	    )
-    // 	},
-    // };
-    // if number_of_posts_by_user > 10 {
-    // 	return Err(
-    // 	    (
-    // 		axum::http::StatusCode::TOO_MANY_REQUESTS,
-    // 		"আপনার গত এক ঘণ্টায় অনেক অনির্বাচিত পোস্ট রয়েছে। পুনরায় পোস্ট \
-    // 		 করার আগে অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।",
-    // 	    )
-    // 	)
-    // };
-
-    match board_submission(
+    match create_thread (
+	ip,
+	&thread_form.subject,
+	&thread_form.comment,
+	thread_form.name,
+	&board,
 	state_pool,
-	uid,
-	thread_form,
-	&boardname,
     ).await {
 	Ok(id) => {
 	    Ok(Redirect::to(&format!("/submission/{}", id)))
 	},
 	Err(e) => {
 	    eprintln!("Error submitting thread: {}", e);
-	    Err(
+	    Err (
 		(
-		    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+		    StatusCode::INTERNAL_SERVER_ERROR,
 		    INTERNAL_SERVER_ERROR_REPLY,
 		)
 	    )
