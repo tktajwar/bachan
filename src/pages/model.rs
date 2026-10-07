@@ -1,4 +1,3 @@
-use axum::extract::State;
 use base64::{
     engine::general_purpose::URL_SAFE_NO_PAD,
     Engine as _,
@@ -279,7 +278,7 @@ impl From<(Vec<Post>, Vec<Post>)> for Threads {
 impl ThreadLight {
     async fn try_from(
 	id: i32,
-	State(pool): State<PgPool>,
+	pool: PgPool,
     ) -> Result<ThreadLight, Box<dyn Error>> {
 	let q = "\
 	SELECT \
@@ -327,7 +326,7 @@ impl ThreadLight {
 impl ReplyLight {
     async fn try_from(
 	id: i32,
-	State(pool): State<PgPool>,
+	pool: PgPool,
     ) -> Result<ReplyLight, Box<dyn Error>> {
 	let q = "\
 	SELECT \
@@ -368,7 +367,7 @@ impl ReplyLight {
     }
 }
 
-#[derive(sqlx::FromRow, Serialize)]
+#[derive(sqlx::FromRow, Serialize, Clone)]
 pub struct Board {
     pub url: String,
     pub label: String,
@@ -442,10 +441,10 @@ pub fn bengali_digits(s: &str) -> String {
 
 pub async fn thread_or_reply_with_id(
     id: i32,
-    state_pool: State<PgPool>,
+    pool: PgPool,
 ) -> Result<ThreadOrReplySerializable, Box<dyn Error>> {
-    let Ok(thread) = ThreadLight::try_from(id, state_pool.clone()).await else {
-	let reply: ReplyLight = ReplyLight::try_from(id, state_pool).await?;
+    let Ok(thread) = ThreadLight::try_from(id, pool.clone()).await else {
+	let reply: ReplyLight = ReplyLight::try_from(id, pool).await?;
 	let serialize_reply = reply.into_serializable();
 	return Ok(serialize_reply)
     };
@@ -459,7 +458,7 @@ pub async fn create_thread (
     comment: &str,
     name: Option<String>,
     board: &str,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<i64, Box<dyn Error>> {
     let q = "\
     INSERT INTO Post ( \
@@ -493,7 +492,7 @@ pub async fn create_thread (
 
 pub async fn thread_replies (
     thread_id: i64,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<(Vec<Post>, i64), Box<dyn Error>> {
     let q = "\
     SELECT \
@@ -578,7 +577,7 @@ pub async fn create_reply (
     ip: IpAddr,
     thread_id: i64,
     reply_form: ReplyForm,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<i64, Box<dyn Error>> {
     let q = "\
     INSERT INTO Post ( \
@@ -612,7 +611,7 @@ pub async fn redact_thread_or_reply(
     id: i32,
     moderator_username: &str,
     reason: &str,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<(), Box<dyn Error>> {
     let (moderator_id,): (i32,) = sqlx::query_as::<_, (i32,)>(
 	"\
@@ -663,7 +662,7 @@ pub async fn redact_thread_or_reply(
 
 pub async fn boards_in_category(
     category: &str,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<Vec<Board>, Box<dyn Error>> {
     let q = "\
     SELECT \
@@ -684,7 +683,7 @@ pub async fn boards_in_category(
 
 pub async fn get_board_ctx(
     url: &str,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<Board, Box<dyn Error>> {
     let q = "\
     SELECT \
@@ -705,7 +704,7 @@ pub async fn get_board_ctx(
 
 pub async fn top_threads (
     limit: i32,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<(Vec<TopThread>, i64), Box<dyn Error>> {
     let q = "\
     SELECT \
@@ -745,7 +744,7 @@ pub async fn paginated_board_threads (
     opt_before_bump_time: Option<i64>,
     opt_limit: Option<i32>,
     board: &str,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<(Vec<Thread>, bool, i32, i64), Box<dyn Error>> {
     let limit = match opt_limit {
 	Some(limit) => limit,
@@ -904,7 +903,7 @@ pub fn country_code (
 
 pub async fn post_with_id (
     id: i64,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<Option<Post>, Box<dyn Error>> {
     let q = "\
     SELECT \
@@ -936,12 +935,12 @@ pub async fn post_with_id (
 }
 
 pub async fn ctx_up_sidebar (
-    pool_state: State<PgPool>,
+    pool: PgPool,
     ctx: &mut tera::Context,
 )  {
     let hobbies = boards_in_category(
 	"Hobbies",
-	pool_state.clone(),
+	pool.clone(),
     ).await.unwrap_or(
 	vec![]
     );
@@ -949,7 +948,7 @@ pub async fn ctx_up_sidebar (
 
     let interests = boards_in_category(
 	"Interests",
-	pool_state.clone(),
+	pool.clone(),
     ).await.unwrap_or(
 	vec![]
     );
@@ -957,7 +956,7 @@ pub async fn ctx_up_sidebar (
 
     let lifestyle = boards_in_category(
 	"Lifestyle",
-	pool_state.clone(),
+	pool.clone(),
     ).await.unwrap_or(
 	vec![]
     );
@@ -965,7 +964,7 @@ pub async fn ctx_up_sidebar (
 
     let local = boards_in_category(
 	"Local",
-	pool_state.clone(),
+	pool.clone(),
     ).await.unwrap_or(
 	vec![]
     );
@@ -973,7 +972,7 @@ pub async fn ctx_up_sidebar (
 
     let misc = boards_in_category(
 	"Misc",
-	pool_state.clone(),
+	pool.clone(),
     ).await.unwrap_or(
 	vec![]
     );
@@ -982,7 +981,7 @@ pub async fn ctx_up_sidebar (
 
 pub async fn post_summary (
     id: i32,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<PostSummary, Box<dyn Error>> {
     let q = "\
     SELECT comment \

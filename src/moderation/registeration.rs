@@ -13,7 +13,7 @@ use std::io::Write;
 use uuid::Uuid;
 
 pub async fn register_mod(
-    State(pool): State<PgPool>,
+    pool: PgPool,
     username: &str,
     passphrase: &[u8],
 ) -> Result<i32, Box<dyn Error>> {
@@ -43,7 +43,7 @@ pub async fn register_mod(
 
 #[allow(unused)]
 pub async fn register_mod_from_cli(
-    state_pool: State<PgPool>,
+    State(pool): State<PgPool>,
 ) -> Result<i32, Box<dyn Error>> {
     let mut username = String::new();
 
@@ -67,13 +67,13 @@ pub async fn register_mod_from_cli(
 
     let passphrase = passphrase.trim();
 
-    let id = register_mod(state_pool, username, passphrase.as_bytes()).await?;
+    let id = register_mod(pool, username, passphrase.as_bytes()).await?;
 
     Ok(id)
 }
 
 pub async fn create_mod_token (
-    State(pool): State<PgPool>,
+    pool: PgPool,
     passphrase: &[u8],
 ) -> Result<Uuid, Box<dyn Error>> {
     let salt = SaltString::generate(&mut OsRng);
@@ -100,7 +100,7 @@ pub async fn create_mod_token (
 }
 
 pub async fn delete_mod_token (
-    State(pool): State<PgPool>,
+    pool: PgPool,
     id: Uuid,
 ) -> Result<(), Box<dyn Error>> {
     let q = "\

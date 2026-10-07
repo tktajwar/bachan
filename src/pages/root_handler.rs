@@ -16,13 +16,13 @@ use crate::model::{
 };
 
 pub async fn root_page(
-    pool_state: State<PgPool>,
+    State(pool): State<PgPool>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
 
     let (threads, last_mtime) = match top_threads (
 	24,
-	pool_state.clone(),
+	pool.clone(),
     ).await {
 	Ok(result) => result,
 	Err(e) => {
@@ -33,7 +33,7 @@ pub async fn root_page(
     ctx.insert("threads", &threads);
     ctx.insert("last_mtime", &last_mtime);
 
-    ctx_up_sidebar(pool_state, &mut ctx).await;
+    ctx_up_sidebar(pool, &mut ctx).await;
 
     let rendered = TERA.render("root.html", &ctx);
     let content = match rendered {
@@ -48,11 +48,11 @@ pub async fn root_page(
 }
 
 pub async fn formatting_page (
-    pool_state: State<PgPool>,
+    State(pool): State<PgPool>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
 
-    ctx_up_sidebar(pool_state, &mut ctx).await;
+    ctx_up_sidebar(pool, &mut ctx).await;
 
     let rendered = TERA.render("formatting_guide.html", &ctx);
     let content = match rendered {

@@ -30,11 +30,11 @@ use crate::template::{
 use crate::model::ctx_up_sidebar;
 
 pub async fn token_page (
-    pool_state: State<PgPool>,
+    State(pool): State<PgPool>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
 
-    ctx_up_sidebar(pool_state, &mut ctx).await;
+    ctx_up_sidebar(pool, &mut ctx).await;
 
     let rendered = TERA.render("mod_token.html", &ctx);
     let content = match rendered {
@@ -49,7 +49,7 @@ pub async fn token_page (
 }
 
 pub async fn token_submission (
-    state_pool: State<PgPool>,
+    State(pool): State<PgPool>,
     Form(token_form): Form<TokenForm>,
 ) -> Result<String, axum::http::StatusCode> {
     match verify_admin(
@@ -68,7 +68,7 @@ pub async fn token_submission (
     };
 
     let Ok(token_id) = create_mod_token(
-	state_pool,
+	pool,
 	&token_form.token_passphrase.as_bytes(),
     ).await else {
 	return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
@@ -96,12 +96,12 @@ pub async fn register_id_page (
 }
 
 pub async fn registeration_submission (
-    state_pool: State<PgPool>,
+    State(pool): State<PgPool>,
     Path(token_id): Path<Uuid>,
     Form(registeration_form): Form<RegisterationForm>,
 ) -> impl IntoResponse {
     match verify_mod_token (
-	state_pool.clone(),
+	pool.clone(),
 	token_id,
 	&registeration_form.token_passphrase,
     ).await {
@@ -117,7 +117,7 @@ pub async fn registeration_submission (
     };
 
     match is_mod_username_taken (
-	state_pool.clone(),
+	pool.clone(),
 	&registeration_form.username,
     ).await {
 	Ok(true) => {
@@ -136,7 +136,7 @@ pub async fn registeration_submission (
     };
 
     match delete_mod_token (
-	state_pool.clone(),
+	pool.clone(),
 	token_id,
     ).await {
 	Ok(_) => {},
@@ -147,7 +147,7 @@ pub async fn registeration_submission (
     };
 
     let id = match register_mod (
-	state_pool,
+	pool,
 	&registeration_form.username,
 	&registeration_form.passphrase.as_bytes(),
     ).await {

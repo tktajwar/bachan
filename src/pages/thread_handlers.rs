@@ -38,10 +38,10 @@ use crate::model::{
 };
 
 pub async fn thread_page (
-    state_pool: State<PgPool>,
+    State(pool): State<PgPool>,
     Path((board, HexID(id))): Path<(String, HexID)>,
 ) -> impl IntoResponse {
-    let post = match post_with_id (id, state_pool.clone()).await {
+    let post = match post_with_id (id, pool.clone()).await {
 	Ok(Some(post)) => post,
 	Ok(None) => return Err(StatusCode::NOT_FOUND),
 	Err(e) => {
@@ -51,14 +51,14 @@ pub async fn thread_page (
     };
 
     thread_page_view (
-	state_pool,
+	pool,
 	post,
 	&board,
     ).await
 }
 
 async fn thread_page_view (
-    state_pool: State<PgPool>,
+    pool: PgPool,
     post: Post,
     board: &str,
 ) -> Result<Result<Html<String>, Redirect>, StatusCode> {
@@ -76,7 +76,7 @@ async fn thread_page_view (
 
     let (replies, last_id) = match thread_replies (
 	post.id,
-	state_pool.clone(),
+	pool.clone(),
     ).await {
 	Ok((replies, last_id)) => (replies, last_id),
 	Err(e) => {
@@ -91,7 +91,7 @@ async fn thread_page_view (
 	.collect();
 
     let mut ctx = tera::Context::new();
-    ctx_up_sidebar(state_pool, &mut ctx).await;
+    ctx_up_sidebar(pool, &mut ctx).await;
     ctx.insert("thread", &PostSerialized::from(post));
     ctx.insert("replies", &replies);
     ctx.insert("last_id", &last_id);
@@ -108,7 +108,7 @@ async fn thread_page_view (
 }
 
 pub async fn reply_submission (
-    state_pool: State<PgPool>,
+    State(pool): State<PgPool>,
     Path((board, HexID(thread_id))): Path<(String, HexID)>,
     RealIp(ip): RealIp,
     Form(reply_form): Form<ReplyForm>,
@@ -117,7 +117,7 @@ pub async fn reply_submission (
 	ip,
 	thread_id,
 	reply_form,
-	state_pool,
+	pool,
     ).await {
 	Ok(id) => {
 	    Ok (
@@ -160,12 +160,12 @@ pub async fn thread_updates (
 }
 
 pub async fn summary_page (
-    pool_state: State<PgPool>,
+    State(pool): State<PgPool>,
     Path((_board, HexID(id))): Path<(String, HexID)>,
 ) -> Result<String, StatusCode> {
     let Ok(summary) = post_summary (
 	id as i32,
-	pool_state,
+	pool,
     ).await else {
 	return Err(StatusCode::NOT_FOUND)
     };

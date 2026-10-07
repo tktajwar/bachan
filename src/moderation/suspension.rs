@@ -1,4 +1,3 @@
-use axum::extract::State;
 use sqlx::{
     PgPool,
     types::chrono::Utc,
@@ -11,7 +10,7 @@ pub async fn suspend_user (
     moderator_username: &str,
     for_days: u64,
     reason: &str,
-    State(pool): State<PgPool>,
+    pool: PgPool,
 ) -> Result<(), Box<dyn Error>> {
     let (uid,) = match sqlx::query_as::<_, (i64,)>(
 	"\

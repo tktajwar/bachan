@@ -5,7 +5,6 @@ use argon2::{
 	PasswordVerifier,
     },
 };
-use axum::extract::State;
 use sqlx::PgPool;
 use std::error::Error;
 use std::io::Write;
@@ -22,7 +21,7 @@ pub async fn verify_admin (
 }
 
 pub async fn verify_mod(
-    State(pool): State<PgPool>,
+    pool: PgPool,
     username: &str,
     passphrase: &str,
 ) -> Result<bool, Box<dyn Error>> {
@@ -58,7 +57,7 @@ pub async fn verify_mod(
 
 #[allow(unused)]
 pub async fn verify_mod_from_cli(
-    state_pool: State<PgPool>,
+    pool: PgPool,
 ) -> Result<bool, Box<dyn Error>> {
     let mut username = String::new();
 
@@ -82,11 +81,11 @@ pub async fn verify_mod_from_cli(
 
     let passphrase = passphrase.trim();
 
-    verify_mod(state_pool, username, passphrase).await
+    verify_mod(pool, username, passphrase).await
 }
 
 pub async fn verify_mod_token (
-    State(pool): State<PgPool>,
+    pool: PgPool,
     id: Uuid,
     passphrase: &str,
 ) -> Result<bool, Box<dyn Error>> {
@@ -118,7 +117,7 @@ pub async fn verify_mod_token (
 }
 
 pub async fn is_mod_username_taken (
-    State(pool): State<PgPool>,
+    pool: PgPool,
     username: &str,
 ) -> Result<bool, Box<dyn Error>> {
     let username_taken: (bool,) = sqlx::query_as (

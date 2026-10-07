@@ -28,15 +28,15 @@ use crate::model::{
 };
 
 pub async fn mod_id_page(
-    state_pool: State<PgPool>,
+    State(pool): State<PgPool>,
     Path((_board, HexID(id))): Path<(String, HexID)>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
-    ctx_up_sidebar(state_pool.clone(), &mut ctx).await;
+    ctx_up_sidebar(pool.clone(), &mut ctx).await;
 
     let Ok(thread_or_reply) = thread_or_reply_with_id(
 	id as i32,
-	state_pool,
+	pool,
     ).await else {
 	return Err(axum::http::StatusCode::NOT_FOUND)
     };
@@ -55,12 +55,12 @@ pub async fn mod_id_page(
 }
 
 pub async fn mod_id_submission(
-    state_pool: State<PgPool>,
+    State(pool): State<PgPool>,
     Path(id_hex): Path<String>,
     Form(moderation_form): Form<ModerationForm>,
 ) -> impl IntoResponse {
     match verify_mod(
-	state_pool.clone(),
+	pool.clone(),
 	&moderation_form.username,
 	&moderation_form.passphrase,
     ).await {
@@ -104,7 +104,7 @@ pub async fn mod_id_submission(
 		id,
 		&moderation_form.username,
 		&moderation_form.reason,
-		state_pool.clone(),
+		pool.clone(),
 	    ).await {
 		eprintln!("Failed redacting post: {}", e);
 		return Err (
@@ -124,7 +124,7 @@ pub async fn mod_id_submission(
 		&moderation_form.username,
 		7,
 		&moderation_form.reason,
-		state_pool,
+		pool,
 	    ).await {
 		eprintln!("Failed suspending user: {}", e);
 		return Err (

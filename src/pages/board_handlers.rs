@@ -33,7 +33,7 @@ use crate::model::{
 use crate::template::*;
 
 async fn board_page (
-    pool_state: State<PgPool>,
+    pool: PgPool,
     pagination: axum::extract::Query<PaginationWithMTime>,
     url: &str,
 ) -> Result<Html<String>, StatusCode> {
@@ -41,19 +41,19 @@ async fn board_page (
 
     let Ok(board) = get_board_ctx (
 	url,
-	pool_state.clone(),
+	pool.clone(),
     ).await else {
 	return Err(axum::http::StatusCode::NOT_FOUND)
     };
     ctx.insert("board", &board);
 
-    ctx_up_sidebar(pool_state.clone(), &mut ctx).await;
+    ctx_up_sidebar(pool.clone(), &mut ctx).await;
 
     let (threads, has_more, limit, last_bump_time) = paginated_board_threads (
 	pagination.before_mtime,
 	pagination.limit,
 	url,
-	pool_state,
+	pool,
     ).await.unwrap_or(
 	(vec![], false, 0, 0)
     );
@@ -77,19 +77,19 @@ async fn board_page (
 }
 
 pub async fn board_x_page (
-    state_pool: State<PgPool>,
+    State(pool): State<PgPool>,
     Path(url): Path<String>,
     pagination: axum::extract::Query<PaginationWithMTime>,
 ) -> impl IntoResponse {
     board_page(
-	state_pool,
+	pool,
 	pagination,
 	&url,
     ).await
 }
 
 pub async fn board_x_submission (
-    state_pool: State<PgPool>,
+    State(pool): State<PgPool>,
     Path(board): Path<String>,
     RealIp(ip): RealIp,
     Form(thread_form): Form<ThreadForm>,
@@ -100,7 +100,7 @@ pub async fn board_x_submission (
 	&thread_form.comment,
 	thread_form.name,
 	&board,
-	state_pool,
+	pool,
     ).await {
 	Ok(id) => {
 	    Ok(Redirect::to(&format!("/submission/{}", id)))
