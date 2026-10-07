@@ -16,7 +16,6 @@ use tower_http::{
 
 mod pages;
 use pages::*;
-mod formatting;
 mod moderation;
 
 #[tokio::main]

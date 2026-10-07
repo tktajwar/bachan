@@ -1,6 +1,7 @@
 pub mod template;
 
 pub mod forms;
+pub mod sanitize;
 pub mod model;
 
 pub mod root_handler;

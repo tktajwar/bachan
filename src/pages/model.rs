@@ -17,10 +17,7 @@ use sqlx::{
     types::chrono::DateTime,
 };
 
-use crate::formatting;
-use crate::formatting::{
-    sanitize,
-};
+use crate::sanitize::sanitize;
 
 use crate::forms::ReplyForm;
 
