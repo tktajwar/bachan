@@ -2,7 +2,7 @@ const username = document.getElementById("postName");
 
 username.value = localStorage.getItem("name") || "";
 
-username.addEventListener("input", () => {
+username.addEventListener("change", () => {
     localStorage.setItem("name", username.value);
 });
 
