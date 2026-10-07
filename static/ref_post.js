@@ -7,7 +7,7 @@ function add_ref(id) {
 }
 
 function enref(id) {
-    if (document.getElementById('thread-reply-form')) {
+    if (document.getElementById('replyForm')) {
 	add_ref(id);
 	return false;
     } else {
