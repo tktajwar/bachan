@@ -478,8 +478,8 @@ pub async fn create_thread (
 
     let id: i64 = sqlx::query_scalar(q)
 	.bind(board)
-	.bind(subject)
-	.bind(comment)
+	.bind(subject.trim())
+	.bind(comment.trim())
 	.bind(user_id)
 	.bind(user_trip)
 	.bind(user_country)
@@ -596,7 +596,7 @@ pub async fn create_reply (
 
     let id: i64 = sqlx::query_scalar(q)
 	.bind(thread_id)
-	.bind(comment)
+	.bind(comment.trim())
 	.bind(user_id)
 	.bind(user_trip)
 	.bind(user_country)
