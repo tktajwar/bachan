@@ -623,23 +623,6 @@ main, #sidebar {
     padding: 13px 20px;
 }
 
-#postPopup {
-    display: none;
-    position: fixed;
-    background-color: var(--post-form-bg);
-    border: 3px solid var(--post-form-border);
-    border-radius: 5px;
-    width: 95vw;
-    height: 95vh;
-    overflow-y: auto;
-    margin: auto;
-    max-width: 800px;
-    max-height: 500px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
 @media (max-width: 360px) {
     #navbar #logo {
 	display: none !important;

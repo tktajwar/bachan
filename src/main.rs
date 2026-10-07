@@ -32,7 +32,7 @@ async fn main() {
 	.expect("Couldn't do database migration.");
 
     let app = Router::new()
-	.route("/", get(root_page).post(thread_submission))
+	.route("/", get(root_page))
 	.route("/{board}/{tid_hex}",
 	       get(thread_page).post(reply_submission))
 	.route("/{board}/moderation/{tid_hex}",
