@@ -50,8 +50,13 @@ pub async fn root_page(
 
 pub async fn formatting_page (
     State(pool): State<PgPool>,
+    State(pages_cache): State<crate::PagesCache>,
     State(boards_cache): State<crate::BoardsCache>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
+    if let Some(content) = pages_cache.get("formatting").await {
+	return Ok(Html(content));
+    }
+
     let mut ctx = tera::Context::new();
 
     ctx_up_sidebar(pool, boards_cache, &mut ctx).await;
@@ -64,6 +69,10 @@ pub async fn formatting_page (
 	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
 	},
     };
+
+    pages_cache
+	.insert("formatting".to_string(), content.clone())
+	.await;
 
     Ok(Html(content))
 }

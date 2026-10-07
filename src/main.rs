@@ -38,9 +38,15 @@ async fn main() {
 	.max_capacity(8)
 	.build();
 
+    let page_cache: PagesCache = Cache::builder()
+	.time_to_live(Duration::from_hours(4))
+	.max_capacity(20)
+	.build();
+
     let state = AppState {
 	pool,
 	boards_cache,
+	page_cache,
     };
 
     let app = Router::<AppState>::new()
@@ -84,11 +90,13 @@ async fn main() {
 }
 
 type BoardsCache = moka::future::Cache<String, Vec<model::Board>>;
+type PagesCache = moka::future::Cache<String, String>;
 
 #[derive(Clone, FromRef)]
 struct AppState {
     pool: PgPool,
     boards_cache: BoardsCache,
+    page_cache: PagesCache,
 }
 
 lazy_static! {
