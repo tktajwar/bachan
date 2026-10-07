@@ -29,10 +29,7 @@ use crate::model::{
     get_board_ctx,
     paginated_board_threads,
 };
-use crate::moderation::{
-    is_g_open,
-    is_user_suspended,
-};
+
 use crate::template::*;
 
 async fn board_page (
