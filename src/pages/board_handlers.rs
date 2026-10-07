@@ -34,6 +34,7 @@ use crate::template::*;
 
 async fn board_page (
     pool: PgPool,
+    boards_cache: crate::BoardsCache,
     pagination: axum::extract::Query<PaginationWithMTime>,
     url: &str,
 ) -> Result<Html<String>, StatusCode> {
@@ -47,7 +48,7 @@ async fn board_page (
     };
     ctx.insert("board", &board);
 
-    ctx_up_sidebar(pool.clone(), &mut ctx).await;
+    ctx_up_sidebar(pool.clone(), boards_cache, &mut ctx).await;
 
     let (threads, has_more, limit, last_bump_time) = paginated_board_threads (
 	pagination.before_mtime,
@@ -78,11 +79,13 @@ async fn board_page (
 
 pub async fn board_x_page (
     State(pool): State<PgPool>,
+    State(boards_cache): State<crate::BoardsCache>,
     Path(url): Path<String>,
     pagination: axum::extract::Query<PaginationWithMTime>,
 ) -> impl IntoResponse {
     board_page(
 	pool,
+	boards_cache,
 	pagination,
 	&url,
     ).await

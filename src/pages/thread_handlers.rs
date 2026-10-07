@@ -39,6 +39,7 @@ use crate::model::{
 
 pub async fn thread_page (
     State(pool): State<PgPool>,
+    State(boards_cache): State<crate::BoardsCache>,
     Path((board, HexID(id))): Path<(String, HexID)>,
 ) -> impl IntoResponse {
     let post = match post_with_id (id, pool.clone()).await {
@@ -52,6 +53,7 @@ pub async fn thread_page (
 
     thread_page_view (
 	pool,
+	boards_cache,
 	post,
 	&board,
     ).await
@@ -59,6 +61,7 @@ pub async fn thread_page (
 
 async fn thread_page_view (
     pool: PgPool,
+    boards_cache: crate::BoardsCache,
     post: Post,
     board: &str,
 ) -> Result<Result<Html<String>, Redirect>, StatusCode> {
@@ -91,7 +94,7 @@ async fn thread_page_view (
 	.collect();
 
     let mut ctx = tera::Context::new();
-    ctx_up_sidebar(pool, &mut ctx).await;
+    ctx_up_sidebar(pool, boards_cache, &mut ctx).await;
     ctx.insert("thread", &PostSerialized::from(post));
     ctx.insert("replies", &replies);
     ctx.insert("last_id", &last_id);

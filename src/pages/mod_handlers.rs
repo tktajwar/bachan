@@ -29,10 +29,11 @@ use crate::model::{
 
 pub async fn mod_id_page(
     State(pool): State<PgPool>,
+    State(boards_cache): State<crate::BoardsCache>,
     Path((_board, HexID(id))): Path<(String, HexID)>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
-    ctx_up_sidebar(pool.clone(), &mut ctx).await;
+    ctx_up_sidebar(pool.clone(), boards_cache, &mut ctx).await;
 
     let Ok(thread_or_reply) = thread_or_reply_with_id(
 	id as i32,

@@ -3,8 +3,8 @@ use base64::{
     Engine as _,
 };
 use maxminddb::{Reader, PathElement};
-use serde::Serialize;
 use serde::Deserialize;
+use serde::Serialize;
 use siphasher::sip::SipHasher13;
 use std::collections::HashMap;
 use std::error::Error;
@@ -663,7 +663,12 @@ pub async fn redact_thread_or_reply(
 pub async fn boards_in_category(
     category: &str,
     pool: PgPool,
+    boards_cache: crate::BoardsCache,
 ) -> Result<Vec<Board>, Box<dyn Error>> {
+    if let Some(boards) = boards_cache.get(category).await {
+	return Ok( boards );
+    }
+
     let q = "\
     SELECT \
     url, \
@@ -678,7 +683,12 @@ pub async fn boards_in_category(
 	.fetch_all(&pool)
 	.await?;
 
-    Ok(boards)
+    boards_cache
+	.insert(category.to_string(), boards.clone() )
+	.await;
+
+    Ok ( boards )
+
 }
 
 pub async fn get_board_ctx(
@@ -936,11 +946,13 @@ pub async fn post_with_id (
 
 pub async fn ctx_up_sidebar (
     pool: PgPool,
+    boards_cache: crate::BoardsCache,
     ctx: &mut tera::Context,
 )  {
     let hobbies = boards_in_category(
 	"Hobbies",
 	pool.clone(),
+	boards_cache.clone(),
     ).await.unwrap_or(
 	vec![]
     );
@@ -949,6 +961,7 @@ pub async fn ctx_up_sidebar (
     let interests = boards_in_category(
 	"Interests",
 	pool.clone(),
+	boards_cache.clone(),
     ).await.unwrap_or(
 	vec![]
     );
@@ -957,6 +970,7 @@ pub async fn ctx_up_sidebar (
     let lifestyle = boards_in_category(
 	"Lifestyle",
 	pool.clone(),
+	boards_cache.clone(),
     ).await.unwrap_or(
 	vec![]
     );
@@ -965,6 +979,7 @@ pub async fn ctx_up_sidebar (
     let local = boards_in_category(
 	"Local",
 	pool.clone(),
+	boards_cache.clone(),
     ).await.unwrap_or(
 	vec![]
     );
@@ -973,6 +988,7 @@ pub async fn ctx_up_sidebar (
     let misc = boards_in_category(
 	"Misc",
 	pool.clone(),
+	boards_cache,
     ).await.unwrap_or(
 	vec![]
     );

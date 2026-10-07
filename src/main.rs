@@ -3,8 +3,11 @@ use axum::{
     Router,
     response::Redirect,
 };
+use axum::extract::FromRef;
 use lazy_static::lazy_static;
+use moka::future::Cache;
 use real::RealIpLayer;
+use sqlx::postgres::PgPool;
 use std::net::SocketAddr;
 use std::time::Duration;
 use tower::ServiceBuilder;
@@ -24,13 +27,23 @@ async fn main() {
 
     let db_url = std::env::var("DATABASE_URL")
 	.expect("DATABASE_URL not set.");
-    let pool = sqlx::postgres::PgPool::connect(&db_url).await
+    let pool = PgPool::connect(&db_url).await
 	.expect("Couldn't create database pool.");
 
     sqlx::migrate!("./migrations").run(&pool).await
 	.expect("Couldn't do database migration.");
 
-    let app = Router::new()
+    let boards_cache: BoardsCache = Cache::builder()
+	.time_to_live(Duration::from_hours(36))
+	.max_capacity(8)
+	.build();
+
+    let state = AppState {
+	pool,
+	boards_cache,
+    };
+
+    let app = Router::<AppState>::new()
 	.route("/", get(root_page))
 	.route("/{board}/{tid_hex}",
 	       get(thread_page).post(reply_submission))
@@ -50,7 +63,7 @@ async fn main() {
 	    Redirect::permanent("static/favicon.ico")
 	}))
 	.fallback(fallback)
-	.with_state(pool)
+	.with_state(state)
 	.nest_service("/static", ServeDir::new("static"))
 	.layer(
 	    ServiceBuilder::new()
@@ -68,6 +81,14 @@ async fn main() {
 	listener,
 	app.into_make_service_with_connect_info::<SocketAddr>(),
     ).await.unwrap();
+}
+
+type BoardsCache = moka::future::Cache<String, Vec<model::Board>>;
+
+#[derive(Clone, FromRef)]
+struct AppState {
+    pool: PgPool,
+    boards_cache: BoardsCache,
 }
 
 lazy_static! {
