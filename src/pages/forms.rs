@@ -15,6 +15,7 @@ pub struct PopupThreadForm {
 
 #[derive(Deserialize)]
 pub struct ReplyForm {
+    pub name: Option<String>,
     pub comment: String,
 }
 
@@ -45,30 +46,12 @@ pub struct RegisterationForm {
 }
 
 #[derive(Deserialize)]
-pub struct PaginationWithID {
-    pub limit: Option<i32>,
-    pub before_id: Option<String>,
-}
-
-#[derive(Deserialize)]
 pub struct PaginationWithMTime {
     pub limit: Option<i32>,
     pub before_mtime: Option<i64>,
 }
 
 #[derive(Deserialize)]
-pub struct SubmissionForm {
-    pub action: String,
-    pub name: Option<String>,
-    pub comment: Option<String>,
-}
-
-#[derive(Deserialize)]
-pub struct KUpdates {
-    pub after_id: i32,
-}
-
-#[derive(Deserialize)]
-pub struct HighlightsUpdates {
-    pub after_mtime: i64,
+pub struct ThreadUpdates {
+    pub after_id: i64,
 }

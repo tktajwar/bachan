@@ -27,7 +27,7 @@ use crate::moderation::{
 use crate::template::{
     TERA,
 };
-use crate::helper::ctx_up_sidebar;
+use crate::model::ctx_up_sidebar;
 
 pub async fn token_page (
     pool_state: State<PgPool>,

@@ -33,22 +33,13 @@ async fn main() {
 
     let app = Router::new()
 	.route("/", get(root_page).post(thread_submission))
-	.route("/updates", get(root_updates))
-	.route("/k/", get(k_page))
-	.route("/k", get(|| async {Redirect::to("/k/")}))
-	.route("/k/{tid_hex}", get(k_thread_page).post(reply_submission))
-	.route("/k/{tid_hex}/updates", get(thread_updates))
-	.route("/mod/{tid_hex}", get(mod_id_page).post(mod_id_submission))
-	.route("/{boardname}/", get(board_x_page).post(board_x_submission))
-	.route("/{boardname}", get(board_x_page).post(board_x_submission))
-	.route("/redacted/threads/", get(redacted_threads_page))
-	.route("/redacted/threads", get(|| async {
-	    Redirect::to("/redacted/threads/")
-	}))
-	.route("/redacted/replies/", get(redacted_replies_page))
-	.route("/redacted/replies", get(|| async {
-	    Redirect::to("/redacted/replies/")
-	}))
+	.route("/{board}/{tid_hex}",
+	       get(thread_page).post(reply_submission))
+	.route("/{board}/moderation/{tid_hex}",
+	       get(mod_id_page).post(mod_id_submission))
+	.route("/{board}/{id_hex}/summary", get(summary_page))
+	.route("/{board}/{tid_hex}/updates", get(thread_updates))
+	.route("/{board}/", get(board_x_page).post(board_x_submission))
 	.route("/token", get(token_page).post(token_submission))
 	.route(
 	    "/register/{token_id}",

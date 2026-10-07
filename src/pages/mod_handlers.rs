@@ -20,7 +20,8 @@ use crate::moderation::{
 use crate::template::{
     TERA,
 };
-use crate::helper::{
+use crate::model::{
+    HexID,
     ctx_up_sidebar,
     redact_thread_or_reply,
     thread_or_reply_with_id,
@@ -28,18 +29,13 @@ use crate::helper::{
 
 pub async fn mod_id_page(
     state_pool: State<PgPool>,
-    Path(id_hex): Path<String>,
+    Path((_board, HexID(id))): Path<(String, HexID)>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
-    let Ok(id_u32) = u32::from_str_radix(&id_hex, 16) else {
-	return Err(axum::http::StatusCode::BAD_REQUEST)
-    };
-    let id = id_u32 as i32;
-
     let mut ctx = tera::Context::new();
     ctx_up_sidebar(state_pool.clone(), &mut ctx).await;
 
     let Ok(thread_or_reply) = thread_or_reply_with_id(
-	id,
+	id as i32,
 	state_pool,
     ).await else {
 	return Err(axum::http::StatusCode::NOT_FOUND)

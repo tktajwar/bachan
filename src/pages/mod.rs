@@ -1,13 +1,13 @@
 pub mod template;
 
-pub mod helper;
 pub mod forms;
+pub mod model;
 
 pub mod root_handler;
 pub use root_handler::*;
 
-pub mod k_handlers;
-pub use k_handlers::*;
+pub mod thread_handlers;
+pub use thread_handlers::*;
 
 pub mod board_handlers;
 pub use board_handlers::*;

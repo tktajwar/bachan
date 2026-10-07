@@ -6,26 +6,28 @@
     <title>
       {% block title %}
 
-      BanglaChan: Anonymous Bengali Internet Forum | বাংলাচান
+      বাংলাচান: Anonymous Bengali ImageBoard | BanglaChan
 
       {% endblock title %}
     </title>
 
     <meta name="viewport" content="width=device-width,
 				   initial-scale=1.0">
-    <meta name="description" content="A Bengali Internet Forum. বাংলাচান
+    <meta name="description" content="A Bengali ImageBoard. বাংলাচান
+				      is an online anonymous forum for
+				      Bengali speaking community. It
+				      is an imageboard and a
+				      textboard. Users have the
+				      freedom to express themselves
+				      without revealing their
+				      identity.">
+    <meta name="og:description" content="A Bengali ImageBoard. বাংলাচান
 				      is an online anonymous forum for
 				      Bengali speaking community.
 				      Users have the freedom to
 				      express themselves without
 				      revealing their identity.">
-    <meta name="og:description" content="A Bengali Internet Forum. বাংলাচান
-				      is an online anonymous forum for
-				      Bengali speaking community.
-				      Users have the freedom to
-				      express themselves without
-				      revealing their identity.">
-    <meta property="og:title" content="বাংলাচান - A Bengali Internet Forum">
+    <meta property="og:title" content="বাংলাচান - A Bengali Imageboard">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="675">
     <meta property="og:image:type" content="image/png">
@@ -33,7 +35,7 @@
 
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content="বাংলাচান - A Bengali
-    Internet Forum" />
+    Imageboard" />
     <meta name="keywords"
 	  content="bd,bangla,bengali,bangladesh,image
 		   board,forum,anonymous,anime,video games" />
@@ -71,6 +73,7 @@
 
     {% include "sidebar-script.html" %}
     {% include "popup-post-form.html" %}
+    <script defer src="/static/forms.js"></script>
     <script defer src="https://kit.fontawesome.com/9187eb4d30.js"
 	    crossorigin="anonymous"></script>
    </body>

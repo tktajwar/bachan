@@ -1,3 +1,11 @@
+const username = document.getElementById("postName");
+
+username.value = localStorage.getItem("name") || "";
+
+username.addEventListener("input", () => {
+    localStorage.setItem("name", username.value);
+});
+
 function openPopupThreadMenu(event) {
     event.preventDefault();
     document.getElementById("postPopup").style.display = "block";

@@ -20,11 +20,9 @@
 
 <div class="thread-container">
   {% include "thread.html" %}
-  {% if not thread.redacted %}
   {% include "thread-replies.html" %}
   {% include "autorefresh-countdown.html" %}
   {% include "thread-reply-form.html" %}
-  {% endif %}
 </div>
 
 {% endblock main %}
@@ -32,9 +30,16 @@
 {% block scripts %}
 
 {% include "popup-post-form.html" %}
+
+<script>
+  const board = '{{thread.board}}';
+  const thread_id = '{{thread.id}}';
+  let lastId = {{last_id}};
+</script>
+
 <script defer src="/static/format_local_time.js"></script>
 <script defer src="/static/ref_post.js"></script>
 <script defer src="/static/emoji-up-flags.js"></script>
-{% include "updated-replies-script.html" %}
+<script defer src="/static/thread-fetch-new-replies.js"></script>
 
 {% endblock scripts %}

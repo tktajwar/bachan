@@ -1,5 +1,4 @@
 use axum::{
-    Json,
     Form,
     extract::{
 	ConnectInfo,
@@ -21,16 +20,13 @@ use crate::{
 use crate::board_handlers::board_submission;
 use crate::moderation::is_user_suspended;
 use crate::forms::{
-    HighlightsUpdates,
     PopupThreadForm,
     ThreadForm,
 };
 use crate::template::TERA;
-use crate::helper::{
-    TopThread,
+use crate::model::{
     ctx_up_sidebar,
     hashed,
-    highlights_updates,
     top_threads,
 };
 
@@ -139,20 +135,6 @@ pub async fn thread_submission (
 	    )
 	},
     }
-}
-
-pub async fn root_updates (
-    state_pool: State<PgPool>,
-    updates: axum::extract::Query<HighlightsUpdates>,
-) -> Json<(Vec<TopThread>, i64)> {
-    let (threads, last_mtime) = highlights_updates (
-	updates.after_mtime,
-	state_pool,
-    ).await.unwrap_or(
-	(vec![], 0)
-    );
-
-    Json((threads, last_mtime))
 }
 
 pub async fn formatting_page (

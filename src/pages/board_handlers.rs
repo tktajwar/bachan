@@ -23,7 +23,7 @@ use crate::forms::{
     PaginationWithMTime,
     ThreadForm,
 };
-use crate::helper::{
+use crate::model::{
     create_thread,
     ctx_up_sidebar,
     get_board_ctx,
@@ -53,7 +53,7 @@ async fn board_page (
 
     ctx_up_sidebar(pool_state.clone(), &mut ctx).await;
 
-    let (threads, has_more, limit, last_mtime) = paginated_board_threads (
+    let (threads, has_more, limit, last_bump_time) = paginated_board_threads (
 	pagination.before_mtime,
 	pagination.limit,
 	url,
@@ -61,11 +61,10 @@ async fn board_page (
     ).await.unwrap_or(
 	(vec![], false, 0, 0)
     );
-    ctx.insert("threads", &threads);
 
     ctx.insert("threads", &threads);
     ctx.insert("has_more", &has_more);
-    ctx.insert("last_mtime", &last_mtime);
+    ctx.insert("last_bump_time", &last_bump_time);
     ctx.insert("limit", &limit);
 
 

@@ -29,7 +29,7 @@ window.onload = function() {
 
 async function fetchSummary(id) {
     if (!cacheRef.has(id)) {
-	const res = await fetch(`/api/summary/${id}`);
+	const res = await fetch(`/${board}/${id}/summary`);
 	if(!res.ok) return;
 	cacheRef.set(id, await res.text());
     }
