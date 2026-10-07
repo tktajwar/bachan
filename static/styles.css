@@ -236,20 +236,22 @@ hr {
     margin: 0;
 }
 
-#postFormContainer {
+#postFormContainer,
+#replyFormContainer {
     margin: auto;
     min-width: 150px;
-    text-align: center;
 }
 
-#postForm {
+#postForm,
+#replyForm {
     margin: 10px;
     width: 90%;
     max-width: 600px;
     margin: auto;
 }
 
-#postForm > div {
+#postForm > div,
+#replyForm > div {
     width: 100%;
     margin: 13px;
     display: flex;
@@ -265,6 +267,7 @@ hr {
 
 #postName {
     min-height:30px;
+    max-width: 200px;
     flex: 25%;
 }
 
