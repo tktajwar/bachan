@@ -1,4 +1,5 @@
 <ul class="thread-buttons">
+
   <li class="thread-reply">
     <a href="/{{thread.board}}/{{thread.id}}?enref={{reply.id}}"
        onclick="return enref('{{reply.id}}')"
@@ -6,15 +7,11 @@
       <i class="fa-solid fa-angles-right"></i>{{reply.id}}
     </a>
   </li>
+
   <li class="thread-report">
-    <!-- TODO -->
     <a href="#" title="(report) রিপোর্ট করুন">
       <i class="fa-regular fa-flag"></i>
     </a>
   </li>
-  <li class="thread-mod">
-    <a href="/mod/{{reply.id}}" title="(moderate) পরিচালনা করুন">
-      <i class="fa-solid fa-ellipsis"></i>
-    </a>
-  </li>
+
 </ul>
