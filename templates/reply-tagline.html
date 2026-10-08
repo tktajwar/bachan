@@ -1,12 +1,25 @@
 <p class="reply-tagline">
+
   <span class="reply-utid">
     {{reply.user_name}}#{{reply.user_code}}
     <span class="cc">{{reply.user_country}}</span>
   </span>
+
   <span class="reply-time">
     {{reply.birth_time}}
   </span>
+
   <span class="reply-id">
-    প্রকাশনা {{reply.id}}
+    <a href="/{{thread.board}}/{{thread.id}}?enref={{reply.id}}"
+       onclick="return enref('{{reply.id}}')"
+       title="(cite) পোস্টটি উদ্ধৃত করুন">
+      [ প্রকাশনা {{reply.id}} ]
+    </a>
+  </span>
+
+  <span class="reply-report">
+    <a href="#" title="(report) রিপোর্ট করুন">
+      <span class="reicon--flag"></span>
+    </a>
   </span>
 </p>

@@ -1,12 +1,11 @@
 <div id="thread-replies">
-  <h3 id="replies"> রিপ্লাইসমূহ </h3>
+  <span id="replies" style="display:none;"> </span>
   {% for reply in replies %}
   <div class="reply" id="{{reply.id}}">
     {% include "reply-tagline.html" %}
     <div class="reply-body">
       <div class="reply-comment">{{reply.comment}}</div>
     </div>
-    {% include "reply-buttons.html" %}
   </div>
   {% endfor %}
 </div>

@@ -1,11 +1,37 @@
 <p class="thread-tagline">
+
+  <span class="thread-headline">
+    <a href="/k/{{thread.id}}">
+      {{thread.subject}}
+    </a>
+  </span>
+
   <span class="thread-utid">
     {{thread.user_name}}#{{thread.user_code}} <span class="cc">{{thread.user_country}}</span>
   </span>
+
   <span class="thread-time">
     {{thread.birth_time}}
   </span>
+
   <span class="thread-id">
-    প্রকাশনা {{thread.id}}
+    <a href="/{{thread.board}}/{{thread.id}}?enref={{thread.id}}"
+       onclick="return enref('{{thread.id}}')"
+       title="(cite) পোস্টটি উদ্ধৃত করুন">
+      [ প্রকাশনা {{thread.id}} ]
+    </a>
   </span>
+
+  <span class="thread-replies">
+    <a href="/k/{{thread.id}}#replies" title="(replies) 0 টি মন্তব্য">
+      <span class="la--comments"></span> {{thread.reply_count}}
+    </a>
+  </span>
+
+  <span class="thread-report">
+    <a href="#" title="(report) রিপোর্ট করুন">
+      <span class="reicon--flag"></span>
+    </a>
+  </span>
+
 </p>

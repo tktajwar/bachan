@@ -1,4 +1,4 @@
-function formatLocalTime() {
+function toLocalTime(date) {
     const options = { 
 	year: 'numeric', 
 	month: 'long', 
@@ -8,12 +8,16 @@ function formatLocalTime() {
 	hour12: false,
     };
 
+    const utcDate = new Date(date.trim());
+
+    return utcDate.toLocaleString('bn-BD',options);
+}
+
+function formatLocalTime() {
     const times = document.querySelectorAll('.thread-time,.reply-time');
 
     times.forEach(element => {
-	const utcDate = new Date(element.textContent.trim());
-	const localDate = utcDate.toLocaleString('bn-BD',options);
-	element.textContent = localDate;
+	element.textContent = toLocalTime(element.textContent);
     });
 }
 

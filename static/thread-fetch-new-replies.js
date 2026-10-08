@@ -34,46 +34,35 @@ function insertReplies(replies){
 	div.dataset.postId = String(reply.id);
 	div.id = `${reply.id}`;
 	div.innerHTML = `
-<div class="reply" id="${reply.id}">
-
 <p class="reply-tagline">
+
   <span class="reply-utid">
-    ${reply.user_name}#${reply.user_code} <span class="cc">${reply.user_country}</span>
+    ${reply.user_name}#${reply.user_code}
+    <span class="cc">${flagEmoji(reply.user_country)}</span>
   </span>
+
   <span class="reply-time">
-    ${reply.birth_time}
+    ${toLocalTime(reply.birth_time.trim())}
   </span>
+
   <span class="reply-id">
-    প্রকাশনা ${reply.id}
-  </span>
-</p>
-
-<div class="reply-body">
-  <div class="reply-comment">${reply.comment}</div>
-</div>
-
-<ul class="thread-buttons">
-  <li class="thread-reply">
     <a href="/${board}/${thread_id}?enref=${reply.id}"
        onclick="return enref('${reply.id}')"
        title="(cite) পোস্টটি উদ্ধৃত করুন">
-      <i class="fa-solid fa-angles-right"></i>${reply.id}
+      [ প্রকাশনা ${reply.id} ]
     </a>
-  </li>
-  <li class="thread-report">
-    <!-- TODO -->
+  </span>
+
+  <span class="reply-report">
     <a href="#" title="(report) রিপোর্ট করুন">
-      <i class="fa-regular fa-flag"></i>
+      <span class="reicon--flag"></span>
     </a>
-  </li>
-  <li class="thread-mod">
-    <a href="/mod/${reply.id}" title="(moderate) পরিচালনা করুন">
-      <i class="fa-solid fa-ellipsis"></i>
-    </a>
-  </li>
-</ul>
+  </span>
+</p>
 
 
+<div class="reply-body">
+  <div class="reply-comment">${reply.comment}</div>
 </div>
 `;
 
