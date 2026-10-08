@@ -18,7 +18,12 @@ use crate::model::{
 pub async fn root_page(
     State(pool): State<PgPool>,
     State(boards_cache): State<crate::BoardsCache>,
+    State(pages_cache): State<crate::PagesCache>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
+    if let Some(content) = pages_cache.get("root").await {
+	return Ok(Html(content));
+    }
+
     let mut ctx = tera::Context::new();
 
     let (threads, last_mtime) = match top_threads (
@@ -44,6 +49,8 @@ pub async fn root_page(
 	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
 	},
     };
+
+    pages_cache.insert("root".to_string(), content.clone()).await;
 
     Ok(Html(content))
 }
