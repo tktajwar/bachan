@@ -91,6 +91,9 @@
     --submit-btn:var(--button);
 
     --navbar-height:56px; 	/* Media-dependent */
+    --comment-min-width:clamp(200px, 95%, 450px);
+    --comment-max-width:700px;
+    --thread-container-max-width:800px;
 }
 
 body {
@@ -123,7 +126,7 @@ h1 {
 }
 
 hr {
-    max-width: 1050px;
+    max-width: var(--thread-container-max-width);
 }
 
 #logo {
@@ -242,17 +245,16 @@ hr {
     min-width: 150px;
 }
 
-#postForm,
-#replyForm {
-    margin: 10px;
-    width: 90%;
-    max-width: 600px;
+#postForm {
     margin: auto;
+}
+
+#postForm, #replyForm {
+    width: clamp(200px, 95%, calc(var(--thread-container-max-width)*.95));
 }
 
 #postForm > div,
 #replyForm > div {
-    width: 100%;
     margin: 13px;
     display: flex;
     align-items: center;
@@ -272,8 +274,15 @@ hr {
 }
 
 #postComment {
-    height: 200px;
-    flex: 1;
+    height: 150px;
+}
+
+#postForm #postComment {
+    width: clamp(200px, 100%, var(--thread-container-max-width));
+}
+
+#replyForm #postComment {
+    width: clamp(200px, 100%, var(--comment-max-width));
 }
 
 #board-title {
@@ -285,30 +294,21 @@ hr {
 }
 
 .board-thread-container {
-    max-width: 1410px;
+    max-width: var(--thread-container-max-width);
     margin: auto;
 }
 
 .board-thread-replies {
-    max-width: 700px;
+    max-width: var(--comment-max-width);
     padding-top: 10px;
 }
 
 .thread-and-reply {
-    display: flex;
-    flex-wrap: wrap;
     margin: auto;
-    justify-content: center;
-}
-
-.thread,
-.board-thread-replies {
-    flex: 1;
-    height: fit-content;
 }
 
 .thread-container {
-    max-width: 700px;
+    max-width: var(--thread-container-max-width);
     margin: auto;
 }
 
@@ -316,8 +316,10 @@ hr {
 .reply {
     color: var(--thread-fg);
     padding: 8px;
-    margin: 12px 3px;
-    max-width: 700px;
+    margin: 5px;
+    min-width: var(--comment-min-width);
+    max-width: var(--comment-max-width);
+    display: inline-block;
 }
 
 .reply {
@@ -594,21 +596,6 @@ main, #sidebar {
 
 #notice-msg p {
     margin: 0;
-}
-
-.mod,
-.submission {
-    color: var(--thread-fg);
-    background-color: var(--thread-bg);
-    max-width: 700px;
-    margin: auto;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-}
-
-.mod form,
-.submission form {
-    padding: 13px 20px;
 }
 
 @media (max-width: 360px) {

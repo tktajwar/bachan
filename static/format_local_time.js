@@ -1,6 +1,8 @@
 function toLocalTime(date) {
+    const today = new Date();
+    const utcDate = new Date(date.trim());
+
     const options = { 
-	year: 'numeric', 
 	month: 'long', 
 	day: 'numeric', 
 	hour: '2-digit', 
@@ -8,7 +10,9 @@ function toLocalTime(date) {
 	hour12: false,
     };
 
-    const utcDate = new Date(date.trim());
+    if (utcDate.getFullYear() != today.getFullYear()) {
+	options.year = 'numeric';
+    }
 
     return utcDate.toLocaleString('bn-BD',options);
 }
