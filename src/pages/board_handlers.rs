@@ -106,7 +106,7 @@ pub async fn board_x_submission (
 	pool,
     ).await {
 	Ok(id) => {
-	    Ok(Redirect::to(&format!("/submission/{}", id)))
+	    Ok(Redirect::to(&format!("/{}/{:3x}", board, id)))
 	},
 	Err(e) => {
 	    eprintln!("Error submitting thread: {}", e);
