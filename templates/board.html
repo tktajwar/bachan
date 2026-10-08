@@ -15,7 +15,9 @@
 <h1 id="board-title">
   <center>/{{board.url}}/ - {{board.label}}</center>
 </h1>
-<hr />
+
+<div class="divider"></div>
+
 <div id="newThreadButton">
   <center>
     [
@@ -27,13 +29,17 @@
 </div>
 {% include "post-form.html" %}
 
-<hr />
+<div class="divider"></div>
+
 <div class="board-thread-container">
   {% for thread in threads %}
   <div class="thread-and-reply">
     {% include "thread.html" %}
     {% include "board-thread-replies.html" %}
   </div>
+
+  <div class="divider"></div>
+
   {% else %}
   <p> এই বোর্ডে এখনো কোনো কথোপকথন হয়নি। </p>
   {% endfor %}

@@ -125,8 +125,12 @@ h1 {
     border-radius: 5px;
 }
 
-hr {
+.divider {
     max-width: var(--thread-container-max-width);
+    margin: 20px auto;
+    padding: 0;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+    border-bottom: 1px dotted rgba(209, 213, 219, 20);
 }
 
 #logo {
