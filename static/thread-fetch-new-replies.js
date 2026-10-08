@@ -6,7 +6,7 @@ let originalTitle = document.title;
 
 async function fetchUpdates() {
     const res = await fetch(`/${board}/${thread_id}/updates?after_id=${lastId}`);
-    if(!res.ok) return;
+    if(!res.ok) { console.debug(res); return };
     const data = await res.json();
     if (Array.isArray(data[0]) && data[0].length) {
 	insertReplies(data[0]);
