@@ -1,5 +1,11 @@
 <p class="thread-tagline">
 
+  {% if thread.is_saged %}
+  <span class="thread-saged">
+    [SAGED]
+  </span>
+  {% endif %}
+
   <span class="thread-headline">
     <a href="/k/{{thread.id}}">
       {{thread.subject}}
