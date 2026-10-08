@@ -229,6 +229,10 @@ h1 {
 }
 
 @media (max-width: 450px) {
+    .sm-only-block {
+	display: block !important;
+    }
+
     #highlights .thread {
 	max-width: 250px;
 	flex: 2 1 150px;
@@ -536,6 +540,7 @@ main, #sidebar {
 }
 
 .md-only-block,
+.sm-only-block,
 #navbar .md-only-block,
 #sidebar .md-only-block {
     display: none;
