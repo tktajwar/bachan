@@ -1,3 +1,5 @@
+const cacheRef = new Map();
+
 const re_bold = /(?<=^|\s)'''(\S+?(?:\s+\S+)*?)'''(?=\s|$)/g;
 const re_italic = /(?<=^|\s)''(\S+?(?:\s+\S+)*?)''(?=\s|$)/g;
 const re_underline = /(?<=^|\s)__(\S+?(?:\s+\S+)*?)__(?=\s|$)/g;
@@ -53,6 +55,110 @@ function formatted(text) {
     )
 }
 
+function toLocalTime(date) {
+    const today = new Date();
+    const utcDate = new Date(date.trim());
+
+    const options = {
+	month: 'long',
+	day: 'numeric',
+	hour: '2-digit',
+	minute: '2-digit',
+	hour12: false,
+    };
+
+    if (utcDate.getFullYear() != today.getFullYear()) {
+	options.year = 'numeric';
+    }
+
+    return utcDate.toLocaleString('bn-BD',options);
+}
+
+function formatLocalTime() {
+    const times = document.querySelectorAll('.thread-time,.reply-time');
+
+    times.forEach(element => {
+	element.textContent = toLocalTime(element.textContent);
+    });
+}
+
+function flagEmoji(cc) {
+    if (cc === 'ZZ') return '🏳️';
+    const codePoints = cc
+        .split('')
+        .map((char) => 127397 + char.charCodeAt(0))
+    return String.fromCodePoint(...codePoints)
+}
+
+function add_ref(id) {
+    var inputBox = document.getElementById('postComment');
+    inputBox.value += "\n>>" + id + '\n';
+    inputBox.focus();
+}
+
+function enref(id) {
+    if (document.getElementById('replyForm')) {
+	add_ref(id);
+	return false;
+    } else {
+	return true;
+    }
+}
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+window.onload = function() {
+    const id = getQueryParam('enref');
+    if (id) {
+        add_ref(id);
+    }
+};
+
+async function fetchSummary(id) {
+    if (!cacheRef.has(id)) {
+	const res = await fetch(`/${board}/${id}/summary`);
+	if(!res.ok) return;
+	cacheRef.set(id, await res.text());
+    }
+    return cacheRef.get(id);
+}
+
+async function previewPost(id, el) {
+    const data = await fetchSummary(id);
+    el.title = data;
+}
+
+function addHighlightFor(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('highlighted');
+}
+
+function removeHighlights() {
+    document.querySelectorAll('.highlighted').forEach(el => {
+	el.classList.remove('highlighted');
+    });
+}
+
+function localizeRef(el) {
+    let id = el.getAttribute('href').split('/').pop()
+    if (id.startsWith('#')) id = id.slice(1);
+    id = id.padStart(3, '0');
+    const referenced = document.getElementById(id);
+    if (referenced) {
+	el.setAttribute('href', `#${id}`);
+	if (referenced.classList.contains('thread'))
+	    el.insertAdjacentHTML('afterend', '<span>(OP)</span>');
+    }
+}
+
+document.querySelectorAll('.cc').forEach(el => {
+  el.textContent = flagEmoji(el.textContent.trim());
+});
+
+
 (function() {
     const comments = document.querySelectorAll(
 	'.thread-container .thread .thread-body .thread-comment,' +
@@ -75,3 +181,25 @@ function formatted(text) {
 	}
     });
 })();
+
+formatLocalTime();
+
+document.addEventListener('pointerover', (e) => {
+    clientX = e.clientX;
+    clientY = e.clientY;
+    const a = e.target.closest && e.target.closest('.ref');
+    if (!a) return;
+    let id = a.getAttribute('href').split('/').pop();
+    if (id.startsWith('#')) id = id.slice(1);
+    id = id.padStart(3, '0');
+    previewPost(id, a);
+    addHighlightFor(id);
+});
+
+document.addEventListener('pointerout', e => {
+    removeHighlights();
+});
+
+document.querySelectorAll('.ref').forEach(el => {
+    localizeRef(el);
+});
