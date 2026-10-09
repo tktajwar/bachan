@@ -54,9 +54,18 @@ function formatted(text) {
 }
 
 (function() {
-    const formatting_guide = document.getElementById("formatting-guide");
-    if (!formatting_guide) {return};
-    const trs = formatting_guide.querySelectorAll('table tbody tr');
+    const comments = document.querySelectorAll(
+	'.thread-container .thread .thread-body .thread-comment,' +
+	'.thread-container #thread-replies .reply .reply-body .reply-comment'
+    );
+
+    comments.forEach(comment => {
+	comment.innerHTML = formatted(comment.textContent);
+    });
+})();
+
+(function() {
+    const trs = document.querySelectorAll('#formatting-guide table tbody tr');
 
     trs.forEach(tr => {
 	const [sourceTd, targetTd] = tr.querySelectorAll('td');
