@@ -453,6 +453,7 @@ pub async fn create_thread (
     name: Option<String>,
     board: &str,
     pool: PgPool,
+    pages_cache: crate::PagesCache,
 ) -> Result<i64, Box<dyn Error>> {
     let q = "\
     INSERT INTO Post ( \
@@ -480,6 +481,8 @@ pub async fn create_thread (
 	.bind(user_name)
 	.fetch_one(&pool)
 	.await?;
+
+    pages_cache.invalidate("root").await;
 
     Ok(id)
 }
@@ -572,6 +575,7 @@ pub async fn create_reply (
     thread_id: i64,
     reply_form: ReplyForm,
     pool: PgPool,
+    pages_cache: crate::PagesCache,
 ) -> Result<i64, Box<dyn Error>> {
     let q = "\
     INSERT INTO Post ( \
@@ -597,6 +601,8 @@ pub async fn create_reply (
 	.bind(user_name)
 	.fetch_one(&pool)
 	.await?;
+
+    pages_cache.invalidate("root").await;
 
     Ok(id)
 }

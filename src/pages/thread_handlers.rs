@@ -111,6 +111,7 @@ async fn thread_page_view (
 
 pub async fn reply_submission (
     State(pool): State<PgPool>,
+    State(pages_cache): State<crate::PagesCache>,
     Path((board, HexID(thread_id))): Path<(String, HexID)>,
     RealIp(ip): RealIp,
     Form(reply_form): Form<ReplyForm>,
@@ -120,6 +121,7 @@ pub async fn reply_submission (
 	thread_id,
 	reply_form,
 	pool,
+	pages_cache,
     ).await {
 	Ok(id) => {
 	    Ok (

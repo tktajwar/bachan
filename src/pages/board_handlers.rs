@@ -93,6 +93,7 @@ pub async fn board_x_page (
 
 pub async fn board_x_submission (
     State(pool): State<PgPool>,
+    State(pages_cache): State<crate::PagesCache>,
     Path(board): Path<String>,
     RealIp(ip): RealIp,
     Form(thread_form): Form<ThreadForm>,
@@ -104,6 +105,7 @@ pub async fn board_x_submission (
 	thread_form.name,
 	&board,
 	pool,
+	pages_cache,
     ).await {
 	Ok(id) => {
 	    Ok(Redirect::to(&format!("/{}/{:3x}", board, id)))
