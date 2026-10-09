@@ -517,18 +517,9 @@ main, #sidebar {
     color: var(--sidebtn-fg);
 }
 
-.popup-btn:hover {
-    animation: shake .4s linear infinite;
-}
-
 #sidebar li:hover {
     transform: scale(1.05);
     transition: transform 0.1s cubic-bezier(0.25, 0.45, 0.45, 0.95);
-}
-
-.popup-btn:active,
-#sidebar li:active {
-    animation: jump .15s ease-in-out;
 }
 
 #submit {
@@ -613,24 +604,6 @@ main, #sidebar {
     body {
 	font-size: 14px;
     }
-}
-
-@keyframes shake {
-    0% { transform: translateX(0) }
-    25% { transform: translateX(2px) }
-    50% { transform: translateX(0) }
-    75% { transform: translateX(-2px) }
-    100% { transform: translateX(0) }
-}
-
-@keyframes jump {
-    0% { transform: translateX(0) }
-    25% { transform: translateY(-2px) }
-    25% { transform: translateY(-2px) rotate(3deg) }
-    55% { transform: translateY(-2px) rotate(-3deg) }
-    35% { transform: translateY(-2px) rotate(3deg) }
-    75% { transform: translateY(-2px) rotate(-3deg) }
-    100% { transform: translateY(0) rotate(0) }
 }
 
 .btn,
