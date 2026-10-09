@@ -54,7 +54,8 @@ function insertReplies(replies){
   </span>
 
   <span class="reply-report">
-    <a href="#" title="(report) রিপোর্ট করুন">
+    <a href="/${board}/moderation/${reply.id}"
+      title="(report) রিপোর্ট করুন">
       <span class="reicon--flag"></span>
     </a>
   </span>
