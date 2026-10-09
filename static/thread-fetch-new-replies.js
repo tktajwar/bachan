@@ -62,7 +62,7 @@ function insertReplies(replies){
 
 
 <div class="reply-body">
-  <div class="reply-comment">${reply.comment}</div>
+  <div class="reply-comment">${formatted(reply.comment)}</div>
 </div>
 `;
 
