@@ -301,11 +301,6 @@ h1 {
     color: inherit;
 }
 
-.board-thread-container {
-    max-width: var(--thread-container-max-width);
-    margin: auto;
-}
-
 .board-thread-replies {
     max-width: var(--comment-max-width);
     padding-top: 10px;
