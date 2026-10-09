@@ -679,6 +679,31 @@ button:active {
     transition: box-shadow 0.1s cubic-bezier(0.25, 0.75, 0.75, 0.95);
 }
 
+#formatting-guide {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+table {
+    border: 2px solid black;
+    border-spacing: 3px;
+    flex: 1 0 200px;
+    max-width: 550px;
+    margin: 5px;
+}
+
+table > tbody > tr > td {
+    padding: 5px;
+    background: white;
+}
+
+table > tbody > tr > td:first-child {
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+
+
 .ion--home {
   display: inline-block;
   width: 1em;
