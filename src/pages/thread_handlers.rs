@@ -31,7 +31,6 @@ use crate::model::{
     HexID,
     create_reply,
     ctx_up_sidebar,
-    post_summary,
     thread_replies,
     thread_replies_after,
     post_with_id,
@@ -160,18 +159,4 @@ pub async fn thread_updates (
 	.collect();
 
     Ok(Json((replies, last_id)))
-}
-
-pub async fn summary_page (
-    State(pool): State<PgPool>,
-    Path((_board, HexID(id))): Path<(String, HexID)>,
-) -> Result<String, StatusCode> {
-    let Ok(summary) = post_summary (
-	id as i32,
-	pool,
-    ).await else {
-	return Err(StatusCode::NOT_FOUND)
-    };
-
-    Ok(summary.comment)
 }

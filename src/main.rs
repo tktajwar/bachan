@@ -55,7 +55,6 @@ async fn main() {
 	       get(thread_page).post(reply_submission))
 	.route("/{board}/moderation/{tid_hex}",
 	       get(mod_id_page).post(mod_id_submission))
-	.route("/{board}/{id_hex}/summary", get(summary_page))
 	.route("/{board}/{tid_hex}/updates", get(thread_updates))
 	.route("/{board}/", get(board_x_page).post(board_x_submission))
 	.route("/token", get(token_page).post(token_submission))

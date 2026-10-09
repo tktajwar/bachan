@@ -117,20 +117,6 @@ window.onload = function() {
     }
 };
 
-async function fetchSummary(id) {
-    if (!cacheRef.has(id)) {
-	const res = await fetch(`/${board}/${id}/summary`);
-	if(!res.ok) return;
-	cacheRef.set(id, await res.text());
-    }
-    return cacheRef.get(id);
-}
-
-async function previewPost(id, el) {
-    const data = await fetchSummary(id);
-    el.title = data;
-}
-
 function addHighlightFor(id) {
     const el = document.getElementById(id);
     if (el) el.classList.add('highlighted');
@@ -192,7 +178,6 @@ document.addEventListener('pointerover', (e) => {
     let id = a.getAttribute('href').split('/').pop();
     if (id.startsWith('#')) id = id.slice(1);
     id = id.padStart(3, '0');
-    previewPost(id, a);
     addHighlightFor(id);
 });
 

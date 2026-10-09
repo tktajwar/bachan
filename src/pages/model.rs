@@ -131,12 +131,6 @@ pub struct TopThread {
     pub bump_time: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-#[derive(sqlx::FromRow)]
-#[derive(Serialize)]
-pub struct PostSummary {
-    pub comment: String,
-}
-
 fn decode_user_name (
     code_opt: &Option<String>
 ) -> (String, Option<i64>) {
@@ -993,23 +987,4 @@ pub async fn ctx_up_sidebar (
 	vec![]
     );
     ctx.insert("misc", &misc);
-}
-
-pub async fn post_summary (
-    id: i32,
-    pool: PgPool,
-) -> Result<PostSummary, Box<dyn Error>> {
-    let q = "\
-    SELECT comment \
-    FROM POST \
-    WHERE id = $1 \
-    AND redacted IS FALSE \
-    ";
-
-    let summary: PostSummary = sqlx::query_as::<_, PostSummary>(q)
-	.bind(id)
-	.fetch_one(&pool)
-	.await?;
-
-    Ok(summary)
 }
