@@ -6,7 +6,7 @@ use std::error::Error;
 use std::time::Duration;
 
 pub async fn suspend_user (
-    post_id: i32,
+    post_id: i64,
     moderator_username: &str,
     for_days: u64,
     reason: &str,
@@ -14,8 +14,8 @@ pub async fn suspend_user (
 ) -> Result<(), Box<dyn Error>> {
     let (uid,) = match sqlx::query_as::<_, (i64,)>(
 	"\
-	SELECT uid \
-	FROM thread \
+	SELECT user_id \
+	FROM Post \
 	WHERE id = $1 \
 	"
     )
@@ -54,7 +54,7 @@ pub async fn suspend_user (
 
     sqlx::query(
 	"\
-	INSERT INTO suspended(uid, mod_id, thread_or_reply_id, until, reason) \
+	INSERT INTO suspended(uid, mod_id, post, until, reason) \
 	VALUES ($1, $2, $3, $4, $5) \
 	"
     )
@@ -67,4 +67,25 @@ pub async fn suspend_user (
 	.await?;
 
     Ok(())
+}
+
+pub async fn is_user_suspended (
+    uid: i32,
+    pool: PgPool,
+) -> Result<bool, Box<dyn Error>> {
+    let (is_suspended,): (bool,) = sqlx::query_as::<_, (bool,)>(
+	"\
+	SELECT EXISTS ( \
+	  SELECT 1 \
+	  FROM Suspended \
+	  WHERE uid = $1 \
+	  AND until > NOW() \
+	) \
+	"
+    )
+	.bind(uid)
+	.fetch_one(&pool)
+	.await?;
+
+    Ok(is_suspended)
 }

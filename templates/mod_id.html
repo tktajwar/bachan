@@ -1,28 +1,29 @@
 {% extends "base.html" %}
 
 {% block title %}
-Moderate {{thread_or_reply.id}} | বাংলাচান
+Moderate {{post.id}} | বাংলাচান
 {% endblock title %}
 
 {% block main %}
+
 <h1 id="mod-title">
-  <center>Moderate {{thread_or_reply.id}}</center>
+  <center>Moderate [post {{post.id}}]</center>
 </h1>
 
 <div class="thread-container">
   <div class="thread">
     <div class="thread-body">
-      <a href="/k/{{thread_or_reply.id}}">
-	<h3 class="thread-headline">{{thread_or_reply.subject}}</h3>
+      <a href="/{{post.board}}/{{post.id}}">
+	<h3 class="thread-headline">{{post.subject}}</h3>
       </a>
-      <div class="thread-comment">{{thread_or_reply.comment|safe}}</div>
+      <div class="thread-comment">{{post.comment|safe}}</div>
     </div>
   </div>
 </div>
 
 <div class="mod">
   <h2><center>Moderate post</center></h2>
-  <form id="mod-form" action="/mod/{{thread_or_reply.id}}"
+  <form id="modForm" action="/k/moderation/{{post.id}}"
 	method="POST">
 
     <label for="username">Username:</label>
@@ -34,12 +35,18 @@ Moderate {{thread_or_reply.id}} | বাংলাচান
 	   required><br />
 
     <label>Action:</label><br/>
+    {% if post.is_redacted %}
+    <input type="checkbox" name="restore"
+	   value="restore" />
+    <label for="restore">Restore & Unblock</label><br />
+    {% else %}
     <input type="checkbox" name="redact"
 	   value="redact" />
     <label for="redact">Redact Post</label><br />
     <input type="checkbox" name="suspend"
 	   value="suspend" />
     <label for="suspend">Suspend User</label><br />
+    {% endif %}
 
     <label for="reason">Reason:</label>
     <textarea id="reason" name="reason" minlength="20"

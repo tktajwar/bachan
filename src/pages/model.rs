@@ -89,37 +89,6 @@ pub struct Threads {
 }
 
 #[derive(sqlx::FromRow)]
-pub struct ThreadLight {
-    pub id: i32,
-    pub uid: i64,
-    pub subject: String,
-    pub comment: String,
-    pub ctime: chrono::NaiveDateTime,
-    pub redacted: bool,
-}
-
-#[derive(sqlx::FromRow)]
-pub struct ReplyLight {
-    pub id: i32,
-    pub uid: i64,
-    pub tid: i32,
-    pub comment: String,
-    pub ctime: chrono::NaiveDateTime,
-    pub redacted: bool,
-}
-
-#[derive(Serialize)]
-pub struct ThreadOrReplySerializable {
-    pub id: String,
-    pub tid: Option<String>,
-    pub utid: String,
-    pub subject: String,
-    pub comment: String,
-    pub ctime: String,
-    pub redacted: bool,
-}
-
-#[derive(sqlx::FromRow)]
 #[derive(Serialize)]
 pub struct TopThread {
     pub id: String,
@@ -269,98 +238,6 @@ impl From<(Vec<Post>, Vec<Post>)> for Threads {
     }
 }
 
-impl ThreadLight {
-    async fn try_from(
-	id: i32,
-	pool: PgPool,
-    ) -> Result<ThreadLight, Box<dyn Error>> {
-	let q = "\
-	SELECT \
-	id, \
-	uid, \
-	subject, \
-	comment, \
-	ctime, \
-	redacted \
-	FROM Thread \
-	WHERE id = $1 \
-	";
-
-	let thread: ThreadLight = sqlx::query_as::<_, ThreadLight>(q)
-	    .bind(id)
-	    .fetch_one(&pool)
-	    .await?;
-
-	Ok(thread)
-    }
-}
-
-impl ThreadLight {
-    pub fn into_serializable(self) -> ThreadOrReplySerializable {
-	ThreadOrReplySerializable {
-	    id: format!("{:03x}", self.id as u32),
-	    tid: None,
-	    utid: utid(self.uid, self.id, None),
-	    subject: if self.redacted {
-		"স#ম্পা#দি#ত".to_string()
-	    } else {
-		self.subject
-	    },
-	    comment: if self.redacted {
-		"<del>###সম্পাদিত###</del>".to_string()
-	    } else {
-		self.comment
-	    },
-	    ctime: self.ctime.format("%Y-%m-%d %H:%MZ").to_string(),
-	    redacted: self.redacted,
-	}
-    }
-}
-
-impl ReplyLight {
-    async fn try_from(
-	id: i32,
-	pool: PgPool,
-    ) -> Result<ReplyLight, Box<dyn Error>> {
-	let q = "\
-	SELECT \
-	id, \
-	uid, \
-	tid, \
-	comment, \
-	ctime, \
-	redacted \
-	FROM Reply \
-	WHERE id = $1 \
-	";
-
-	let reply: ReplyLight = sqlx::query_as::<_, ReplyLight>(q)
-	    .bind(id)
-	    .fetch_one(&pool)
-	    .await?;
-
-	Ok(reply)
-    }
-}
-
-impl ReplyLight {
-    pub fn into_serializable(self) -> ThreadOrReplySerializable {
-	ThreadOrReplySerializable {
-	    id: format!("{:03x}", self.id as u32),
-	    tid: Some(format!("{:03x}", self.tid as u32)),
-	    utid: utid(self.uid, self.tid, None),
-	    subject: format!("Reply to {:03x}", self.tid).to_string(),
-	    comment: if self.redacted {
-		"<del>###সম্পাদিত###</del>".to_string()
-	    } else {
-		self.comment
-	    },
-	    ctime: self.ctime.format("%Y-%m-%d %H:%MZ").to_string(),
-	    redacted: self.redacted,
-	}
-    }
-}
-
 #[derive(sqlx::FromRow, Serialize, Clone)]
 pub struct Board {
     pub url: String,
@@ -431,19 +308,6 @@ pub fn bengali_digits(s: &str) -> String {
             _ => c,
 	}
     }).collect()
-}
-
-pub async fn thread_or_reply_with_id(
-    id: i32,
-    pool: PgPool,
-) -> Result<ThreadOrReplySerializable, Box<dyn Error>> {
-    let Ok(thread) = ThreadLight::try_from(id, pool.clone()).await else {
-	let reply: ReplyLight = ReplyLight::try_from(id, pool).await?;
-	let serialize_reply = reply.into_serializable();
-	return Ok(serialize_reply)
-    };
-    let serializable_thread = thread.into_serializable();
-    Ok(serializable_thread)
 }
 
 pub async fn create_thread (
@@ -607,8 +471,8 @@ pub async fn create_reply (
     Ok(id)
 }
 
-pub async fn redact_thread_or_reply(
-    id: i32,
+pub async fn redact_post (
+    id: i64,
     moderator_username: &str,
     reason: &str,
     pool: PgPool,
@@ -626,7 +490,7 @@ pub async fn redact_thread_or_reply(
 
     sqlx::query(
 	"\
-	INSERT INTO redacted(thread_or_reply_id, mod_id, reason) \
+	INSERT INTO RedactedPost(post, moderator, reason) \
 	VALUES ($1, $2, $3) \
 	"
     )
@@ -634,23 +498,19 @@ pub async fn redact_thread_or_reply(
 	.bind(moderator_id)
 	.bind(reason)
 	.execute(&pool)
-	    .await?;
-
-    sqlx::query(
-	"\
-	UPDATE thread \
-	SET redacted = true \
-	WHERE id = $1 \
-	"
-    )
-	.bind(id)
-	.execute(&pool)
 	.await?;
+
+    Ok(())
+}
+
+pub async fn restore_post (
+    id: i64,
+    pool: PgPool,
+) -> Result<(), Box<dyn Error>> {
     sqlx::query(
 	"\
-	UPDATE reply \
-	SET redacted = true \
-	WHERE id = $1 \
+	DELETE FROM RedactedPost \
+	WHERE post = $1 \
 	"
     )
 	.bind(id)

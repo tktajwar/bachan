@@ -23,8 +23,9 @@ use crate::template::{
 use crate::model::{
     HexID,
     ctx_up_sidebar,
-    redact_thread_or_reply,
-    thread_or_reply_with_id,
+    post_with_id,
+    restore_post,
+    redact_post,
 };
 
 pub async fn mod_id_page(
@@ -35,13 +36,22 @@ pub async fn mod_id_page(
     let mut ctx = tera::Context::new();
     ctx_up_sidebar(pool.clone(), boards_cache, &mut ctx).await;
 
-    let Ok(thread_or_reply) = thread_or_reply_with_id(
-	id as i32,
+    let post = match post_with_id(
+	id,
 	pool,
-    ).await else {
-	return Err(axum::http::StatusCode::NOT_FOUND)
+    ).await {
+	Ok(Some(post)) => post,
+	Ok(None) => {
+	    return Err(axum::http::StatusCode::NOT_FOUND)
+	},
+	Err(e) => {
+	    eprintln!("Error retrieving post for moderation: {}", e);
+	    return Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+	},
     };
-    ctx.insert("thread_or_reply", &thread_or_reply);
+
+    let post = crate::model::PostSerialized::from(post);
+    ctx.insert("post", &post);
 
     let rendered = TERA.render("mod_id.html", &ctx);
     let content = match rendered {
@@ -57,7 +67,7 @@ pub async fn mod_id_page(
 
 pub async fn mod_id_submission(
     State(pool): State<PgPool>,
-    Path(id_hex): Path<String>,
+    Path((board, HexID(id))): Path<(String, HexID)>,
     Form(moderation_form): Form<ModerationForm>,
 ) -> impl IntoResponse {
     match verify_mod(
@@ -89,19 +99,28 @@ pub async fn mod_id_submission(
 	},
     };
 
-    let Ok(id_u32) = u32::from_str_radix(&id_hex, 16) else {
-	return Err (
-	    (
-		axum::http::StatusCode::BAD_REQUEST,
-		"The server couldn't process the ID",
-	    )
-	)
+    if let Some(restore) = moderation_form.restore {
+	if restore == "restore" {
+	    if let Err(e) = restore_post (
+		id,
+		pool.clone(),
+	    ).await {
+		eprintln!("Failed redacting post: {}", e);
+		return Err (
+		    (
+			axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+			"Internal Server Error: Failed to redact",
+		    )
+		)
+	    }
+	}
+
+	return Ok(Redirect::to(&format!("/{}/{:3x}", board, id)))
     };
-    let id = id_u32 as i32;
 
     if let Some(redact) = moderation_form.redact {
 	if redact == "redact" {
-	    if let Err(e) = redact_thread_or_reply (
+	    if let Err(e) = redact_post (
 		id,
 		&moderation_form.username,
 		&moderation_form.reason,
@@ -138,5 +157,5 @@ pub async fn mod_id_submission(
 	}
     }
 
-    Ok(Redirect::to(&format!("/k/{}", id_hex)))
+    Ok(Redirect::to(&format!("/{}/{:3x}", board, id)))
 }

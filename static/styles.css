@@ -253,11 +253,8 @@ h1 {
     min-width: 150px;
 }
 
-#postForm {
+#postForm, #modForm {
     margin: auto;
-}
-
-#postForm {
     width: clamp(200px, 95%, var(--thread-container-max-width));
 }
 

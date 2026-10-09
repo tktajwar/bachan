@@ -20,6 +20,7 @@ pub struct ModerationForm {
     pub passphrase: String,
     pub redact: Option<String>,
     pub suspend: Option<String>,
+    pub restore: Option<String>,
     pub reason: String,
 }
 
