@@ -8,7 +8,11 @@
 
   <span class="thread-headline">
     <a href="/k/{{thread.id}}">
+      {% if thread.is_redacted %}
+      #সম্পাদিত#
+      {% else %}
       {{thread.subject}}
+      {% endif %}
     </a>
   </span>
 

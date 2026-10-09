@@ -415,7 +415,8 @@ pub async fn thread_replies_after (
     is_saged \
     FROM Post \
     WHERE thread_id = $1 \
-    AND id > $2
+    AND id > $2 \
+    AND is_redacted IS FALSE \
     ORDER BY id \
     ";
 

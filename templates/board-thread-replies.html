@@ -12,7 +12,13 @@
   <div class="reply" id="{{reply.id}}">
     {% include "reply-tagline.html" %}
     <div class="reply-body">
-      <div class="reply-comment">{{reply.comment}}</div>
+      <div class="reply-comment">
+	{% if reply.is_redacted %}
+	~~###সম্পাদিত###~~
+	{% else %}
+	{{reply.comment}}
+	{% endif %}
+      </div>
     </div>
   </div>
   {% endfor %}

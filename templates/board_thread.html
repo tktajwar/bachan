@@ -20,9 +20,11 @@
 
 <div class="thread-container">
   {% include "thread.html" %}
+  {% if not thread.is_redacted %}
   {% include "thread-replies.html" %}
   {% include "autorefresh-countdown.html" %}
   {% include "thread-reply-form.html" %}
+  {% endif %}
 </div>
 
 {% endblock main %}
@@ -35,7 +37,9 @@
   let lastId = {{last_id}};
 </script>
 
+{% if not thread.is_redacted %}
 <script defer src="/static/thread-fetch-new-replies.js"></script>
 <script defer src="/static/forms.js"></script>
+{% endif %}
 
 {% endblock scripts %}

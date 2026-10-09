@@ -354,7 +354,6 @@ h1 {
 .thread-comment,
 .reply-comment {
     margin: 5px;
-    white-space: pre-wrap;
     overflow-wrap: anywhere;
 }
 

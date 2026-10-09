@@ -1,3 +1,9 @@
 <div class="thread-body">
-  <div class="thread-comment">{{thread.comment}}</div>
+  <div class="thread-comment">
+    {% if thread.is_redacted %}
+    ~~###সম্পাদিত###~~
+    {% else %}
+    {{thread.comment}}
+    {% endif %}
+  </div>
 </div>
