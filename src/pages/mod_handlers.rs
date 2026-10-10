@@ -105,6 +105,7 @@ pub async fn mod_id_submission(
 	    if let Err(e) = restore_post (
 		id,
 		pool.clone(),
+		suspended_cache,
 	    ).await {
 		eprintln!("Failed redacting post: {}", e);
 		return Err (

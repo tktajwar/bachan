@@ -472,8 +472,9 @@ pub async fn redact_post (
 pub async fn restore_post (
     id: i64,
     pool: PgPool,
+    suspended_cache: crate::SuspendedCache,
 ) -> Result<(), Box<dyn Error>> {
-    sqlx::query(
+    sqlx::query (
 	"\
 	DELETE FROM RedactedPost \
 	WHERE post = $1 \
@@ -482,6 +483,19 @@ pub async fn restore_post (
 	.bind(id)
 	.execute(&pool)
 	.await?;
+
+    if let Some(user_id) = sqlx::query_scalar::<_, IpAddr> (
+	"\
+	DELETE FROM Suspended \
+	WHERE post = $1 \
+	RETURNING user_id \
+	"
+    )
+	.bind(id)
+	.fetch_optional(&pool)
+	.await? {
+	    suspended_cache.invalidate(&user_id).await;
+	}
 
     Ok(())
 }
