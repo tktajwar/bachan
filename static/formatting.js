@@ -150,7 +150,7 @@ document.querySelectorAll('.cc').forEach(el => {
 (function() {
     const comments = document.querySelectorAll(
 	'.thread-container .thread .thread-body .thread-comment,' +
-	'.thread-container #thread-replies .reply .reply-body .reply-comment'
+	'.thread-container .reply .reply-body .reply-comment'
     );
 
     comments.forEach(comment => {
