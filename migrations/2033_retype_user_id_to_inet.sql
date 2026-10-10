@@ -1,0 +1,10 @@
+ALTER TABLE Suspended
+RENAME COLUMN uid TO user_id;
+
+ALTER TABLE Suspended
+ALTER COLUMN user_id TYPE INET
+USING '0.0.0.0'::inet;
+
+ALTER TABLE Post
+ALTER COLUMN user_id TYPE INET
+USING '0.0.0.0'::inet;

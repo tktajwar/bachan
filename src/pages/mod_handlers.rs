@@ -67,6 +67,7 @@ pub async fn mod_id_page(
 
 pub async fn mod_id_submission(
     State(pool): State<PgPool>,
+    State(suspended_cache): State<crate::SuspendedCache>,
     Path((board, HexID(id))): Path<(String, HexID)>,
     Form(moderation_form): Form<ModerationForm>,
 ) -> impl IntoResponse {
@@ -145,6 +146,7 @@ pub async fn mod_id_submission(
 		7,
 		&moderation_form.reason,
 		pool,
+		suspended_cache,
 	    ).await {
 		eprintln!("Failed suspending user: {}", e);
 		return Err (

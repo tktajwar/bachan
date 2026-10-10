@@ -28,7 +28,7 @@ pub struct Post {
 
     pub subject: Option<String>,
     pub comment: String,
-    pub user_id: i64,
+    pub user_id: IpAddr,
     pub user_trip: Option<i64>,
     pub user_country: String,
     pub user_name: String,
@@ -253,39 +253,6 @@ pub fn trip(pass: String) -> i64 {
     hasher.finish() as i64
 }
 
-pub fn hashed(ip: IpAddr) -> i64 {
-    let mut hasher = SipHasher13::new_with_keys(
-	0x0123_4567_89ab_cdef,
-	0xfedc_ba98_7654_3210,
-    );
-    ip.hash(&mut hasher);
-    hasher.finish() as i64
-}
-
-pub fn utid (
-    uid: i64,
-    tid: i32,
-    trip: Option<i64>,
-) -> String {
-    let mut hasher = DefaultHasher::new();
-
-    if let Some(code) = trip {
-	code.hash(&mut hasher);
-	let hashed = hasher.finish() as u32;
-
-	return URL_SAFE_NO_PAD.encode(hashed.to_be_bytes())
-    }
-
-    uid.hash(&mut hasher);
-    tid.hash(&mut hasher);
-
-    let utid = hasher.finish();
-
-    let utid = format!("{:08x}", utid as u32);
-
-    bengali_digits(&utid)
-}
-
 pub fn bengali_digits(s: &str) -> String {
     s.chars().map(|c| {
 	match c {
@@ -331,7 +298,6 @@ pub async fn create_thread (
     RETURNING id \
     ";
 
-    let user_id = hashed(ip);
     let user_country = country_code(ip)?;
     let (user_name, user_trip) = decode_user_name(&name);
 
@@ -339,7 +305,7 @@ pub async fn create_thread (
 	.bind(board)
 	.bind(subject.trim())
 	.bind(comment.trim())
-	.bind(user_id)
+	.bind(ip)
 	.bind(user_trip)
 	.bind(user_country)
 	.bind(user_name)
@@ -453,14 +419,13 @@ pub async fn create_reply (
     ";
 
     let ReplyForm { comment, name } = reply_form;
-    let user_id = hashed(ip);
     let user_country = country_code(ip)?;
     let (user_name, user_trip) = decode_user_name(&name);
 
     let id: i64 = sqlx::query_scalar(q)
 	.bind(thread_id)
 	.bind(comment.trim())
-	.bind(user_id)
+	.bind(&ip)
 	.bind(user_trip)
 	.bind(user_country)
 	.bind(user_name)

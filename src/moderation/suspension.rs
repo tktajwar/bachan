@@ -3,6 +3,7 @@ use sqlx::{
     types::chrono::Utc,
 };
 use std::error::Error;
+use std::net::IpAddr;
 use std::time::Duration;
 
 pub async fn suspend_user (
@@ -11,8 +12,9 @@ pub async fn suspend_user (
     for_days: u64,
     reason: &str,
     pool: PgPool,
+    suspended_cache: crate::SuspendedCache,
 ) -> Result<(), Box<dyn Error>> {
-    let (uid,) = match sqlx::query_as::<_, (i64,)>(
+    let (user_id,) = sqlx::query_as::<_, (IpAddr,)>(
 	"\
 	SELECT user_id \
 	FROM Post \
@@ -21,21 +23,7 @@ pub async fn suspend_user (
     )
 	.bind(post_id)
 	.fetch_one(&pool)
-	.await {
-	    Ok(uid) => uid,
-	    Err(_) => {
-		sqlx::query_as::<_, (i64,)>(
-		    "\
-		    SELECT uid \
-		    FROM  reply \
-		    WHERE id = $1 \
-		    "
-		)
-		    .bind(post_id)
-		    .fetch_one(&pool)
-		    .await?
-	    },
-    };
+	.await?;
 
     let (moderator_id,): (i32,) = sqlx::query_as::<_, (i32,)>(
 	"\
@@ -54,11 +42,11 @@ pub async fn suspend_user (
 
     sqlx::query(
 	"\
-	INSERT INTO suspended(uid, mod_id, post, until, reason) \
+	INSERT INTO suspended(user_id, mod_id, post, until, reason) \
 	VALUES ($1, $2, $3, $4, $5) \
 	"
     )
-	.bind(uid)
+	.bind(user_id)
 	.bind(moderator_id)
 	.bind(post_id)
 	.bind(suspend_until)
@@ -66,26 +54,35 @@ pub async fn suspend_user (
 	.execute(&pool)
 	.await?;
 
+    suspended_cache.invalidate(&user_id).await;
+
     Ok(())
 }
 
 pub async fn is_user_suspended (
-    uid: i32,
+    user_id: IpAddr,
     pool: PgPool,
+    suspended_cache: crate::SuspendedCache,
 ) -> Result<bool, Box<dyn Error>> {
+    if let Some(suspension_status) = suspended_cache.get(&user_id).await {
+	return Ok(suspension_status)
+    };
+
     let (is_suspended,): (bool,) = sqlx::query_as::<_, (bool,)>(
 	"\
 	SELECT EXISTS ( \
 	  SELECT 1 \
 	  FROM Suspended \
-	  WHERE uid = $1 \
+	  WHERE user_id = $1 \
 	  AND until > NOW() \
 	) \
 	"
     )
-	.bind(uid)
+	.bind(user_id)
 	.fetch_one(&pool)
 	.await?;
+
+    suspended_cache.insert(user_id, is_suspended).await;
 
     Ok(is_suspended)
 }
