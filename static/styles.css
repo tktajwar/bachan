@@ -355,6 +355,7 @@ h1 {
 .reply-comment {
     margin: 5px;
     overflow-wrap: anywhere;
+    white-space: pre-wrap;
 }
 
 #submission-preview {

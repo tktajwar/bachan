@@ -2,7 +2,7 @@
 <div class="board-thread-replies" id="{{thread.id}}">
   {% if thread.reply_count > 5 %}
   <div class="load-more-replies">
-    <a href="/k/{{thread.id}}" title="load all replies">
+    <a href="/{{thread.board}}/{{thread.id}}" title="load all replies">
       সকল মন্তব্য দেখুন ({{thread.reply_count - 5}} omitted)
     </a>
   </div>
@@ -12,13 +12,11 @@
   <div class="reply" id="{{reply.id}}">
     {% include "reply-tagline.html" %}
     <div class="reply-body">
-      <div class="reply-comment">
-	{% if reply.is_redacted %}
-	~~###সম্পাদিত###~~
-	{% else %}
-	{{reply.comment}}
-	{% endif %}
-      </div>
+      {% if reply.is_redacted %}
+      <div class="reply-comment">~~###সম্পাদিত###~~</div>
+      {% else %}
+      <div class="reply-comment">{{reply.comment}}</div>
+      {% endif %}
     </div>
   </div>
   {% endfor %}
