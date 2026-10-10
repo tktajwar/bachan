@@ -21,13 +21,13 @@ services:
         read_only: true
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     environment:
       POSTGRES_USER: bachan
       POSTGRES_PASSWORD: bachan1234
       POSTGRES_DB: bachan
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bachan"]
       interval: 10s
