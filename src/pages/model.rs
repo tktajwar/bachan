@@ -164,9 +164,9 @@ impl From<Post> for PostSerialized {
 	PostSerialized {
 	    user_code: post.user_code(),
 
-	    id: format!("{:03x}", post.id),
+	    id: format!("{:03X}", post.id),
 	    board: post.board,
-	    thread_id: post.thread_id.map(|tid| format!("{:03x}", tid)),
+	    thread_id: post.thread_id.map(|tid| format!("{:03X}", tid)),
 
 	    subject: post.subject,
 	    comment: post.comment,
@@ -205,7 +205,7 @@ impl From<(Vec<Post>, Vec<Post>)> for Threads {
 		  .map(|thread| Thread {
 		      user_code: thread.user_code(),
 
-		      id: format!("{:03x}", thread.id),
+		      id: format!("{:03X}", thread.id),
 		      board: thread.board,
 
 		      subject: thread.subject,
