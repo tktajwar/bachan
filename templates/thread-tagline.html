@@ -19,7 +19,7 @@
   <br class="md-only-block" />
 
   <span class="thread-utid">
-    {{thread.user_name}}#{{thread.user_code}} <span class="cc">{{thread.user_country}}</span>
+    {{thread.user_name}}{% if thread.user_code %}#{{thread.user_code}}{% endif %} <span class="cc">{{thread.user_country}}</span>
   </span>
 
   <br class="sm-only-block" />

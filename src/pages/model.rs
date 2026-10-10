@@ -50,7 +50,7 @@ pub struct PostSerialized {
 
     pub subject: Option<String>,
     pub comment: String,
-    pub user_code: String,
+    pub user_code: Option<String>,
     pub user_country: String,
     pub user_name: String,
 
@@ -69,7 +69,7 @@ pub struct Thread {
 
     pub subject: Option<String>,
     pub comment: String,
-    pub user_code: String,
+    pub user_code: Option<String>,
     pub user_country: String,
     pub user_name: String,
 
@@ -143,29 +143,19 @@ impl<'de> Deserialize<'de> for HexID {
 }
 
 impl Post {
-    pub fn user_code(&self) -> String {
+    pub fn user_code(&self) -> Option<String> {
 	let mut hasher = DefaultHasher::new();
 
 	if let Some(code) = self.user_trip {
 	    code.hash(&mut hasher);
 	    let hashed = hasher.finish() as u32;
 
-	    return URL_SAFE_NO_PAD.encode(hashed.to_be_bytes())
+	    return Some (
+		URL_SAFE_NO_PAD.encode(hashed.to_be_bytes())
+	    )
 	}
 
-	let tid = match self.thread_id {
-	    Some(tid) => tid,
-	    None => self.id,
-	};
-
-	self.user_id.hash(&mut hasher);
-	tid.hash(&mut hasher);
-
-	let hashed = hasher.finish();
-
-	let user_code = format!("{:08x}", hashed as u32);
-
-	bengali_digits(&user_code)
+	return None
     }
 }
 
@@ -251,30 +241,6 @@ pub fn trip(pass: String) -> i64 {
     );
     pass.to_lowercase().hash(&mut hasher);
     hasher.finish() as i64
-}
-
-pub fn bengali_digits(s: &str) -> String {
-    s.chars().map(|c| {
-	match c {
-	    '0' => '০',
-            '1' => '১',
-            '2' => '২',
-            '3' => '৩',
-            '4' => '৪',
-            '5' => '৫',
-            '6' => '৬',
-            '7' => '৭',
-            '8' => '৮',
-            '9' => '৯',
-	    'a' => 'ক',
-            'b' => 'খ',
-            'c' => 'গ',
-            'd' => 'ঘ',
-            'e' => 'ঙ',
-            'f' => 'চ',
-            _ => c,
-	}
-    }).collect()
 }
 
 pub async fn create_thread (

@@ -1,7 +1,7 @@
 <p class="reply-tagline">
 
   <span class="reply-utid">
-    {{reply.user_name}}#{{reply.user_code}}
+    {{reply.user_name}}{% if reply.user_code %}#{{reply.user_code}}{% endif %}
     <span class="cc">{{reply.user_country}}</span>
   </span>
 
