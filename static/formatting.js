@@ -1,22 +1,34 @@
 const cacheRef = new Map();
 
-const re_bold = /(?<=^|\s)'''(\S+?(?:\s+\S+)*?)'''(?=\s|$)/g;
-const re_italic = /(?<=^|\s)''(\S+?(?:\s+\S+)*?)''(?=\s|$)/g;
+const re_bold = /(?<=^|\s)&#x27;&#x27;&#x27;(\S+?(?:\s+\S+)*?)&#x27;&#x27;&#x27;(?=\s|$)/g;
+const re_italic = /(?<=^|\s)&#x27;&#x27;(\S+?(?:\s+\S+)*?)&#x27;&#x27;(?=\s|$)/g;
 const re_underline = /(?<=^|\s)__(\S+?(?:\s+\S+)*?)__(?=\s|$)/g;
 const re_quote = /(?<=^)(>[^>].+)(?=$)/g;
-const re_ref = /(?<=^|\s)>>\s*([0-9a-fA-F]+)(?=\s|$)/g;
-const re_global_ref = /(?<=^|\s)>>>\s*\/(\w+?\/(?:[0-9a-fA-F]+)?)\/?(?=\s|$)/g;
+const re_ref = /(?<=^|\s)(?:>>|&gt;&gt;)\s*([0-9a-fA-F]+)(?=\s|$)/g;
+const re_global_ref = /(?<=^|\s)(?:>>>|&gt;&gt;&gt;)\s*\/(\w+?\/(?:[0-9a-fA-F]+)?)\/?(?=\s|$)/g;
 const re_alt_ref = /(?<=^|\s)\[(?:প্রকাশনা|post)\s+?([0-9a-fA-F]+)\](?=\s|$)/g;
 const re_spoiler = /\[spoiler\](.+?)\[\/spoiler\]/g;
 const re_strikethrough = /(?<=^|\s)~~(\S+?(?:\s+\S+)*?)~~(?=\s|$)/g;
 const re_redText = /(?<=^|\s)==(\S+?(?:\s+\S+)*?)==(?=\s|$)/g;
-const re_embed = /\[\[((?:http|https):\/\/.+?(?:jpeg|jpg|png|webp|gif))\]\s*?(?:\[(.*?)\])?\]/g;
-const re_hyper_link = /\[\[((?:http|https|ftp):\/\/.+?)\]\s*?\[(.+?)\]\]/g;
-const re_link = /\[\[((?:http|https|ftp):\/\/.+?)\]\s*?(?:\[\])?\]/g;
-const re_unformatted_link = /(?<=^|\s)(?:http|https|ftp):\/\/\S+(?=\s|$)/g;
+
+const re_embed = /(?<=^|\s|\[)(?:(?<=^|.)\[)?((?:http|https):\/\/\S+?\.\S+?(?:jpeg|jpg|png|webp|gif))(?:\](?=.|$))?(?=\s|\]|\.|$)/g;
+const re_link = /(?<=^|\s|\[)(?:(?<=^|.)\[)?((?:http|https):\/\/\S+?\.\S+?)(?:\](?=.|$))?(?=\s|\]|\.|$)/g;
+
+const san_map = {
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+};
+const reg = /[&<>"']/ig;
+
+function sanitized(string) {
+  return string.replace(reg, (match)=>(san_map[match]));
+}
 
 function formatted(text) {
-    return text.replaceAll(
+    const sanitized_text = sanitized(text);
+    return sanitized_text.replaceAll(
 	re_bold, '<b>$1</b>'
     ).replaceAll(
 	re_italic, '<i>$1</i>'
@@ -39,19 +51,9 @@ function formatted(text) {
     ).replaceAll(
 	re_embed, `<figure class="fig-comment">
 <img src="$1" alt="$1" class="img-comment" loading="lazy" />
-<figcaption>$2</figcaption>
 </figure>`
     ).replaceAll(
-	re_hyper_link, '<a href="$1" target="_blank" ' +
-	    'title="$1"' +
-	    'onclick="return confirm(\'আপনি  [$1] লিংকটিতে প্রবেশ করছেন\')" ' +
-	    '>' +
-	    '$2' +
-	    '</a>'
-    ).replaceAll(
 	re_link, '<a href="$1" target="_blank">$1</a>'
-    ).replaceAll(
-	re_unformatted_link, '<a href="$&" target="_blank">$&</a>'
     )
 }
 
