@@ -15,6 +15,7 @@ use real::RealIp;
 use sqlx::PgPool;
 
 use crate::{
+    SUSPENDED_REPLY,
     INTERNAL_SERVER_ERROR_REPLY,
 };
 
@@ -29,6 +30,8 @@ use crate::model::{
     get_board_ctx,
     paginated_board_threads,
 };
+
+use crate::moderation::is_user_suspended;
 
 use crate::template::*;
 
@@ -94,10 +97,34 @@ pub async fn board_x_page (
 pub async fn board_x_submission (
     State(pool): State<PgPool>,
     State(pages_cache): State<crate::PagesCache>,
+    State(suspended_cache): State<crate::SuspendedCache>,
     Path(board): Path<String>,
     RealIp(ip): RealIp,
     Form(thread_form): Form<ThreadForm>,
 ) -> impl IntoResponse {
+    match is_user_suspended (
+	ip,
+	pool.clone(),
+	suspended_cache,
+    ).await {
+	Ok(true) => return Err (
+	    (
+		StatusCode::FORBIDDEN,
+		SUSPENDED_REPLY,
+	    )
+	),
+	Ok(false) => (),
+	Err(e) => {
+	    eprintln!("Error checking user suspension: {}", e);
+	    return Err (
+		(
+		    StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
+	},
+    };
+
     match create_thread (
 	ip,
 	&thread_form.subject,

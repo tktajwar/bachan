@@ -17,14 +17,18 @@ use sqlx::PgPool;
 
 use crate::{
     INTERNAL_SERVER_ERROR_REPLY,
+    SUSPENDED_REPLY,
 };
+
 use crate::forms::{
     ThreadUpdates,
     ReplyForm,
 };
+
 use crate::template::{
     TERA,
 };
+
 use crate::model::{
     Post,
     PostSerialized,
@@ -35,6 +39,8 @@ use crate::model::{
     thread_replies_after,
     post_with_id,
 };
+
+use crate::moderation::is_user_suspended;
 
 pub async fn thread_page (
     State(pool): State<PgPool>,
@@ -112,10 +118,34 @@ async fn thread_page_view (
 pub async fn reply_submission (
     State(pool): State<PgPool>,
     State(pages_cache): State<crate::PagesCache>,
+    State(suspended_cache): State<crate::SuspendedCache>,
     Path((board, HexID(thread_id))): Path<(String, HexID)>,
     RealIp(ip): RealIp,
     Form(reply_form): Form<ReplyForm>,
 ) -> impl IntoResponse {
+    match is_user_suspended (
+	ip,
+	pool.clone(),
+	suspended_cache,
+    ).await {
+	Ok(true) => return Err (
+	    (
+		StatusCode::FORBIDDEN,
+		SUSPENDED_REPLY,
+	    )
+	),
+	Ok(false) => (),
+	Err(e) => {
+	    eprintln!("Error checking user suspension: {}", e);
+	    return Err (
+		(
+		    StatusCode::INTERNAL_SERVER_ERROR,
+		    INTERNAL_SERVER_ERROR_REPLY,
+		)
+	    )
+	},
+    };
+
     match create_reply(
 	ip,
 	thread_id,
