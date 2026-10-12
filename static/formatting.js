@@ -3,7 +3,7 @@ const cacheRef = new Map();
 const re_bold = /(?<=^|\s)&#x27;&#x27;&#x27;(\S+?(?:\s+\S+)*?)&#x27;&#x27;&#x27;(?=\s|$)/g;
 const re_italic = /(?<=^|\s)&#x27;&#x27;(\S+?(?:\s+\S+)*?)&#x27;&#x27;(?=\s|$)/g;
 const re_underline = /(?<=^|\s)__(\S+?(?:\s+\S+)*?)__(?=\s|$)/g;
-const re_quote = /(?<=^)(>[^>].+)(?=$)/g;
+const re_quote = /(?<=^|\n)((?:>|&gt;)(?!>|&gt;)..*?)(?=\r|\n|$)/g;
 const re_ref = /(?<=^|\s)(?:>>|&gt;&gt;)\s*([0-9a-fA-F]+)(?=\s|$)/g;
 const re_global_ref = /(?<=^|\s)(?:>>>|&gt;&gt;&gt;)\s*\/(\w+?\/(?:[0-9a-fA-F]+)?)\/?(?=\s|$)/g;
 const re_alt_ref = /(?<=^|\s)\[(?:প্রকাশনা|post)\s+?([0-9a-fA-F]+)\](?=\s|$)/g;
