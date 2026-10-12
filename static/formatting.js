@@ -20,7 +20,7 @@ const san_map = {
     '"': '&quot;',
     "'": '&#x27;',
 };
-const reg = /[&<>"']/ig;
+const reg = /[<>"']/ig;
 
 function sanitized(string) {
   return string.replace(reg, (match)=>(san_map[match]));
