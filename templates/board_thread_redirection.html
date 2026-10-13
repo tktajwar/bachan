@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{post.id}} | বাংলাচান
+{% endblock title %}
+
+{% block extrahead %}
+
+<link rel="stylesheet" href="/static/boards.css">
+
+{% endblock extrahead %}
+
+{% block main %}
+
+<h1 id="board-title" class="k-board" label="/{{post.board}}/">
+  <a href="/{{post.board}}/">
+    <center>/{{post.board}}/</center>
+  </a>
+</h1>
+
+<div class="thread-container">
+  {{post.id}} কথোপকথন টি /{{post.board}}/ বোর্ডে আছে
+
+  <div>
+    <a href="/{{post.board}}/{{post.id}}">
+      >>>/{{post.board}}/{{post.id}} যান
+    </a>
+  </div>
+</div>
+
+{% endblock main %}

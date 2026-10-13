@@ -76,9 +76,7 @@ async fn thread_page_view (
 	)))
     } else if let Some(post_board) = &post.board {
 	if post_board != board {
-	    return Ok(Err(Redirect::permanent(
-		&format!("/{}/{:x}", post_board, post.id)
-	    )))
+	    return redirect_to_board_view(pool, boards_cache, post).await
 	}
     }
 
@@ -104,6 +102,26 @@ async fn thread_page_view (
     ctx.insert("replies", &replies);
     ctx.insert("last_id", &last_id);
     let rendered = TERA.render("board_thread.html", &ctx);
+    let content = match rendered {
+	Ok(s) => s,
+	Err(e) => {
+	    eprintln!("{e}");
+	    return Err(StatusCode::INTERNAL_SERVER_ERROR)
+	},
+    };
+
+    Ok(Ok(Html(content)))
+}
+
+async fn redirect_to_board_view (
+    pool: PgPool,
+    boards_cache: crate::BoardsCache,
+    post: Post,
+) -> Result<Result<Html<String>, Redirect>, StatusCode> {
+    let mut ctx = tera::Context::new();
+    ctx_up_sidebar(pool, boards_cache, &mut ctx).await;
+    ctx.insert("post", &PostSerialized::from(post));
+    let rendered = TERA.render("board_thread_redirection.html", &ctx);
     let content = match rendered {
 	Ok(s) => s,
 	Err(e) => {
