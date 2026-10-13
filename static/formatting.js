@@ -11,8 +11,8 @@ const re_spoiler = /\[spoiler\](.+?)\[\/spoiler\]/g;
 const re_strikethrough = /(?<=^|\s)~~(\S+?(?:\s+\S+)*?)~~(?=\s|$)/g;
 const re_redText = /(?<=^|\s)==(\S+?(?:\s+\S+)*?)==(?=\s|$)/g;
 
-const re_embed = /(?<=^|\s|\[)(?:(?<=^|.)\[)?((?:http|https):\/\/\S+?\.\S+?(?:jpeg|jpg|png|webp|gif))(?:\](?=.|$))?(?=\s|\]|\.|$)/g;
-const re_link = /(?<=^|\s|\[)(?:(?<=^|.)\[)?((?:http|https):\/\/\S+?\.\S+?)(?:\](?=.|$))?(?=\s|\]|\.|$)/g;
+const re_embed = /(?<=^|\s|\[|\()(?:(?<=^|.)\[)?((?:http|https):\/\/\S+?\.\S+?(?:jpeg|jpg|png|webp|gif))(?:\](?=.|$))?(?=\s|\]|\)|$)/g;
+const re_link = /(?<=^|\s|\[|\()((?:http|https):\/\/\S+?)(?=\s|\]|\)|$)/g;
 
 const san_map = {
     '<': '&lt;',
