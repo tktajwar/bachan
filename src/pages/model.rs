@@ -661,28 +661,8 @@ pub async fn paginated_board_threads (
     reply_count, \
     is_redacted, \
     is_saged \
-    FROM ( \
-        SELECT \
-	id, \
-	board, \
-	thread_id, \
-	subject, \
-	comment, \
-	user_id, \
-	user_trip, \
-	user_country, \
-	user_name, \
-	birth_time, \
-	change_time, \
-	bump_time, \
-	reply_count, \
-	is_redacted, \
-	is_saged, \
-	ROW_NUMBER() OVER (PARTITION BY thread_id ORDER BY id DESC) as rn \
-	FROM Post \
-	WHERE thread_id = ANY($1) \
-    ) sub \
-    WHERE rn <= 5 \
+    FROM Post \
+    WHERE thread_id = ANY($1) \
     ORDER BY id ASC \
     ";
 
