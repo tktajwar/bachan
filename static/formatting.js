@@ -41,7 +41,7 @@ function formatted(text) {
     ).replaceAll(
 	re_ref, '<a class="ref" href="$1">$&</a>'
     ).replaceAll(
-	re_global_ref, '<a class="ref" href="/$1">$&</a>'
+	re_global_ref, '<a class="ref global-ref" href="/$1">$&</a>'
     ).replaceAll(
 	re_alt_ref, '<a class="ref" href="$1">$&</a>'
     ).replaceAll(
@@ -146,8 +146,8 @@ function localizeRef(el) {
 
 function references(post) {
     return Array.from(post.querySelectorAll (
-	'.thread-body .ref,' +
-	'.reply-body .ref'
+	'.thread-body .ref:not(.global-ref),' +
+	'.reply-body .ref:not(.global-ref)'
     )).map(r => r.hash.slice(1))
 }
 
