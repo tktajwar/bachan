@@ -37,7 +37,7 @@ function insertReplies(replies){
 <p class="reply-tagline">
 
   <span class="reply-utid">
-    ${reply.user_name}#${reply.user_code}
+    ${reply.user_name}${reply.user_code ? '#'+reply.user_code : ''}
     <span class="cc">${flagEmoji(reply.user_country)}</span>
   </span>
 
