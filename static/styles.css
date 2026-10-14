@@ -151,7 +151,7 @@ h1 {
     color: var(--quote);
 }
 
-.ref {
+.ref, .backref {
     color: var(--ref);
 }
 

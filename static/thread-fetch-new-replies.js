@@ -71,6 +71,8 @@ function insertReplies(replies){
 	    localizeRef(el);
 	});
 	frag.appendChild(div);
+	addPostsBackrefs(div);
+	writePostsBackrefs();
     });
     container.appendChild(frag);
 }

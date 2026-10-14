@@ -1,4 +1,6 @@
 const cacheRef = new Map();
+const backRefMap = new Map();
+const backRefChangedSet = new Set();
 
 const re_bold = /(?<=^|\s)&#x27;&#x27;&#x27;(\S+?(?:\s+\S+)*?)&#x27;&#x27;&#x27;(?=\s|$)/g;
 const re_italic = /(?<=^|\s)&#x27;&#x27;(\S+?(?:\s+\S+)*?)&#x27;&#x27;(?=\s|$)/g;
@@ -142,10 +144,53 @@ function localizeRef(el) {
     }
 }
 
+function references(post) {
+    return Array.from(post.querySelectorAll (
+	'.thread-body .ref,' +
+	'.reply-body .ref'
+    )).map(r => r.hash.slice(1))
+}
+
+function addPostsBackrefs(post) {
+    references(post).forEach( h => {
+	const referenced_post = document.getElementById(h);
+	if (referenced_post) {
+	    if (!backRefMap.has(h)) {
+		backRefMap.set(h, new Set());
+	    }
+	    backRefMap.get(h).add(`\
+<a class="ref backref" href="#${post.id}">&gt;&gt;${post.id}</a>
+`);
+	    backRefChangedSet.add(h);
+	}
+    });
+}
+
+function addBackrefsForAllPost() {
+    const posts = document.querySelectorAll(
+	'.thread,' +
+	'.reply'
+    );
+
+    posts.forEach(post => {
+	addPostsBackrefs(post);
+    });
+}
+
+function writePostsBackrefs() {
+    backRefChangedSet.forEach(id => {
+	const post = document.getElementById(id);
+
+	const backlink = post.querySelector('.backlink');
+	backlink.innerHTML = Array.from(backRefMap.get(id)).join(' ');
+    });
+
+    backRefChangedSet.clear();
+}
+
 document.querySelectorAll('.cc').forEach(el => {
   el.textContent = flagEmoji(el.textContent.trim());
 });
-
 
 (function() {
     const comments = document.querySelectorAll(
@@ -190,3 +235,8 @@ document.addEventListener('pointerout', e => {
 document.querySelectorAll('.ref').forEach(el => {
     localizeRef(el);
 });
+
+(function() {
+    addBackrefsForAllPost();
+    writePostsBackrefs();
+})();
