@@ -372,7 +372,6 @@ pub async fn create_reply (
     thread_id: i64,
     reply_form: ReplyForm,
     pool: PgPool,
-    pages_cache: crate::PagesCache,
 ) -> Result<i64, Box<dyn Error>> {
     let q = "\
     INSERT INTO Post ( \
@@ -397,8 +396,6 @@ pub async fn create_reply (
 	.bind(user_name)
 	.fetch_one(&pool)
 	.await?;
-
-    pages_cache.invalidate("root").await;
 
     Ok(id)
 }
@@ -464,6 +461,28 @@ pub async fn restore_post (
 	}
 
     Ok(())
+}
+
+pub async fn thread_id_of (
+    id: i64,
+    pool: PgPool,
+) -> Result<Option<i64>, Box<dyn Error>> {
+    let opt_thread_id = sqlx::query_scalar::<_, i64> (
+	"\
+	SELECT \
+	  CASE \
+	  WHEN thread_id IS NULL THEN id \
+	  ELSE thread_id \
+	END AS thread_id \
+	FROM Post \
+	WHERE id = $1 \
+	"
+    )
+	.bind(id)
+	.fetch_optional(&pool)
+	.await?;
+
+    Ok(opt_thread_id)
 }
 
 pub async fn boards_in_category(

@@ -45,8 +45,13 @@ use crate::moderation::is_user_suspended;
 pub async fn thread_page (
     State(pool): State<PgPool>,
     State(boards_cache): State<crate::BoardsCache>,
+    State(pages_cache): State<crate::PagesCache>,
     Path((board, HexID(id))): Path<(String, HexID)>,
 ) -> impl IntoResponse {
+    if let Some(content) = pages_cache.get(&format!("/{board}/{id:03x}")).await {
+	return Ok(Ok(Html(content)));
+    }
+
     let post = match post_with_id (id, pool.clone()).await {
 	Ok(Some(post)) => post,
 	Ok(None) => return Err(StatusCode::NOT_FOUND),
@@ -59,6 +64,8 @@ pub async fn thread_page (
     thread_page_view (
 	pool,
 	boards_cache,
+	pages_cache,
+	id,
 	post,
 	&board,
     ).await
@@ -67,6 +74,8 @@ pub async fn thread_page (
 async fn thread_page_view (
     pool: PgPool,
     boards_cache: crate::BoardsCache,
+    pages_cache: crate::PagesCache,
+    id: i64,
     post: Post,
     board: &str,
 ) -> Result<Result<Html<String>, Redirect>, StatusCode> {
@@ -109,6 +118,8 @@ async fn thread_page_view (
 	    return Err(StatusCode::INTERNAL_SERVER_ERROR)
 	},
     };
+
+    pages_cache.insert(format!("/{board}/{id:03x}"), content.clone()).await;
 
     Ok(Ok(Html(content)))
 }
@@ -164,12 +175,14 @@ pub async fn reply_submission (
 	},
     };
 
+    pages_cache.invalidate("root").await;
+    pages_cache.invalidate(&format!("/{board}/{thread_id:03x}")).await;
+
     match create_reply(
 	ip,
 	thread_id,
 	reply_form,
 	pool,
-	pages_cache,
     ).await {
 	Ok(id) => {
 	    Ok (

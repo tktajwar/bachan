@@ -26,6 +26,7 @@ use crate::model::{
     post_with_id,
     restore_post,
     redact_post,
+    thread_id_of,
 };
 
 pub async fn mod_id_page(
@@ -68,6 +69,7 @@ pub async fn mod_id_page(
 pub async fn mod_id_submission(
     State(pool): State<PgPool>,
     State(suspended_cache): State<crate::SuspendedCache>,
+    State(pages_cache): State<crate::PagesCache>,
     Path((board, HexID(id))): Path<(String, HexID)>,
     Form(moderation_form): Form<ModerationForm>,
 ) -> impl IntoResponse {
@@ -100,6 +102,13 @@ pub async fn mod_id_submission(
 	},
     };
 
+    let thread_id = match thread_id_of(id, pool.clone()).await {
+	Ok(Some(thread_id)) => thread_id,
+	_ => id,
+    };
+
+    pages_cache.invalidate(&format!("/{board}/{thread_id:03x}")).await;
+
     if let Some(restore) = moderation_form.restore {
 	if restore == "restore" {
 	    if let Err(e) = restore_post (
@@ -107,7 +116,7 @@ pub async fn mod_id_submission(
 		pool.clone(),
 		suspended_cache,
 	    ).await {
-		eprintln!("Failed redacting post: {}", e);
+		eprintln!("Failed restoring post: {}", e);
 		return Err (
 		    (
 			axum::http::StatusCode::INTERNAL_SERVER_ERROR,
@@ -117,7 +126,7 @@ pub async fn mod_id_submission(
 	    }
 	}
 
-	return Ok(Redirect::to(&format!("/{}/{:3x}", board, id)))
+	return Ok(Redirect::to(&format!("/{}/{:3x}#{:3x}", board, thread_id, id)))
     };
 
     if let Some(redact) = moderation_form.redact {
@@ -160,5 +169,5 @@ pub async fn mod_id_submission(
 	}
     }
 
-    Ok(Redirect::to(&format!("/{}/{:3x}", board, id)))
+    Ok(Redirect::to(&format!("/{}/{:3x}#{:3x}", board, thread_id, id)))
 }
