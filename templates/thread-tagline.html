@@ -22,12 +22,6 @@
     {{thread.user_name}}{% if thread.user_code %}#{{thread.user_code}}{% endif %} <span class="cc">{{thread.user_country}}</span>
   </span>
 
-  <br class="sm-only-block" />
-
-  <span class="thread-time">
-    {{thread.birth_time}}
-  </span>
-
   <span class="thread-id">
     <a href="/{{thread.board}}/{{thread.id}}?enref={{thread.id}}"
        onclick="return enref('{{thread.id}}')"

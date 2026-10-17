@@ -41,12 +41,6 @@ function insertReplies(replies){
     <span class="cc">${flagEmoji(reply.user_country)}</span>
   </span>
 
-  <br class="sm-only-block" />
-
-  <span class="reply-time">
-    ${toLocalTime(reply.birth_time.trim())}
-  </span>
-
   <span class="reply-id">
     <a href="/${board}/${thread_id}?enref=${reply.id}"
        onclick="return enref('${reply.id}')"
@@ -69,6 +63,10 @@ function insertReplies(replies){
 </div>
 
 <p class="reply-footer">
+  <span class="reply-time">
+    ${toLocalTime(reply.birth_time.trim())}
+  </span>
+
   <span id="bl_${reply.id}" class="backlinks">
   </span>
 </p>
