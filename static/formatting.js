@@ -121,6 +121,48 @@ window.onload = function() {
     }
 };
 
+function postIsVisible(id) {
+    const el = document.getElementById(id);
+    const rect = el.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) &&
+	el.style.display != 'none'
+    );
+}
+
+function previewFor(id, referer) {
+    const el = document.getElementById(id);
+    preview.innerHTML = el.innerHTML;
+    preview.classList.add('active');
+}
+
+function positionPreviewTo(el) {
+    const rect = el.getBoundingClientRect();
+    const offset = 15;
+    let x = rect.right + window.scrollX + offset;
+    let y = rect.top + window.scrollY;
+
+    if (
+	x + preview.offsetWidth > window.innerWidth + window.scrollX &&
+	    x > (window.innerWidth + window.scrollX) / 2
+    ) {
+	x = rect.left + window.scrollX - preview.offsetWidth - offset;
+    }
+
+    if (
+	y + preview.offsetHeight > window.innerHeight + window.scrollY &&
+	    y > (window.innerHeight + window.scrollY) / 2
+    ) {
+	y = rect.top + window.scrollY - preview.offsetHeight;
+    }
+
+    preview.style.left = `${x}px`;
+    preview.style.top = `${y}px`;
+}
+
 function addHighlightFor(id) {
     const el = document.getElementById(id);
     if (el) el.classList.add('highlighted');
@@ -217,19 +259,35 @@ function writePostsBackrefs() {
 
 formatLocalTime();
 
+const preview = document.createElement('div');
+
+(function() {
+    preview.id = "post-preview";
+    preview.className = "tooltip";
+    const container = document.querySelector("main") || document.body;
+    container.appendChild(preview);
+})();
+
+
+
+
 document.addEventListener('pointerover', (e) => {
-    clientX = e.clientX;
-    clientY = e.clientY;
     const a = e.target.closest && e.target.closest('.ref');
     if (!a) return;
     let id = a.getAttribute('href').split('/').pop();
     if (id.startsWith('#')) id = id.slice(1);
     id = id.padStart(3, '0').toLowerCase();
-    addHighlightFor(id);
+    if (postIsVisible(id)) {
+	addHighlightFor(id);
+    } else {
+	previewFor(id);
+	positionPreviewTo(a);
+    }
 });
 
 document.addEventListener('pointerout', e => {
     removeHighlights();
+    preview.classList.remove('active');
 });
 
 document.querySelectorAll('.ref').forEach(el => {

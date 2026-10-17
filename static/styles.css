@@ -358,6 +358,20 @@ h1 {
     white-space: pre-wrap;
 }
 
+#post-preview {
+    display: none;
+    position: absolute;
+    background-color: var(--reply-bg);
+    min-width: var(--comment-min-width);
+    max-width: var(--comment-max-width);
+    z-index: 10;
+    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+}
+
+#post-preview.active {
+    display: table !important;
+}
+
 #submission-preview {
     color: var(--thread-fg);
     background-color: var(--thread-bg);
