@@ -91,7 +91,7 @@
     --submit-btn:var(--button);
 
     --navbar-height:56px; 	/* Media-dependent */
-    --comment-min-width:clamp(200px, 95%, 450px);
+    --comment-min-width:clamp(200px, 95%, 350px);
     --comment-max-width:1050px;
     --thread-container-max-width:1100px;
 }
