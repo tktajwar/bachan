@@ -181,8 +181,8 @@ function writePostsBackrefs() {
     backRefChangedSet.forEach(id => {
 	const post = document.getElementById(id);
 
-	const backlink = post.querySelector('.backlink');
-	backlink.innerHTML = Array.from(backRefMap.get(id)).join(' ');
+	const backlinks = post.querySelector('.backlinks');
+	backlinks.innerHTML = Array.from(backRefMap.get(id)).join(' ');
     });
 
     backRefChangedSet.clear();

@@ -41,6 +41,8 @@ function insertReplies(replies){
     <span class="cc">${flagEmoji(reply.user_country)}</span>
   </span>
 
+  <br class="sm-only-block" />
+
   <span class="reply-time">
     ${toLocalTime(reply.birth_time.trim())}
   </span>
@@ -65,6 +67,11 @@ function insertReplies(replies){
 <div class="reply-body">
   <div class="reply-comment">${formatted(reply.comment)}</div>
 </div>
+
+<p class="reply-footer">
+  <span id="bl_${reply.id}" class="backlinks">
+  </span>
+</p>
 `;
 
 	div.querySelectorAll('.ref').forEach(el => {
