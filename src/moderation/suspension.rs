@@ -55,7 +55,7 @@ pub async fn suspend_user (
 	    .execute(&pool)
 	    .await?;
 
-	suspended_cache.invalidate(&user_id).await;
+	suspended_cache.invalidate(&()).await;
     }
 
     Ok(())
@@ -66,25 +66,32 @@ pub async fn is_user_suspended (
     pool: PgPool,
     suspended_cache: crate::SuspendedCache,
 ) -> Result<bool, Box<dyn Error>> {
-    if let Some(suspension_status) = suspended_cache.get(&user_id).await {
-	return Ok(suspension_status)
+    if let Some(suspended_ips) = suspended_cache.get(&()).await {
+	return Ok(suspended_ips.contains(&user_id))
     };
 
-    let (is_suspended,): (bool,) = sqlx::query_as::<_, (bool,)>(
+    let suspended_ips = sqlx::query_scalar::<_, IpAddr>(
 	"\
-	SELECT EXISTS ( \
-	  SELECT 1 \
-	  FROM Suspended \
-	  WHERE user_id = $1 \
-	  AND until > NOW() \
-	) \
+	SELECT user_id \
+	FROM Suspended \
+	WHERE user_id IS NOT NULL \
+	AND until > NOW() \
 	"
     )
 	.bind(user_id)
-	.fetch_one(&pool)
+	.fetch_all(&pool)
 	.await?;
 
-    suspended_cache.insert(user_id, is_suspended).await;
+    eprintln!("Loading suspended users table into memory");
 
-    Ok(is_suspended)
+    let suspended_ips = suspended_ips
+	.into_iter()
+	.collect::<crate::HashSet<IpAddr>>();
+
+    suspended_cache.insert(
+	(),
+	suspended_ips.clone(),
+    ).await;
+
+    Ok(suspended_ips.contains(&user_id))
 }

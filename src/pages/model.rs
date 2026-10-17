@@ -446,7 +446,7 @@ pub async fn restore_post (
 	.execute(&pool)
 	.await?;
 
-    if let Some(user_id) = sqlx::query_scalar::<_, IpAddr> (
+    if let Some(_user_id) = sqlx::query_scalar::<_, IpAddr> (
 	"\
 	DELETE FROM Suspended \
 	WHERE post = $1 \
@@ -456,7 +456,7 @@ pub async fn restore_post (
 	.bind(id)
 	.fetch_optional(&pool)
 	.await? {
-	    suspended_cache.invalidate(&user_id).await;
+	    suspended_cache.invalidate(&()).await;
 	}
 
     Ok(())

@@ -8,6 +8,7 @@ use lazy_static::lazy_static;
 use moka::future::Cache;
 use real::{RealIpLayer,IpAddr};
 use sqlx::postgres::PgPool;
+use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::time::Duration;
 use tower::ServiceBuilder;
@@ -44,8 +45,8 @@ async fn main() {
 	.build();
 
     let suspended_cache: SuspendedCache = Cache::builder()
-	.time_to_live(Duration::from_hours(2))
-	.max_capacity(10_000)
+	.time_to_live(Duration::from_hours(18))
+	.max_capacity(1)
 	.build();
 
     let state = AppState {
@@ -96,7 +97,7 @@ async fn main() {
 
 type BoardsCache = moka::future::Cache<String, Vec<model::Board>>;
 type PagesCache = moka::future::Cache<String, String>;
-type SuspendedCache = moka::future::Cache<IpAddr, bool>;
+type SuspendedCache = moka::future::Cache<(), HashSet<IpAddr>>;
 
 #[derive(Clone, FromRef)]
 struct AppState {
