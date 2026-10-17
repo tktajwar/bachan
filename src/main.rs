@@ -39,7 +39,7 @@ async fn main() {
 	.build();
 
     let page_cache: PagesCache = Cache::builder()
-	.time_to_live(Duration::from_hours(8))
+	.time_to_live(Duration::from_hours(18))
 	.max_capacity(500)
 	.build();
 
