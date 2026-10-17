@@ -28,7 +28,6 @@ pub struct Post {
 
     pub subject: Option<String>,
     pub comment: String,
-    pub user_id: IpAddr,
     pub user_trip: Option<i64>,
     pub user_country: String,
     pub user_name: String,

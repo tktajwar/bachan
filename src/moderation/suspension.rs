@@ -14,7 +14,7 @@ pub async fn suspend_user (
     pool: PgPool,
     suspended_cache: crate::SuspendedCache,
 ) -> Result<(), Box<dyn Error>> {
-    let (user_id,) = sqlx::query_as::<_, (IpAddr,)>(
+    let user_id_opt = sqlx::query_scalar::<_, Option<IpAddr>>(
 	"\
 	SELECT user_id \
 	FROM Post \
@@ -40,21 +40,23 @@ pub async fn suspend_user (
 	for_days * 24 * 60 * 60
     );
 
-    sqlx::query(
-	"\
-	INSERT INTO suspended(user_id, mod_id, post, until, reason) \
-	VALUES ($1, $2, $3, $4, $5) \
-	"
-    )
-	.bind(user_id)
-	.bind(moderator_id)
-	.bind(post_id)
-	.bind(suspend_until)
-	.bind(reason)
-	.execute(&pool)
-	.await?;
+    if let Some(user_id) = user_id_opt {
+	sqlx::query (
+	    "\
+	    INSERT INTO suspended(user_id, mod_id, post, until, reason) \
+	    VALUES ($1, $2, $3, $4, $5) \
+	    "
+	)
+	    .bind(user_id)
+	    .bind(moderator_id)
+	    .bind(post_id)
+	    .bind(suspend_until)
+	    .bind(reason)
+	    .execute(&pool)
+	    .await?;
 
-    suspended_cache.invalidate(&user_id).await;
+	suspended_cache.invalidate(&user_id).await;
+    }
 
     Ok(())
 }
