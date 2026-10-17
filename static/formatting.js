@@ -8,7 +8,7 @@ const re_underline = /(?<=^|\s)__(\S+?(?:\s+\S+)*?)__(?=\s|$)/g;
 const re_quote = /(?<=^|\n)((?:>|&gt;)(?!>|&gt;)..*?)(?=\r|\n|$)/g;
 const re_ref = /(?<=^|\s)(?:>>|&gt;&gt;)\s*([0-9a-fA-F]+)(?=\s|$)/g;
 const re_global_ref = /(?<=^|\s)(?:>>>|&gt;&gt;&gt;)\s*\/(\w+?\/(?:[0-9a-fA-F]+)?)\/?(?=\s|$)/g;
-const re_alt_ref = /(?<=^|\s)\[(?:প্রকাশনা|post)\s+?([0-9a-fA-F]+)\](?=\s|$)/g;
+const re_alt_ref = /(?<=^|\s)\[\s{0,3}(?:প্রকাশনা|post)\s+?([0-9a-fA-F]+)\s{0,3}\](?=\s|$)/g;
 const re_spoiler = /\[spoiler\](.+?)\[\/spoiler\]/g;
 const re_strikethrough = /(?<=^|\s)~~(\S+?(?:\s+\S+)*?)~~(?=\s|$)/g;
 const re_redText = /(?<=^|\s)==(\S+?(?:\s+\S+)*?)==(?=\s|$)/g;
