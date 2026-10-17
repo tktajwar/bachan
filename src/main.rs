@@ -1,12 +1,15 @@
 use axum::{
-    routing::get,
     Router,
-    response::Redirect,
+    extract::State,
+    middleware::Next,
+    http::StatusCode,
+    response::{Response,Redirect},
+    routing::get,
 };
-use axum::extract::FromRef;
+use axum::extract::{Request,FromRef};
 use lazy_static::lazy_static;
 use moka::future::Cache;
-use real::{RealIpLayer,IpAddr};
+use real::{RealIpLayer,IpAddr,RealIp};
 use sqlx::postgres::PgPool;
 use std::collections::HashSet;
 use std::net::SocketAddr;
@@ -21,6 +24,36 @@ use tower_http::{
 mod pages;
 use pages::*;
 mod moderation;
+
+type BoardsCache = moka::future::Cache<String, Vec<model::Board>>;
+type PagesCache = moka::future::Cache<String, String>;
+type SuspendedCache = moka::future::Cache<(), HashSet<IpAddr>>;
+
+#[derive(Clone, FromRef)]
+struct AppState {
+    pool: PgPool,
+    boards_cache: BoardsCache,
+    page_cache: PagesCache,
+    suspended_cache: SuspendedCache,
+}
+
+lazy_static! {
+    pub static ref SECRET_NUMBER: u32 = {
+	eprintln!("Reading secret number.");
+	std::env::var("SECRET_NUMBER")
+	    .unwrap_or("123".to_string())
+	    .parse()
+	    .unwrap_or(123)
+    };
+}
+
+const INTERNAL_SERVER_ERROR_REPLY: &str = "\
+সার্ভারে একটি অভ্যন্তরীণ ত্রুটি ঘটেছে। অনুগ্রহ করে প্রশাসকের সাথে যোগাযোগ করুন।\
+";
+
+const SUSPENDED_REPLY: &str = "\
+আপনি এই সার্ভার ব্যবহার করা থেকে নিলম্বিত হয়েছেন।\
+";
 
 #[tokio::main]
 async fn main() {
@@ -75,6 +108,12 @@ async fn main() {
 	    Redirect::permanent("static/favicon.ico")
 	}))
 	.fallback(fallback)
+	.layer(
+	    axum::middleware::from_fn_with_state(
+		state.clone(),
+		forbid_suspeneded_ips,
+	    )
+	)
 	.with_state(state)
 	.nest_service("/static", ServeDir::new("static"))
 	.layer(
@@ -95,32 +134,22 @@ async fn main() {
     ).await.unwrap();
 }
 
-type BoardsCache = moka::future::Cache<String, Vec<model::Board>>;
-type PagesCache = moka::future::Cache<String, String>;
-type SuspendedCache = moka::future::Cache<(), HashSet<IpAddr>>;
+async fn forbid_suspeneded_ips (
+    RealIp(ip): RealIp,
+    State(pool): State<PgPool>,
+    State(suspended_cache): State<SuspendedCache>,
+    request: Request,
+    next: Next,
+) -> Result<Response, StatusCode> {
+    if let Ok(true) = moderation::is_user_suspended (
+	ip,
+	pool,
+	suspended_cache,
+    ).await {
+	return Err(
+	    StatusCode::FORBIDDEN
+	)
+    }
 
-#[derive(Clone, FromRef)]
-struct AppState {
-    pool: PgPool,
-    boards_cache: BoardsCache,
-    page_cache: PagesCache,
-    suspended_cache: SuspendedCache,
+    Ok(next.run(request).await)
 }
-
-lazy_static! {
-    pub static ref SECRET_NUMBER: u32 = {
-	eprintln!("Reading secret number.");
-	std::env::var("SECRET_NUMBER")
-	    .unwrap_or("123".to_string())
-	    .parse()
-	    .unwrap_or(123)
-    };
-}
-
-const INTERNAL_SERVER_ERROR_REPLY: &str = "\
-সার্ভারে একটি অভ্যন্তরীণ ত্রুটি ঘটেছে। অনুগ্রহ করে প্রশাসকের সাথে যোগাযোগ করুন।\
-";
-
-const SUSPENDED_REPLY: &str = "\
-আপনি এই সার্ভার ব্যবহার করা থেকে নিলম্বিত হয়েছেন।\
-";
