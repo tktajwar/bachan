@@ -188,10 +188,6 @@ function writePostsBackrefs() {
     backRefChangedSet.clear();
 }
 
-document.querySelectorAll('.cc').forEach(el => {
-  el.textContent = flagEmoji(el.textContent.trim());
-});
-
 (function() {
     const comments = document.querySelectorAll(
 	'.thread .thread-body .thread-comment,' +
@@ -214,6 +210,10 @@ document.querySelectorAll('.cc').forEach(el => {
 	}
     });
 })();
+
+(function() {document.querySelectorAll('.cc').forEach(el => {
+  el.textContent = flagEmoji(el.textContent.trim());
+})})();
 
 formatLocalTime();
 
