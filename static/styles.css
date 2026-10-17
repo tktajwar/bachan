@@ -111,7 +111,7 @@ body {
     row-gap: 5px;
     margin: 0;
     padding: 0;
-    height: 100vh;
+    height: 100dvh;
 }
 
 main {
@@ -185,7 +185,7 @@ h1 {
 .img-comment {
     display: block;
     max-width: 100%;
-    max-height: 80vh;
+    max-height: 80dvh;
     margin: auto;
 }
 
@@ -436,6 +436,7 @@ h1 {
     overflow: hidden;
     font-weight: 500;
     margin-bottom: 2pt;
+    z-index: 100;
 }
 
 main, #sidebar {
