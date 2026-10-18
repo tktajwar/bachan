@@ -31,6 +31,7 @@
     --logo-line:var(--black);
     --logo-bg:var(--sup2);
     --headline:var(--brand);
+    --yellow:var(--sup2);
 
     --thread-fg:var(--sup1d);
     --reply-fg:var(--thread-fg);
@@ -171,6 +172,10 @@ h1 {
     color: transparent;
     background-color: var(--spoiler);
     transition: background-color 0.2s cubic-bezier(0.25, 0.45, 0.45, 0.95);
+}
+
+.yellow {
+    color: var(--yellow);
 }
 
 @media (prefers-reduced-motion: reduce) {
