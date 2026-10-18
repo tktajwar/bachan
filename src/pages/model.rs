@@ -92,11 +92,9 @@ pub struct Threads {
 pub struct TopThread {
     pub id: String,
     pub subject: String,
-    pub comment: String,
     pub board: String,
     pub label: String,
     pub reply_count: i32,
-    pub bump_time: Option<chrono::DateTime<chrono::Utc>>,
 }
 
 fn decode_user_name (
@@ -249,7 +247,6 @@ pub async fn create_thread (
     name: Option<String>,
     board: &str,
     pool: PgPool,
-    pages_cache: crate::PagesCache,
 ) -> Result<i64, Box<dyn Error>> {
     let q = "\
     INSERT INTO Post ( \
@@ -276,8 +273,6 @@ pub async fn create_thread (
 	.bind(user_name)
 	.fetch_one(&pool)
 	.await?;
-
-    pages_cache.invalidate("root").await;
 
     Ok(id)
 }
@@ -506,7 +501,56 @@ pub async fn boards_in_category (
 
 }
 
-pub async fn get_board_ctx(
+// pub async fn boards_with_threads (
+//     pool: PgPool,
+// )  {
+//     let hobbies = boards_in_category(
+// 	"Hobbies",
+// 	pool.clone(),
+// 	boards_cache.clone(),
+//     ).await.unwrap_or(
+// 	vec![]
+//     );
+//     ctx.insert("hobbies", &hobbies);
+
+//     let interests = boards_in_category(
+// 	"Interests",
+// 	pool.clone(),
+// 	boards_cache.clone(),
+//     ).await.unwrap_or(
+// 	vec![]
+//     );
+//     ctx.insert("interests", &interests);
+
+//     let lifestyle = boards_in_category(
+// 	"Lifestyle",
+// 	pool.clone(),
+// 	boards_cache.clone(),
+//     ).await.unwrap_or(
+// 	vec![]
+//     );
+//     ctx.insert("lifestyle", &lifestyle);
+
+//     let local = boards_in_category(
+// 	"Local",
+// 	pool.clone(),
+// 	boards_cache.clone(),
+//     ).await.unwrap_or(
+// 	vec![]
+//     );
+//     ctx.insert("local", &local);
+
+//     let misc = boards_in_category(
+// 	"Misc",
+// 	pool.clone(),
+// 	boards_cache,
+//     ).await.unwrap_or(
+// 	vec![]
+//     );
+//     ctx.insert("misc", &misc);
+// }
+
+pub async fn get_board_ctx (
     url: &str,
     pool: PgPool,
 ) -> Result<Board, Box<dyn Error>> {
@@ -530,14 +574,12 @@ pub async fn get_board_ctx(
 pub async fn top_threads (
     limit: i32,
     pool: PgPool,
-) -> Result<(Vec<TopThread>, i64), Box<dyn Error>> {
+) -> Result<Vec<TopThread>, Box<dyn Error>> {
     let q = "\
     SELECT \
     to_hex(t.id) as id, \
     t.subject, \
-    t.comment, \
     t.reply_count, \
-    t.bump_time, \
     t.board, \
     b.label, \
     t.reply_count \
@@ -545,8 +587,7 @@ pub async fn top_threads (
     INNER JOIN board b \
     ON t.board = b.url \
     WHERE t.is_redacted IS FALSE \
-    AND t.bump_time > NOW() - interval'6 week' \
-    ORDER BY t.bump_time desc \
+    ORDER BY t.bump_time DESC \
     LIMIT $1 \
     ";
 
@@ -555,14 +596,7 @@ pub async fn top_threads (
 	.fetch_all(&pool)
 	.await?;
 
-    let last_bump_time = threads
-	.first()
-	.and_then(|thread| thread.bump_time.as_ref())
-	.map(|time|time.timestamp())
-	.map(|time| time + 1)
-	.unwrap_or(0);
-
-    Ok((threads, last_bump_time))
+    Ok( threads )
 }
 
 pub async fn paginated_board_threads (

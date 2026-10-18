@@ -1,11 +1,6 @@
-<div class="thread" id="{{thread.id}}">
-  <h3 class="boardLabel"><a href="/{{thread.board}}/" title="/{{thread.board}}/">
-      <center>{{thread.label}}</center>
-  </a></h3>
-  <div class="thread-body">
-    <a href="/{{thread.board}}/{{thread.id}}">
-      <h4 class="thread-headline" style="text-align:center;">{{thread.subject}}</h4>
-    </a>
-    <div class="thread-comment">{{thread.comment}}</div>
-  </div>
-</div>
+<a class="top-thread" href="/{{thread.board}}/{{thread.id}}"
+   title="/{{thread.board}}/{{thread.id}} {{thread.subject}}" >
+  <span class="label"> {{thread.label}} </span>
+  <span class="subject"> {{thread.subject}} </span>
+  <span class="reply-count"> {{thread.reply_count}} </span>
+</a>

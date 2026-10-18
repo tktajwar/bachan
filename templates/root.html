@@ -15,13 +15,22 @@
   <h2>জনপ্রিয় আলোচনা</h2>
   <!-- List of highlighted threads -->
 
-  <div class="thread-container" id="highlights-container">
+  <div id="highlights-threads">
+
     {% for thread in threads %}
     {% include "top-thread.html" %}
     {% else %}
     <p> এখনো কোনো কথোপকথন হয়নি। </p>
     {% endfor %}
+
   </div>
+
 </div>
 
 {% endblock main %}
+
+{% block scripts %}
+
+<script defer src="/static/root_candy.js"></script>
+
+{% endblock scripts %}

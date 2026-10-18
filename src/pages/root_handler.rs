@@ -22,20 +22,21 @@ pub async fn root_page(
 	return Ok(Html(content));
     }
 
+    eprintln!("Building root page");
+
     let mut ctx = tera::Context::new();
 
-    let (threads, last_mtime) = match top_threads (
-	24,
+    let threads = match top_threads (
+	6,
 	pool.clone(),
     ).await {
 	Ok(result) => result,
 	Err(e) => {
 	    eprintln!("Error retrieving top threads: {}", e);
-	    (vec![], 0)
+	    vec![]
 	},
     };
     ctx.insert("threads", &threads);
-    ctx.insert("last_mtime", &last_mtime);
 
     let rendered = TERA.render("root.html", &ctx);
     let content = match rendered {

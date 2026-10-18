@@ -119,6 +119,8 @@ pub async fn board_x_submission (
 	},
     };
 
+    pages_cache.invalidate("root").await;
+
     match create_thread (
 	ip,
 	&thread_form.subject,
@@ -126,7 +128,6 @@ pub async fn board_x_submission (
 	thread_form.name,
 	&board,
 	pool,
-	pages_cache,
     ).await {
 	Ok(id) => {
 	    Ok(Redirect::to(&format!("/{}/{:3x}", board, id)))
