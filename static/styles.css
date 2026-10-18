@@ -86,6 +86,7 @@
 
 main {
     scrollbar-gutter: stable;
+    padding: 2px;
 }
 
 body {
