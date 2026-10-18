@@ -34,7 +34,6 @@ use crate::model::{
     PostSerialized,
     HexID,
     create_reply,
-    ctx_up_sidebar,
     thread_replies,
     thread_replies_after,
     post_with_id,
@@ -44,7 +43,6 @@ use crate::moderation::is_user_suspended;
 
 pub async fn thread_page (
     State(pool): State<PgPool>,
-    State(boards_cache): State<crate::BoardsCache>,
     State(pages_cache): State<crate::PagesCache>,
     Path((board, HexID(id))): Path<(String, HexID)>,
 ) -> impl IntoResponse {
@@ -63,7 +61,6 @@ pub async fn thread_page (
 
     thread_page_view (
 	pool,
-	boards_cache,
 	pages_cache,
 	id,
 	post,
@@ -73,7 +70,6 @@ pub async fn thread_page (
 
 async fn thread_page_view (
     pool: PgPool,
-    boards_cache: crate::BoardsCache,
     pages_cache: crate::PagesCache,
     id: i64,
     post: Post,
@@ -85,7 +81,7 @@ async fn thread_page_view (
 	)))
     } else if let Some(post_board) = &post.board {
 	if post_board != board {
-	    return redirect_to_board_view(pool, boards_cache, post).await
+	    return redirect_to_board_view(post).await
 	}
     }
 
@@ -106,7 +102,6 @@ async fn thread_page_view (
 	.collect();
 
     let mut ctx = tera::Context::new();
-    ctx_up_sidebar(pool, boards_cache, &mut ctx).await;
     ctx.insert("thread", &PostSerialized::from(post));
     ctx.insert("replies", &replies);
     ctx.insert("last_id", &last_id);
@@ -125,12 +120,9 @@ async fn thread_page_view (
 }
 
 async fn redirect_to_board_view (
-    pool: PgPool,
-    boards_cache: crate::BoardsCache,
     post: Post,
 ) -> Result<Result<Html<String>, Redirect>, StatusCode> {
     let mut ctx = tera::Context::new();
-    ctx_up_sidebar(pool, boards_cache, &mut ctx).await;
     ctx.insert("post", &PostSerialized::from(post));
     let rendered = TERA.render("board_thread_redirection.html", &ctx);
     let content = match rendered {

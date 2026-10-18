@@ -52,15 +52,6 @@
     --notice-bg:var(--bg);
     --notice-border:var(--sup1md);
 
-    --sidebar-h-fg:var(--sup3d);
-    --sidebar-h-bg:var(--sup3);
-
-    --sidebar:var(--sup1d);
-    --sidebar-fg:var(--sup1d);
-    --sidebar-bg:var(--sup1l);
-
-    --sidebtn-fg:var(--sup1d);
-
     --navbar-fg:var(--sup3l);
     --navbar-bg:var(--sup3d);
     --navbar-border:var(--black);
@@ -90,10 +81,13 @@
 
     --submit-btn:var(--button);
 
-    --navbar-height:56px; 	/* Media-dependent */
     --comment-min-width:clamp(200px, 95%, 350px);
     --comment-max-width:1050px;
     --thread-container-max-width:1100px;
+}
+
+main {
+    scrollbar-gutter: stable;
 }
 
 body {
@@ -102,21 +96,35 @@ body {
     font-family: Helvetica, 'Noto Sans Bengali', Arial, sans-serif;
     font-size: 16px;
     line-height: 1.6;
-    display: grid;
-    grid-template-rows: var(--navbar-height) 1fr;
-    grid-template-columns: 1fr min-content;
-    grid-template-areas:
-	"head head"
-	"main side";
+    display: flex;
+    flex-direction: column;
     row-gap: 5px;
     margin: 0;
     padding: 0;
-    height: 100dvh;
 }
 
 main {
-    grid-area: main;
-    overflow-y: auto;
+    flex: 1;
+    scroll-behavior: smooth;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--navbar-fg);
+    background-color: var(--navbar-bg);
+    box-shadow: 0 1px 2px 0 var(--navbar-border);
+    border-bottom: 2px solid var(--navbar-border);
+    font-weight: 500;
+    margin-bottom: 2pt;
+    z-index: 100;
+}
+
+header, footer {
+    padding: .5rem;
 }
 
 h1 {
@@ -286,10 +294,6 @@ h1 {
     width: clamp(200px, 100%, var(--thread-container-max-width));
 }
 
-#replyForm #postComment {
-    width: clamp(200px, 100%, var(--comment-max-width));
-}
-
 #board-title {
     color: var(--board-title);
 }
@@ -435,42 +439,17 @@ h1 {
     padding: 0;
 }
 
-#navbar {
-    grid-area: head;
-    text-align: center;
-    color: var(--navbar-fg);
-    background-color: var(--navbar-bg);
-    box-shadow: 0 1px 2px 0 var(--navbar-border);
-    border-bottom: 2px solid var(--navbar-border);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: var(--navbar-height);
-    overflow: hidden;
-    font-weight: 500;
-    margin-bottom: 2pt;
-    z-index: 100;
-}
-
-main, #sidebar {
-    overflow-y: auto;
-    padding: 4pt;
-    margin-top: 2pt;
-}
-
 #navbar ul {
-    max-width: 1780px;
+    max-width: var(--thread-container-max-width);
     list-style-type: none;
-    padding: 0 50px;
     display: flex;
     margin: auto;
+    padding: 0 2px;
     align-items: center;
     text-align: center;
     flex-wrap: wrap;
     justify-content: space-around;
     gap: .25rem;
-    height: 100%;
 }
 
 #navbar a {
@@ -478,66 +457,11 @@ main, #sidebar {
     color: inherit;
     display: inline-block;
     height: 100%;
-    padding: 7px;
+    padding: 11px;
     border-radius: 7px;
     font-size: 1.4rem;
     line-height: 1.2;
     text-shadow: 1px 2px 2px var(--navbar-border);
-}
-
-#sidebar {
-    grid-area: side;
-    width: clamp(200px, 17vw, 280px);
-    overflow-y: auto;
-    border-left: 1px dashed var(--sidebar-fg);
-    margin-left: 5px;
-}
-
-#sidebar h3 {
-    color: var(--sidebar-h-fg);
-    background-color: var(--sidebar-h-bg);
-    margin: 5px;
-    border-top: 1px solid var(--sidebar-fg);
-    text-align: center;
-}
-
-#sidebar a {
-    color: inherit;
-    width: 100%;
-    display: block;
-    margin: 1px 10px;
-}
-
-#sidebar .thread {
-    width: 100%;
-    padding: 0;
-    margin: 0;
-}
-
-#sidebar ul {
-    display: flex;
-    list-style-type: none;
-    padding: 0 5px;
-    margin: 0;
-    flex-wrap: wrap;
-}
-
-.popup-btn,
-#sidebar li {
-    position: relative;
-    display: block;
-    width: 100%;
-    cursor: pointer;
-    font-size: inherit;
-    font-family: inherit;
-    border: 0;
-    font-weight: 500;
-    color: var(--sidebtn-fg);
-}
-
-#sidebar li:hover {
-    transform: scale(1.05);
-    transition: transform 0.1s cubic-bezier(0.25, 0.45, 0.45, 0.95);
 }
 
 #submit {
@@ -549,25 +473,11 @@ main, #sidebar {
 }
 
 .md-only-block,
-.sm-only-block,
-#navbar .md-only-block,
-#sidebar .md-only-block {
+.sm-only-block {
     display: none;
 }
 
-@media (max-width: 840px) {
-    :root {
-	--navbar-height: 32px;
-    }
-
-    #sidebar {
-	display: none;
-    }
-
-    #navbar li {
-	display: none;
-    }
-
+@media (max-width: 650px) {
     #navbar a {
 	font-size: 1.2rem !important;
     }
@@ -576,13 +486,20 @@ main, #sidebar {
 	max-width: 710px;
     }
 
-    .md-only-block,
-    #navbar #logo {
+    .md-only-block {
 	display: block !important;
     }
 
-    .show {
-	display: block !important;
+    .li-title {
+	display: none;
+    }
+
+    header, footer {
+	padding: .15rem;
+    }
+
+    #navbar a {
+	padding: 7px;
     }
 }
 

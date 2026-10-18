@@ -22,7 +22,6 @@ use crate::template::{
 };
 use crate::model::{
     HexID,
-    ctx_up_sidebar,
     post_with_id,
     restore_post,
     redact_post,
@@ -31,11 +30,9 @@ use crate::model::{
 
 pub async fn mod_id_page(
     State(pool): State<PgPool>,
-    State(boards_cache): State<crate::BoardsCache>,
     Path((_board, HexID(id))): Path<(String, HexID)>,
 ) -> Result<Html<String>, axum::http::StatusCode> {
     let mut ctx = tera::Context::new();
-    ctx_up_sidebar(pool.clone(), boards_cache, &mut ctx).await;
 
     let post = match post_with_id(
 	id,

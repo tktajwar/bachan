@@ -484,15 +484,10 @@ pub async fn thread_id_of (
     Ok(opt_thread_id)
 }
 
-pub async fn boards_in_category(
+pub async fn boards_in_category (
     category: &str,
     pool: PgPool,
-    boards_cache: crate::BoardsCache,
 ) -> Result<Vec<Board>, Box<dyn Error>> {
-    if let Some(boards) = boards_cache.get(category).await {
-	return Ok( boards );
-    }
-
     let q = "\
     SELECT \
     url, \
@@ -506,10 +501,6 @@ pub async fn boards_in_category(
 	.bind(category)
 	.fetch_all(&pool)
 	.await?;
-
-    boards_cache
-	.insert(category.to_string(), boards.clone() )
-	.await;
 
     Ok ( boards )
 
@@ -746,55 +737,4 @@ pub async fn post_with_id (
 	    .fetch_optional(&pool)
 	    .await?
     )
-}
-
-pub async fn ctx_up_sidebar (
-    pool: PgPool,
-    boards_cache: crate::BoardsCache,
-    ctx: &mut tera::Context,
-)  {
-    let hobbies = boards_in_category(
-	"Hobbies",
-	pool.clone(),
-	boards_cache.clone(),
-    ).await.unwrap_or(
-	vec![]
-    );
-    ctx.insert("hobbies", &hobbies);
-
-    let interests = boards_in_category(
-	"Interests",
-	pool.clone(),
-	boards_cache.clone(),
-    ).await.unwrap_or(
-	vec![]
-    );
-    ctx.insert("interests", &interests);
-
-    let lifestyle = boards_in_category(
-	"Lifestyle",
-	pool.clone(),
-	boards_cache.clone(),
-    ).await.unwrap_or(
-	vec![]
-    );
-    ctx.insert("lifestyle", &lifestyle);
-
-    let local = boards_in_category(
-	"Local",
-	pool.clone(),
-	boards_cache.clone(),
-    ).await.unwrap_or(
-	vec![]
-    );
-    ctx.insert("local", &local);
-
-    let misc = boards_in_category(
-	"Misc",
-	pool.clone(),
-	boards_cache,
-    ).await.unwrap_or(
-	vec![]
-    );
-    ctx.insert("misc", &misc);
 }

@@ -25,14 +25,12 @@ mod pages;
 use pages::*;
 mod moderation;
 
-type BoardsCache = moka::future::Cache<String, Vec<model::Board>>;
 type PagesCache = moka::future::Cache<String, String>;
 type SuspendedCache = moka::future::Cache<(), HashSet<IpAddr>>;
 
 #[derive(Clone, FromRef)]
 struct AppState {
     pool: PgPool,
-    boards_cache: BoardsCache,
     page_cache: PagesCache,
     suspended_cache: SuspendedCache,
 }
@@ -67,11 +65,6 @@ async fn main() {
     sqlx::migrate!("./migrations").run(&pool).await
 	.expect("Couldn't do database migration.");
 
-    let boards_cache: BoardsCache = Cache::builder()
-	.time_to_live(Duration::from_hours(36))
-	.max_capacity(8)
-	.build();
-
     let page_cache: PagesCache = Cache::builder()
 	.time_to_live(Duration::from_hours(18))
 	.max_capacity(500)
@@ -84,7 +77,6 @@ async fn main() {
 
     let state = AppState {
 	pool,
-	boards_cache,
 	page_cache,
 	suspended_cache,
     };

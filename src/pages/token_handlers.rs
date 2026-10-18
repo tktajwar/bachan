@@ -27,15 +27,9 @@ use crate::moderation::{
 use crate::template::{
     TERA,
 };
-use crate::model::ctx_up_sidebar;
 
-pub async fn token_page (
-    State(pool): State<PgPool>,
-    State(boards_cache): State<crate::BoardsCache>,
-) -> Result<Html<String>, axum::http::StatusCode> {
-    let mut ctx = tera::Context::new();
-
-    ctx_up_sidebar(pool, boards_cache, &mut ctx).await;
+pub async fn token_page () -> Result<Html<String>, axum::http::StatusCode> {
+    let ctx = tera::Context::new();
 
     let rendered = TERA.render("mod_token.html", &ctx);
     let content = match rendered {
