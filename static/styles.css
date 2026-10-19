@@ -68,6 +68,8 @@
     --highlights-odd:var(--sup1l);
     --highlights-even:var(--sup3l);
     --highlights-hover:var(--sup3ml);
+    --highlights-heading-fg:#595959;
+    --highlights-heading-bg:#e0f6e0;
 
     --post-form-fg:var(--sup1d);
     --post-form-bg:var(--sup1l);
@@ -232,7 +234,6 @@ h1 {
 #highlights-threads {
     display: flex;
     flex-direction: column;
-    padding: 0.25rem;
 }
 
 .top-thread {
@@ -257,6 +258,15 @@ h1 {
 .top-thread:hover {
     background-color: var(--highlights-hover);
     transition: background-color 0.15s ease;
+}
+
+.top-thread-heading {
+    color: var(--highlights-heading-fg);
+    background-color: var(--highlights-heading-bg) !important;
+    pointer-events: none;
+    font-size: .85em;
+    letter-spacing: .5px;
+    font-weight: 700;
 }
 
 .top-thread .label {
