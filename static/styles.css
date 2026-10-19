@@ -37,7 +37,13 @@
     --reply-fg:var(--thread-fg);
     --reply-bg:var(--sup1ml);
 
+    --board-slug:var(--sup1md);
     --board-title:var(--brand);
+
+    --board-whatshot:#d60000;
+    --board-active:#008900;
+    --board-slow:#381d0f;
+    --board-dead:#a6a6a6;
 
     --redaction-reason:var(--brandl);
     --redaction-reason-fg:var(--brandd);
@@ -83,6 +89,10 @@
     --comment-min-width:clamp(200px, 95%, 350px);
     --comment-max-width:1050px;
     --thread-container-max-width:1100px;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 main {
@@ -201,16 +211,17 @@ h1 {
     margin: auto;
 }
 
-#highlights {
+.stat-container {
     background-color: var(--highlights-bg);
     min-width: 150px;
     max-width: 1100px;
-    margin: auto;
+    margin: 13px auto;
+    padding: 0;
     border-radius: 5px;
     box-shadow: 0 0 3px var(--highlights-border);
 }
 
-#highlights h2 {
+.stat-container h2 {
     text-align: center;
     color: var(--highlights-head-fg);
     background-color: var(--highlights-head-bg);
@@ -259,6 +270,82 @@ h1 {
 .top-thread .reply-count {
     color: var(--fg);
     text-align: right;
+}
+
+#boards {
+    min-width: 150px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+#boards-box-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    grid-auto-rows: 240px;
+    padding: 0.75rem;
+}
+
+.board-box {
+    padding: 0.5rem;
+    margin: 0.25rem;
+    border-radius: 2px;
+    box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+}
+
+.board-box h3 {
+    color: var(--thread-headline-fg);
+    margin: 3px;
+}
+
+.board-box .boards-wrapper {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    column-gap: .5rem;
+}
+
+.board-box a {
+    display: contents;
+    color: inherit;
+}
+
+.board-box .board-slug {
+    color: var(--board-slug);
+}
+
+.board-box .board-label {
+    color: var(--board-title);
+}
+
+.board .board-activity .whatshot:before {
+    content: "উত্তপ্ত";
+}
+
+.board .board-activity .active:before {
+    content: "সচল";
+}
+
+.board .board-activity .slow:before {
+    content: "শীতল";
+}
+
+.board .board-activity .dead:before {
+    content: "অচল";
+}
+
+.board .board-activity .whatshot {
+    color: var(--board-whatshot);
+}
+
+.board .board-activity .active {
+    color: var(--board-active);
+}
+
+.board .board-activity .slow {
+    color: var(--board-slow);
+}
+
+.board .board-activity .dead {
+    color: var(--board-dead);
 }
 
 #postFormContainer,
@@ -514,18 +601,13 @@ h1 {
 }
 
 #notice {
-    max-width: 1100px;
-    margin: 13px auto;
-    padding: 9px 0;
-    background-color: var(--notice-bg);
-    border-radius: 5px;
-    box-shadow: 0 0 2px var(--notice-border);
     text-align: justify;
+    padding: .5rem;
 }
 
 #notice h3 {
     margin: 3px auto;
-    padding: 0;
+    padding: 7px;
     color: var(--notice-head);
     font-weight: 700;
 }
@@ -757,4 +839,3 @@ table > tbody > tr > td:first-child {
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
-

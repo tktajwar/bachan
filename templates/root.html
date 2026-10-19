@@ -11,7 +11,7 @@
 
 {% include "notice.html" %}
 
-<div id="highlights">
+<div id="highlights" class="stat-container">
   <h2>জনপ্রিয় আলোচনা</h2>
   <!-- List of highlighted threads -->
 
@@ -22,6 +22,61 @@
     {% else %}
     <p> এখনো কোনো কথোপকথন হয়নি। </p>
     {% endfor %}
+
+  </div>
+
+</div>
+
+<div id="boards" class="stat-container">
+  <h2> বোর্ডসমূহ </h2>
+  <!-- List of Boards -->
+
+  <div id="boards-box-container">
+
+    <div class="board-box">
+      <h3>শখ</h3>
+      <div class="boards-wrapper">
+	{% for board in hobbies %}
+	{% include "board-line.html" %}
+	{% endfor %}
+      </div>
+    </div>
+
+    <div class="board-box">
+      <h3>আগ্রহ</h3>
+      <div class="boards-wrapper">
+	{% for board in interests %}
+	{% include "board-line.html" %}
+	{% endfor %}
+      </div>
+    </div>
+
+    <div class="board-box">
+      <h3>জীবনধারা</h3>
+      <div class="boards-wrapper">
+	{% for board in lifestyle %}
+	{% include "board-line.html" %}
+	{% endfor %}
+      </div>
+    </div>
+
+    <div class="board-box">
+      <h3>স্থানীয়</h3>
+      <div class="boards-wrapper">
+	{% for board in local %}
+	{% include "board-line.html" %}
+	{% endfor %}
+      </div>
+    </div>
+
+    <div class="board-box">
+      <h3>অন্যান্য</h3>
+      <div class="boards-wrapper">
+	{% for board in misc %}
+	{% include "board-line.html" %}
+	{% endfor %}
+      </div>
+    </div>
 
   </div>
 

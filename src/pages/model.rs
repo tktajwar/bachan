@@ -231,6 +231,15 @@ pub struct Board {
     pub label: String,
 }
 
+#[derive(sqlx::FromRow, Serialize, Clone, Default)]
+pub struct BoardStats {
+    pub url: String,
+    pub label: String,
+    pub category: String,
+    pub active_threads: i64,
+    pub new_replies: i64,
+}
+
 pub fn trip(pass: String) -> i64 {
     let mut hasher = SipHasher13::new_with_keys(
 	0x0123_4567_89ab_cdef,
@@ -479,76 +488,33 @@ pub async fn thread_id_of (
     Ok(opt_thread_id)
 }
 
-pub async fn boards_in_category (
-    category: &str,
+pub async fn boards_stats (
     pool: PgPool,
-) -> Result<Vec<Board>, Box<dyn Error>> {
+) -> Result<Vec<BoardStats>, Box<dyn Error>> {
     let q = "\
     SELECT \
-    url, \
-    label \
-    FROM board \
-    WHERE category = $1 \
-    ORDER BY url ASC \
+    b.url, \
+    b.label, \
+    b.category, \
+    COUNT(DISTINCT t.id) AS active_threads, \
+    COUNT(r.id) AS new_replies \
+    FROM Board b \
+    LEFT JOIN Post t ON t.board = b.url \
+    AND t.is_redacted IS FALSE \
+    AND t.bump_time > NOW() - INTERVAL '7 days' \
+    LEFT JOIN Post r ON r.thread_id = t.id \
+    AND r.is_redacted IS FALSE \
+    AND r.birth_time > NOW() - INTERVAL '7 days' \
+    GROUP BY b.url ORDER BY b.url \
     ";
 
-    let boards: Vec<Board> = sqlx::query_as::<_, Board>(q)
-	.bind(category)
+    let boards = sqlx::query_as::<_, BoardStats>(q)
 	.fetch_all(&pool)
 	.await?;
 
     Ok ( boards )
 
 }
-
-// pub async fn boards_with_threads (
-//     pool: PgPool,
-// )  {
-//     let hobbies = boards_in_category(
-// 	"Hobbies",
-// 	pool.clone(),
-// 	boards_cache.clone(),
-//     ).await.unwrap_or(
-// 	vec![]
-//     );
-//     ctx.insert("hobbies", &hobbies);
-
-//     let interests = boards_in_category(
-// 	"Interests",
-// 	pool.clone(),
-// 	boards_cache.clone(),
-//     ).await.unwrap_or(
-// 	vec![]
-//     );
-//     ctx.insert("interests", &interests);
-
-//     let lifestyle = boards_in_category(
-// 	"Lifestyle",
-// 	pool.clone(),
-// 	boards_cache.clone(),
-//     ).await.unwrap_or(
-// 	vec![]
-//     );
-//     ctx.insert("lifestyle", &lifestyle);
-
-//     let local = boards_in_category(
-// 	"Local",
-// 	pool.clone(),
-// 	boards_cache.clone(),
-//     ).await.unwrap_or(
-// 	vec![]
-//     );
-//     ctx.insert("local", &local);
-
-//     let misc = boards_in_category(
-// 	"Misc",
-// 	pool.clone(),
-// 	boards_cache,
-//     ).await.unwrap_or(
-// 	vec![]
-//     );
-//     ctx.insert("misc", &misc);
-// }
 
 pub async fn get_board_ctx (
     url: &str,

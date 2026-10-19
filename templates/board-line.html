@@ -1,0 +1,25 @@
+<a class="board" href="/{{board.url}}/">
+  <span class="board-slug">/{{board.url}}/</span>
+  <span class="board-label">{{board.label}}</span>
+  <span class="board-activity">
+    {% if board.active_threads + board.new_replies >=
+    activity_threshold * 10 %}
+
+    <span class="whatshot"></span>
+    
+    {% elif board.active_threads + board.new_replies >=
+    activity_threshold %}
+
+    <span class="active"></span>
+    
+    {% elif board.active_threads + board.new_replies > 0 %}
+
+    <span class="slow"></span>
+
+    {% else %}
+
+    <span class="dead"></span>
+
+    {% endif %}
+  </span>
+</a>
