@@ -90,7 +90,8 @@
 
     --comment-min-width:clamp(200px, 95%, 350px);
     --comment-max-width:1050px;
-    --thread-container-max-width:1100px;
+    --header-footer-max-width:550px;
+    --thread-container-max-width:1250px;
 }
 
 * {
@@ -136,7 +137,10 @@ header {
 }
 
 header, footer {
-    padding: .5rem;
+    padding: .25rem;
+    max-width: var(--header-footer-max-width);
+    width: 95%;
+    margin: auto;
 }
 
 h1 {
@@ -543,7 +547,6 @@ h1 {
 }
 
 #navbar ul {
-    max-width: var(--thread-container-max-width);
     list-style-type: none;
     display: flex;
     margin: auto;
@@ -555,6 +558,10 @@ h1 {
     gap: .25rem;
 }
 
+#navbar ul li:first-child {
+    margin-right: auto;
+}
+
 #navbar a {
     text-decoration: none;
     color: inherit;
@@ -562,7 +569,7 @@ h1 {
     height: 100%;
     padding: 11px;
     border-radius: 7px;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     line-height: 1.2;
     text-shadow: 1px 2px 2px var(--navbar-border);
 }
@@ -613,6 +620,8 @@ h1 {
 #notice {
     text-align: justify;
     padding: .5rem;
+    width: 99%;
+    max-width: 1100px;
 }
 
 #notice h3 {

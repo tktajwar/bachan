@@ -1,11 +1,23 @@
 <header id="navbar">
   <ul>
 
+    {% if not thread.board %}
+
     <li id="logo">
       <a href="/" title="BanglaChan">
 	𑍞বাংলাচান
       </a>
     </li>
+
+    {% else %}
+
+    <li>
+      <a href="/{{thread.board}}/" title="/{{thread.board}}/">
+	<span class="eva--corner-up-left-fill"></span>
+	<span class="li-title"> /{{thread.board}}/ </span>
+      </a>
+    </li>
+    {% endif %}
 
     <li>
       <a href="/" title="homepage">
