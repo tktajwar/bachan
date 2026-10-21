@@ -13,7 +13,7 @@ function load_previous_replies(btn) {
 	    reply.style.display = 'table';
 	}
     });
-    btn.style.display = 'none'
+    btn.style.display = 'none';
 }
 
 (function() {
@@ -28,7 +28,7 @@ function load_previous_replies(btn) {
 	    const reply_container = thread.querySelector('.board-thread-replies');
 	    let load_prev_btn = document.createElement('a');
 	    load_prev_btn.href = '#';
-	    load_prev_btn.onclick = function(){load_previous_replies(this);};
+	    load_prev_btn.onclick = function(){load_previous_replies(this);return false};
 	    load_prev_btn.class = 'load-more-replies';
 	    load_prev_btn.textContent = `সকল মন্তব্য দেখুন (${hideCount} omitted)`;
 	    reply_container.prepend(load_prev_btn);
