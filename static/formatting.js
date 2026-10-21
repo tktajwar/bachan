@@ -123,6 +123,7 @@ window.onload = function() {
 
 function postIsVisible(id) {
     const el = document.getElementById(id);
+    if (!el) return false;
     const rect = el.getBoundingClientRect();
     return (
         rect.top >= 0 &&
@@ -135,6 +136,7 @@ function postIsVisible(id) {
 
 function previewFor(id, referer) {
     const el = document.getElementById(id);
+    if (!el) return;
     preview.innerHTML = el.innerHTML;
     preview.classList.add('active');
 }
