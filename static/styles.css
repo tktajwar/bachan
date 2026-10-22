@@ -250,7 +250,12 @@ h4 {
     border-radius: 2px;
     box-shadow: 0 0 3px var(--border);
     flex-direction: column;
+    transition: box-shadow 0.2s ease;
     overflow: hidden;
+}
+
+#highlights-threads:hover {
+    box-shadow: 0 0 3px 1px var(--border);
 }
 
 .top-thread {
