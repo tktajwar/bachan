@@ -2,38 +2,72 @@
 
   <ul>
 
-    {% if not thread.board %}
-
-    <li id="logo">
+    <li>
       <a href="/" title="BanglaChan">
-	𑍞বাংলাচান
-      </a>
-    </li>
-
-    {% else %}
-
-    <li>
-      <a href="/{{thread.board}}/" title="/{{thread.board}}/"
-	 class="board-slug">
-	<span class="eva--corner-up-left-fill"></span>
-	<span class="li-direction"> /{{thread.board}}/ </span>
-      </a>
-    </li>
-    {% endif %}
-
-    <li>
-      <a href="/" title="homepage">
 	<span class="ion--home"></span>
 	<span class="li-title">মূলপাতা</span>
       </a>
     </li>
 
+    {% if thread.board %}
+
+    <li class="li-arrow">
+      <span class="eva--arrowhead-right-fill"></span>
+    </li>
+
+    <li>
+      <a href="/{{thread.board}}/" title="/{{thread.board}}/"
+	 class="board-slug">
+	<span class="li-direction"> /{{thread.board}}/ </span>
+      </a>
+    </li>
+
+    <li class="li-arrow">
+      <span class="eva--arrowhead-right-fill"></span>
+    </li>
+
+    <li>
+      <a href="/{{thread.board}}/{{thread.id}}" title="/{{thread.id}}/"
+	 class="tid">
+	<span class="li-direction"> {{thread.id}} </span>
+      </a>
+    </li>
+
+    {% elif board.url %}
+
+    <li class="li-arrow">
+      <span class="eva--arrowhead-right-fill"></span>
+    </li>
+
+    <li>
+      <a href="/{{board.url}}/" title="BanglaChan"
+	class="board-slug">
+	<span class="li-direction"> /{{board.url}}/ </span>
+      </a>
+    </li>
+
+    <li class="li-arrow">
+      <span class="eva--arrowhead-right-fill"></span>
+    </li>
+
+    <li></li>
+
+    {% else %}
+
+    <li class="li-arrow">
+      <span class="fluent--divider-tall-16-filled"></span>
+    </li>
+
     <li>
       <a href="/formatting/"
-	 title="formatting guide" >
+	 title="Formatting Guide" >
 	<span class="ion--text-outline"></span>
-	<span class="li-title">ফরম্যাটিং গাইড</span>
+	<span class="li-title">ফরম্যাটিং</span>
       </a>
+    </li>
+
+    <li class="li-arrow">
+      <span class="fluent--divider-tall-16-filled"></span>
     </li>
 
     <li>
@@ -42,6 +76,8 @@
 	<span class="li-title">ফিডব্যাক</span>
       </a>
     </li>
+
+    {% endif %}
 
   </ul>
 
