@@ -614,6 +614,8 @@ h4 {
     padding: 5px;
     font-size: 1.1rem;
     text-shadow: 1px 2px 2px var(--navbar-border);
+    background-color: inherit;
+    transition: background-color 0.1s ease;
 }
 
 #navbar a:hover {
