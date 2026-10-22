@@ -435,8 +435,8 @@ h4 {
 
 .thread,
 .reply {
-    padding: 8px;
-    margin: 5px;
+    padding: 12px;
+    margin: 7px;
     min-width: var(--comment-min-width);
     max-width: var(--comment-max-width);
     display: table;
@@ -673,6 +673,12 @@ h4 {
 @media (max-width: 460px) {
     #boards-box-container {
 	grid-template-columns: auto;
+    }
+
+    .thread, .reply {
+	width: 100%;
+	max-width: 100%;
+	margin: 7px auto;
     }
 
     body {
