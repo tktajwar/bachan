@@ -302,11 +302,16 @@ h4 {
 
 .board-box {
     background-color: var(--board-box-bg);
-    padding: 0.5rem;
+    padding: 0.65rem;
     margin: 0.25rem;
     border-radius: 2px;
-    box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+    box-shadow: rgba(50, 50, 105, 0.25) 0px 1px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+    transition: box-shadow 0.2s ease;
     overflow: hidden;
+}
+
+.board-box:hover {
+    box-shadow: rgba(50, 50, 105, 0.45) 0px 1px 5px 0px, rgba(0, 0, 0, 0.05) 0px 0px 3px 0px;
 }
 
 .board-box h3 {
