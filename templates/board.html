@@ -47,13 +47,13 @@
 <div id="load-more">
   <center>
     {% if has_more %}
-    <div class="btn">
-      <a href="/{{board.url}}/?limit={{limit}}&before_mtime={{last_bump_time}}"
-	 style="text-decoration:none;
-		color:black;">
+    <a href="/{{board.url}}/?limit={{limit}}&before_mtime={{last_bump_time}}"
+       style="text-decoration:none;
+	      color:black;">
+      <button>
 	পরবর্তী পৃষ্ঠা
-      </a>
-    </div>
+      </button>
+    </a>
     {% else %}
     শেষ পৃষ্ঠা
     {% endif %}

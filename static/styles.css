@@ -122,6 +122,8 @@
 
     --button:#B1D3A5;
     --button-shadow:#659226;
+    --button-inactive:#dfd5cf;
+    --button-inactive-shadow:#c4c4c4;
 
     --comment-min-width:clamp(100px, 95%, 350px);
     --comment-max-width:1050px;
@@ -231,6 +233,8 @@ hr {
     display: inline-block;
     max-width: clamp(50px, 95%, 600px);
     max-height: clamp(50px, 90%, 600px);
+    border-radius: 4px;
+    box-shadow: rgba(17, 17, 26, 0.4) 0px 0px 1px;
 }
 
 .stat-container {
@@ -403,7 +407,7 @@ hr {
 #postSubject {
     font-weight:bold;
     min-height:30px;
-    flex: 75%;
+    flex: 66.7;
     margin-right: 8px;
 }
 
@@ -411,13 +415,63 @@ hr {
     min-height:30px;
     max-width: 200px;
     min-width: 75px;
-    flex: 25%;
+    flex: 33.2%;
 }
 
 #postComment {
-    height: 150px;
+    height: 100px;
     width: clamp(100px, 100%, var(--thread-container-max-width));
+    transition: height .1s ease;
 }
+
+form:has(#postComment:placeholder-shown) button,
+form:has(#postSubject:placeholder-shown) button {
+    background-color: var(--button-inactive);
+    box-shadow: 0 2px 0 var(--button-inactive-shadow);
+}
+
+.actions {
+    transition: all .1s ease;
+    opacity: 1;
+    justify-content: space-between;
+}
+
+form:not(:focus-within):has(#postComment:placeholder-shown) .actions {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+}
+
+button {
+    display: inline-block;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0.25em 0.5em;
+    margin: 0.25em;
+    border: 0;
+    border-radius: 0.75em;
+    font-weight: 500;
+    transition: 0.3s;
+    background-color: var(--button);
+    box-shadow: 0 2px 0 var(--button-shadow);
+}
+
+button:hover:not(:disabled) {
+    box-shadow: 0 1px 0 var(--button-shadow);
+}
+
+button:active {
+    box-shadow: 0 1px 0 var(--button-shadow);
+}
+
+button:disabled {
+    background-color: var(--button-inactive);
+    box-shadow: 0 2px 0 var(--button-inactive-shadow);
+}
+
 
 #board-title {
     color: var(--board-label);
@@ -629,10 +683,6 @@ hr {
     background-color: var(--navbar-hover-bg);
 }
 
-#submit {
-    background-color: var(--button);
-}
-
 .md-only-block,
 .sm-only-block {
     display: none;
@@ -698,36 +748,29 @@ hr {
     body {
 	font-size: 14px;
     }
-}
 
-.btn,
-button {
-    postion: relative;
-    display: inline-block;
-    cursor: pointer;
-    font-size: inherit;
-    font-family: inherit;
-    padding: 0.25em 0.5em;
-    margin: 0.25em;
-    border: 0;
-    border-radius: 0.75em;
-    font-weight: 500;
-    transition: 0.3s;
-    background-color: var(--button);
-    box-shadow: 0 6px 0 var(--button-shadow);
-}
+    main:has(#replyFormContainer) {
+	margin-bottom: 200px;
+    }
 
-.btn:hover,
-button:hover {
-    transform: translateY(2px);
-    box-shadow: 0 4px 0 var(--button-shadow);
-}
+    main:has(#replyForm:not(:focus-within) #postComment:placeholder-shown) {
+	margin-bottom: 70px;
+    }
 
-.btn:active,
-button:active {
-    transform: translateY(5px);
-    box-shadow: 0 3px 0 var(--button-shadow);
-}
+    #replyFormContainer {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: var(--bg-main);
+	box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+	border-radius: 5px;
+    }
+
+    #replyForm:not(:focus-within) #postComment:placeholder-shown {
+	height: 2rem;
+	transition: height .15s ease;
+    }
 
 }
 

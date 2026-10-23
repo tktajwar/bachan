@@ -1,25 +1,21 @@
 <div id="replyFormContainer">
 
-  <h3> আপনার মন্তব্য* </h3>
-
   <form method="post" id="replyForm">
 
-    <div>
+    <div class="actions">
 
-      <textarea name="comment" cols="48" rows="4" maxlength="2048"
-	      id="postComment" required></textarea><br/>
+      <input type="text" id="postName" name="name"
+	     placeholder=" বানন#পাসওয়ার্ড">
+
+      <button type="submit">জমা দিন</button>
 
     </div>
 
     <div>
 
-      <label for="name">নাম:</label>
-
-      <input type="text" id="postName" name="name"
-	     placeholder=" বানন#পাসওয়ার্ড">
-
-      <input class="btn" name="submit" type="submit" value="জমা দিন"
-	     title="Submit"/>
+      <textarea name="comment" cols="48" rows="4" maxlength="2048"
+	      id="postComment" placeholder="আপনার মন্তব্য*"
+	      required></textarea><br/>
 
     </div>
 
