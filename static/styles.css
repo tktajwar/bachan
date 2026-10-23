@@ -524,15 +524,6 @@ button:disabled {
     color: inherit;
 }
 
-.thread-tagline,
-.thread-headline,
-.thread-comment,
-.reply-tagline,
-.reply-comment,
-#submission-preview {
-    margin: 3px;
-}
-
 .thread-headline {
     font-weight: bold;
     color: var(--thread-headline-fg);
@@ -571,7 +562,6 @@ button:disabled {
 
 .thread-tagline,
 .reply-tagline {
-    color: #0E3D55;
     margin: 0;
     font-size: 0.9rem;
 }
@@ -609,6 +599,13 @@ button:disabled {
 
 .thread-board > a {
     text-decoration: none;
+}
+
+.thread-replies a,
+.thread-report a,
+.reply-report a {
+    color: var(--cyan);
+    margin: 1px;
 }
 
 .thread-footer,
