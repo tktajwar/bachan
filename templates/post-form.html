@@ -1,6 +1,7 @@
 <div id="postFormContainer">
 
-  <form id="postForm" method="post">
+  <form id="postForm" method="post"
+	onSubmit="submit.disabled = true; return true;">
 
     <div>
 
@@ -22,7 +23,7 @@
 
     <div>
 
-      <button type="submit">জমা দিন</button>
+      <button type="submit" name="submit">জমা দিন</button>
 
     </div>
 
