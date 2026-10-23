@@ -29,6 +29,7 @@ pub struct Post {
     pub subject: Option<String>,
     pub comment: String,
     pub user_trip: Option<i64>,
+    pub user_id: Option<IpAddr>,
     pub user_country: String,
     pub user_name: String,
 
@@ -146,6 +147,21 @@ impl Post {
 	if let Some(code) = self.user_trip {
 	    code.hash(&mut hasher);
 	    let hashed = hasher.finish() as u32;
+
+	    return Some (
+		URL_SAFE_NO_PAD.encode(hashed.to_be_bytes())
+	    )
+	}
+
+	else if let Some(id) = self.user_id {
+	    let thread_id = match self.thread_id {
+		Some(id) => id,
+		None => self.id,
+	    };
+
+	    id.hash(&mut hasher);
+	    thread_id.hash(&mut hasher);
+	    let hashed = hasher.finish() as u16;
 
 	    return Some (
 		URL_SAFE_NO_PAD.encode(hashed.to_be_bytes())
