@@ -727,15 +727,6 @@ button:active {
     box-shadow: 0 3px 0 var(--button-shadow);
 }
 
-#submissionEditing h3 {
-    text-decoration: underline;
-    padding: 0;
-    margin: 0;
-}
-
-.redaction-reason {
-    color: var(--redaction-reason-fg);
-    background-color: var(--redaction-reason);
 }
 
 .refPreview {
