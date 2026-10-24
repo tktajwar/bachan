@@ -53,9 +53,30 @@ const SUSPENDED_REPLY: &str = "\
 আপনি এই সার্ভার ব্যবহার করা থেকে নিলম্বিত হয়েছেন।\
 ";
 
+async fn redirect_handler(uri: axum::http::Uri) -> Redirect {
+    let url = std::env::var("redirect_url").unwrap();
+    let path = uri.path_and_query().map(|pq| pq.as_str()).unwrap_or("");
+    let target = format!("{}{}", url, path);
+    Redirect::permanent(&target)
+}
+
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().ok();
+
+	if let Ok(_redirect_url) = std::env::var("redirect_url") {
+	let app = Router::new()
+	    .fallback(redirect_handler);
+
+	let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+
+	axum::serve(
+	    listener,
+	    app,
+	).await.unwrap();
+
+	return;
+    }
 
     let db_url = std::env::var("DATABASE_URL")
 	.expect("DATABASE_URL not set.");
