@@ -3,8 +3,8 @@
 An internet forum for Bengali speaking community that respects
 anonymity and freedom of speech.
 
-#+CAPTION: Homepage of Bachan on April 5, 2026
-[[file:static/bachan-homepage.png]]
+#+CAPTION: Homepage of BanglaChan as of 24th October, 2026
+[[https://i.ibb.co.com/kVQB8Ctd/image.png]]
 
 The source code for বাchan is licensed under GNU Affero General Public
 License. See [[file:COPYING][COPYING]] for more information.
