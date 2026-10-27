@@ -59,8 +59,16 @@ async fn main() {
 
     let db_url = std::env::var("DATABASE_URL")
 	.expect("DATABASE_URL not set.");
-    let pool = PgPool::connect(&db_url).await
-	.expect("Couldn't create database pool.");
+    let pool = match PgPool::connect(&db_url).await {
+	Ok(pool) => pool,
+	Err(e) => {
+	    eprintln!("Error connecting to db: {}", e);
+	    eprintln!("Retrying in 30s");
+	    tokio::time::sleep(Duration::from_secs(30)).await;
+	    PgPool::connect(&db_url).await
+		.expect("Couldn't connect to pgpool!!")
+	},
+    };
 
     sqlx::migrate!("./migrations").run(&pool).await
 	.expect("Couldn't do database migration.");
