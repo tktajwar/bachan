@@ -1,27 +1,38 @@
-#+TITLE: বাchan: A Bengali Internet Forum
+#+TITLE: বাংলাচান: A Bangla Imageboard
 
-An internet forum for Bengali speaking community that respects
-anonymity and freedom of speech.
+An anonymity and freedom of speech respecting forum for the
+Bengali speaking community.
 
 #+CAPTION: Homepage of BanglaChan as of 24th October, 2026
 [[https://i.ibb.co.com/kVQB8Ctd/image.png]]
 
-The source code for বাchan is licensed under GNU Affero General Public
-License. See [[file:COPYING][COPYING]] for more information.
+The source code for বাংলাচান is licensed under GNU Affero General
+Public License. See [[file:COPYING][COPYING]] for further information.
 
 * Core Philosophy
 
-বাchan lets Bengali netizens express their thoughts without revealing
-their identity. The site features different boards for various
-interests. Users can post new threads, reply to an existing thread,
-use text hotlink images in their post, format texts, reference other
-posts, and quote other users without having to register an account.
-Each thread or reply has a unique ID and a hashed user ID indicating
-the person who posted it. The user ID is unique per thread to preserve
-users' anonymity across threads.
+BanglaChan (বাংলাচান) is for Bengali netizens to express their
+thoughts without revealing their identity on the internet. Most forums
+and social networks require multitude of identifications for users
+including name, self-portrait, pronouns, etc. With the loss in
+anonymity, not only the discussants are forced to give out their
+personal information, discussants can never have an open-minded
+conversation there. Discussants are judged by their name, how they
+look, and what socioeconomic class and subculture they belong to. A
+comment on such networks are always about who is saying it rather than
+what they are saying. BanglaChan strips away all forms of
+identification of an user leaving only what they say. The whole
+conversation is represented in a form of a socratic dialogue. The site
+features several boards for various interests. Users can post new
+threads, reply to an existing thread, hotlink images, reference other
+posts, and quote other users without having to register an account or
+pay a poisha or personal data. Each thread or reply on BanglaChan has
+an unique ID and a hashed user ID indicating the person who posted it.
+The user ID is unique per thread to preserve users' anonymity across
+threads.
 
-* Visit বাchan
+* Visit BanglaChan
 
-[[https://bachan-production.up.railway.app/]]
+[[https://bachan-production.up.railway.app/][বাংলাচান/BanglaChan link]]
 
 Be sure to read the rules before participating on the site.
