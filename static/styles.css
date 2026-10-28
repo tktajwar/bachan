@@ -164,6 +164,10 @@ main {
     scroll-behavior: smooth;
 }
 
+.hidden {
+    display: none !important;
+}
+
 h1 {
     max-width: 650px;
     margin: 8px auto;
@@ -416,10 +420,27 @@ hr {
     flex: 33.2%;
 }
 
+#replyForm #postName {
+    margin-right: auto;
+}
+
 #postComment {
     height: 100px;
     width: clamp(100px, 100%, var(--thread-container-max-width));
     transition: height .1s ease;
+}
+
+#postPreview {
+    min-height: 100px;
+    width: clamp(100px, 100%, var(--thread-container-max-width));
+    padding: 8px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    transition: height .1s ease;
+    background-color: #f5f5f5;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+    border: 1px solid #555;
+    border-radius: 5px;
 }
 
 form:has(#postComment:placeholder-shown) button,
@@ -469,7 +490,6 @@ button:disabled {
     background-color: var(--button-inactive);
     box-shadow: 0 2px 0 var(--button-inactive-shadow);
 }
-
 
 #board-title {
     color: var(--board-label);
@@ -767,6 +787,10 @@ button:disabled {
 	transition: height .15s ease;
     }
 
+    #postPreview {
+	max-height: clamp(150px, 45dvh, 500px);
+	overflow-y: scroll;
+    }
 }
 
 .refPreview {
