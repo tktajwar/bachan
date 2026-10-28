@@ -87,11 +87,14 @@ function formatLocalTime() {
 }
 
 function flagEmoji(cc) {
-    if (cc === 'ZZ') return '🏳️';
-    const codePoints = cc
-        .split('')
-        .map((char) => 127397 + char.charCodeAt(0))
-    return String.fromCodePoint(...codePoints)
+    if (cc == 'ZZ') return cc;
+    return `
+<img
+  src="https://flagcdn.com/16x12/${cc.toLowerCase()}.png"
+  srcset="https://flagcdn.com/32x24/${cc.toLowerCase()}.png 2x,
+    https://flagcdn.com/48x36/${cc.toLowerCase()}.png 3x"
+  alt="${cc}">
+`;
 }
 
 function add_ref(id) {
@@ -256,7 +259,7 @@ function writePostsBackrefs() {
 })();
 
 (function() {document.querySelectorAll('.cc').forEach(el => {
-  el.textContent = flagEmoji(el.textContent.trim());
+  el.innerHTML = flagEmoji(el.textContent.trim());
 })})();
 
 formatLocalTime();
