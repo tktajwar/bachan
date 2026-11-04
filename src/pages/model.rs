@@ -161,7 +161,7 @@ impl Post {
 
 	    id.hash(&mut hasher);
 	    thread_id.hash(&mut hasher);
-	    let hashed = hasher.finish() as u8;
+	    let hashed = hasher.finish() as u16;
 
 	    return Some (
 		URL_SAFE_NO_PAD.encode(hashed.to_be_bytes())
