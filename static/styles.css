@@ -755,6 +755,10 @@ button:disabled {
 	font-size: 14px;
     }
 
+    #navbar {
+	width: 99%;
+    }
+
     #boards-box-container {
 	grid-template-columns: auto;
     }
