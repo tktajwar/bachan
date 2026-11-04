@@ -689,7 +689,7 @@ button:disabled {
     text-decoration: none;
     color: inherit;
     padding: 5px;
-    font-size: 1.1rem;
+    font-size: 1.1em;
     text-shadow: 1px 2px 2px var(--navbar-border);
     background-color: inherit;
     transition: background-color 0.1s ease;
@@ -757,6 +757,10 @@ button:disabled {
 
     #navbar {
 	width: 99%;
+    }
+
+    #navbar a {
+	font-size: .95em;
     }
 
     #boards-box-container {
