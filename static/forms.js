@@ -70,7 +70,14 @@ if (replyForm) {
 		throw new Error(`Server error: ${response.status}`);
 	    }
 
-	    commentBox.value = '';
+	    if (is_preview_mode) is_preview_mode = togglePreview (
+		commentBox,
+		previewBox,
+		togglePreviewBtn,
+		is_preview_mode
+	    );
+
+	    form.reset();
 	    fetchUpdates();
 
 	} catch (error) {
