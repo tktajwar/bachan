@@ -18,9 +18,9 @@ services:
   postgres:
     image: postgres:18-alpine
     environment:
-      POSTGRES_USER: bachan
-      POSTGRES_PASSWORD: bachan1234
-      POSTGRES_DB: bachan
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB}
     volumes:
       - pgdata:/var/lib/postgresql
     healthcheck:
