@@ -14,11 +14,6 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
-    volumes:
-      - type: bind
-        source: ./static
-        target: /app/static
-        read_only: true
 
   postgres:
     image: postgres:18-alpine
