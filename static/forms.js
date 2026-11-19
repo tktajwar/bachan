@@ -21,6 +21,10 @@ function togglePreview(
 	previewBox.classList.remove('hidden');
 	commentBox.classList.add('hidden');
 	togglePreviewBtn.textContent = "এডিট করুন";
+
+	// MathJax for /sci/ board
+	if (typeof MathJax !== "undefined" ) MathJax.typeset();
+
     } else {
 	commentBox.classList.remove('hidden');
 	previewBox.classList.add('hidden');

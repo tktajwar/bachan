@@ -10,6 +10,10 @@ async function fetchUpdates() {
     const data = await res.json();
     if (Array.isArray(data[0]) && data[0].length) {
 	insertReplies(data[0]);
+
+	// MathJax for /sci/ board
+	if (typeof MathJax !== "undefined" ) MathJax.typeset();
+
 	unseenCount += data[0].length;
 	updateTitle();
 	interval = initialInterval;
