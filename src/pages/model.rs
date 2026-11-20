@@ -153,21 +153,6 @@ impl Post {
 	    )
 	}
 
-	// else if let Some(id) = self.user_id {
-	//     let thread_id = match self.thread_id {
-	// 	Some(id) => id,
-	// 	None => self.id,
-	//     };
-
-	//     id.hash(&mut hasher);
-	//     thread_id.hash(&mut hasher);
-	//     let hashed = hasher.finish() as u16;
-
-	//     return Some (
-	// 	URL_SAFE_NO_PAD.encode(hashed.to_be_bytes())
-	//     )
-	// }
-
 	return None
     }
 }
