@@ -1,10 +1,14 @@
 const username = document.getElementById("postName");
 
-username.value = localStorage.getItem("name") || "";
+function pullUsername() {
+    username.value = localStorage.getItem("name") || "";
+}
 
 username.addEventListener("change", () => {
     localStorage.setItem("name", username.value);
 });
+
+pullUsername();
 
 function togglePreview(
     commentBox,
@@ -82,6 +86,7 @@ if (replyForm) {
 	    );
 
 	    form.reset();
+	    pullUsername();
 	    fetchUpdates();
 
 	} catch (error) {
