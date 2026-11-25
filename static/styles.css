@@ -147,7 +147,7 @@ body {
     background-repeat: repeat;
     color: var(--fg-main);
     font-family: Helvetica, 'Noto Sans Bengali', Arial, sans-serif;
-    font-size: 16px;
+    font-size: .875rem;
     line-height: 1.6;
     margin: 0;
     padding: 0;
@@ -751,10 +751,6 @@ button:disabled {
 }
 
 @media (max-width: 460px) {
-    body {
-	font-size: 14px;
-    }
-
     #navbar {
 	width: 99%;
     }
